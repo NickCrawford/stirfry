@@ -17,21 +17,23 @@ export default {
   props: {},
   data() {
     return {
-      app: ""
+      app: "",
+      mouse: ""
     };
   },
   mounted() {
+    this.mouse = new WHS.VirtualMouseModule();
+    var el = document.getElementById("main-canvas");
     this.app = new WHS.App([
-      new WHS.ElementModule({
-        container: document.getElementById("main-canvas")
-      }),
+      new WHS.ElementModule(el),
+      new WHS.DefineModule(
+        "camera",
+        new WHS.PerspectiveCamera({
+          // Apply a camera.
+          position: new THREE.Vector3(0, 0, 50)
+        })
+      ),
       new WHS.SceneModule(),
-      new WHS.CameraModule({
-        position: {
-          y: 10,
-          z: 25
-        }
-      }),
       new WHS.RenderingModule(
         {
           bgColor: 0xf7f7dc,
@@ -50,7 +52,8 @@ export default {
         gravity: new THREE.Vector3(0, -10, 0),
         ammo:
           "https://cdn.rawgit.com/WhitestormJS/physics-module-ammonext/6ba4f54a/vendor/ammo.js"
-      })
+      }),
+      this.mouse
     ]);
 
     this.app.manager.get("camera").native.lookAt({ x: 0, y: 0, z: 0 });
@@ -123,6 +126,25 @@ export default {
       });
 
       box.addTo(this.app);
+
+      this.mouse.track(box);
+      box.on("mouseover", () => {
+        box.material.color.set(0xffff00);
+        console.log("mouseover");
+      });
+
+      box.on("mousemove", () => {
+        console.log("mousemove");
+      });
+
+      box.on("mouseout", () => {
+        box.material.color.set(0xf2f2f2);
+        console.log("mouseout");
+      });
+
+      box.on("click", () => {
+        alert("click!");
+      });
     }
   }
 };
