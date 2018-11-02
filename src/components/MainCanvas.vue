@@ -33,15 +33,20 @@ export default {
       app: "",
       mouse: "",
       camera: "",
-      dragging: new DragModule()
+      dragging: new DragModule(),
+      selectedObject: false
     };
   },
   mounted() {
     this.mouse = new WHS.VirtualMouseModule();
+    // addEventListener("mouseup", () => {
+    //   console.log("MOUSEUP", this.mouse);
+    //   this.selectedObject = null;
+    // });
     this.camera = new WHS.PerspectiveCamera({
       // Apply a camera.
       fov: 90,
-      position: new THREE.Vector3(0, 10, 5)
+      position: new THREE.Vector3(0, 7, 10)
     });
 
     var el = document.getElementById("main-canvas");
@@ -61,15 +66,15 @@ export default {
         },
         { shadow: true }
       ),
-      new WHS.OrbitControlsModule(),
+      // new WHS.OrbitControlsModule(), // Uncomment to add free orbit camera controls
       new WHS.ResizeModule(),
       new PHYSICS.WorldModule({
         gravity: new THREE.Vector3(0, -10, 0),
         ammo:
           "https://cdn.rawgit.com/WhitestormJS/physics-module-ammonext/6ba4f54a/vendor/ammo.js"
       }),
-      this.mouse,
-      this.dragging
+      this.mouse
+      // this.dragging
     ]);
 
     // How to set default outline parameters
@@ -126,7 +131,7 @@ export default {
     this.addLights();
     this.app.start(); // Run app.
 
-    // this.addBox();
+    this.addBox();
   },
   methods: {
     addLights() {
@@ -142,7 +147,7 @@ export default {
         position: new THREE.Vector3(0, 10, 0)
       }).addTo(this.app);
 
-      new WHS.AmbientLight({ color: 0xffffff, intensity: 0.9 }).addTo(this.app);
+      new WHS.AmbientLight({ color: 0xffffff, intensity: 1 }).addTo(this.app);
     },
 
     addBox() {
@@ -161,7 +166,7 @@ export default {
 
         modules: [
           new PHYSICS.BoxModule({
-            mass: 1
+            mass: 10
           }),
           this.dragging.mesh()
         ],
@@ -169,15 +174,46 @@ export default {
         position: [0, 10, 0]
       });
 
-      this.mouse.track(box);
-
+      this.mouse.track(box); // Look for mouseevents on the box
       box.addTo(this.app);
 
-      // this.mouse.on("move", () => {
-      //   console.log(box);
-      //   box
-      //     .use("physics")
-      //     .setLinearVelocity(this.mouse.project().sub(box.position));
+      box.on("mouseover", () => {
+        if (!this.selectedObject) box.material.color.set(0xff0000);
+      });
+
+      box.on("mouseout", () => {
+        if (!this.selectedObject) box.material.color.set(colors.red);
+      });
+
+      box.on("mousedown", () => {
+        box.material.color.set(0xff0000);
+        this.selectedObject = box;
+      });
+
+      this.mouse.on("mouseup", () => {
+        box.material.color.set(colors.red);
+        this.selectedObject = false;
+      });
+
+      this.mouse.on("move", () => {
+        if (this.selectedObject)
+          this.selectedObject.use("physics").setLinearVelocity(
+            this.mouse
+              .project()
+              .multiply(new THREE.Vector3(1, 1, 0)) // Remove z index movement
+              .sub(this.selectedObject.position)
+              .multiplyScalar(3)
+          );
+      });
+
+      addEventListener("mouseup", () => {
+        this.selectedObject = false;
+      });
+
+      // this.mouse.on("move", evt => {
+      //     box
+      //       .use("physics")
+      //       .setLinearVelocity(this.mouse.project().sub(box.position));
       // });
       // box.on("mouseover", () => {
       //   box.material.color.set(0xffff00);
@@ -190,12 +226,13 @@ export default {
       // });
 
       // box.on("mouseout", () => {
-      //   box.material.color.set(0xf2f2f2);
+      //   box.material.color.set(colors.red);
       //   console.log("mouseout");
       // });
 
       // box.on("mousedown", () => {
-      //   console.log("click!");
+      //   this.selectedObject = box;
+      //   console.log("Click", box);
       // });
     }
   }
