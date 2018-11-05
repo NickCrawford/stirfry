@@ -39,14 +39,14 @@ export default {
   },
   mounted() {
     this.mouse = new WHS.VirtualMouseModule();
-    // addEventListener("mouseup", () => {
-    //   console.log("MOUSEUP", this.mouse);
-    //   this.selectedObject = null;
-    // });
+
+    let cameraY = 10,
+      cameraZ = -15;
+
     this.camera = new WHS.PerspectiveCamera({
       // Apply a camera.
-      fov: 90,
-      position: new THREE.Vector3(0, 7, 10)
+      fov: 70,
+      position: new THREE.Vector3(0, cameraY, cameraZ)
     });
 
     var el = document.getElementById("main-canvas");
@@ -66,7 +66,7 @@ export default {
         },
         { shadow: true }
       ),
-      // new WHS.OrbitControlsModule(), // Uncomment to add free orbit camera controls
+      new WHS.OrbitControlsModule(), // Uncomment to add free orbit camera controls
       new WHS.ResizeModule(),
       new PHYSICS.WorldModule({
         gravity: new THREE.Vector3(0, -10, 0),
@@ -78,7 +78,7 @@ export default {
     ]);
 
     // How to set default outline parameters
-    // new THREE.OutlineEffect(renderer, {
+    // new THREE.OutlineEffect(this.renderer, {
     //   defaultThickNess: 0.01,
     //   defaultColor: new THREE.Color(0x888888),
     //   defaultAlpha: 0.8,
@@ -95,15 +95,20 @@ export default {
     // Fitting plane to viewport
     // https://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
 
+    var aspect = this.camera.native.aspect; // Get the aspect ratio of the camera view
     var vFOV = THREE.Math.degToRad(this.camera.native.fov); // convert vertical fov to radians
-    var dist = 10;
-    var planeHeight = 2 * Math.tan(vFOV / 2) * dist; // visible height
+    var hFOV = 2 * Math.atan(Math.tan(vFOV / 2) * aspect); // horizontal fov
+    var dist = Math.sqrt(cameraY * cameraY + cameraZ * cameraZ); // Use cameraY and cameraZ to calculate distance from center using Pythagorean Theory
 
-    var planeWidth = planeHeight * this.camera.native.aspect; // visible width
+    var planeHeight = 2 * Math.tan(vFOV / 2) * dist; // visible height
+    var planeWidth = planeHeight * aspect; // visible width
+
     console.log("plane: ", planeWidth, planeHeight, this.camera.native);
+
+    /* Bottom Floor */
     new WHS.Plane({
       geometry: {
-        width: planeWidth * 2,
+        width: planeWidth,
         height: planeHeight
       },
 
@@ -128,6 +133,32 @@ export default {
       }
     }).addTo(this.app);
 
+    /* Right Bounding Wall */
+    var rightBBox = new WHS.Plane({
+      geometry: {
+        width: 100,
+        height: cameraY
+      },
+
+      modules: [
+        new PHYSICS.BoxModule({
+          mass: 0
+        })
+      ],
+
+      material: new THREE.MeshLambertMaterial({
+        color: 0xf7f700,
+        side: THREE.DoubleSide
+      })
+
+      // rotation: {
+      //   y: 1 //-hFOV
+      // },
+
+      // position: new THREE.Vector3(-10, 0, 0)
+    }); //.addTo(this.app);
+    // rightBBox.use("mesh").lookAt(this.camera.position);
+
     this.addLights();
     this.app.start(); // Run app.
 
@@ -145,7 +176,7 @@ export default {
         },
 
         position: new THREE.Vector3(0, 10, 0)
-      }).addTo(this.app);
+      }); //.addTo(this.app);
 
       new WHS.AmbientLight({ color: 0xffffff, intensity: 1 }).addTo(this.app);
     },
