@@ -11,8 +11,9 @@
 import * as WHS from "whs";
 import * as PHYSICS from "physics-module-ammonext";
 import * as THREE from "three";
-import OBJLoader from "three-obj-loader";
-OBJLoader(THREE);
+import OBJLoader from "three-react-obj-loader";
+
+// OBJLoader(THREE);
 
 import DragModule from "whs/modules/DragModule";
 
@@ -182,7 +183,14 @@ export default {
           return object;
         },
 
-        position: [0, 100, 0]
+        modules: [
+          new PHYSICS.ConvexModule({
+            mass: 2,
+            path: url
+          })
+        ],
+
+        position: [0, 0, 0]
       }).addTo(this.app);
     },
 
