@@ -11,6 +11,8 @@
 import * as WHS from "whs";
 import * as PHYSICS from "physics-module-ammonext";
 import * as THREE from "three";
+import OBJLoader from "three-obj-loader";
+OBJLoader(THREE);
 
 import DragModule from "whs/modules/DragModule";
 
@@ -38,6 +40,9 @@ export default {
     };
   },
   mounted() {
+    setTimeout(() => {
+      console.log("THREE", THREE);
+    }, 1000);
     this.mouse = new WHS.VirtualMouseModule();
 
     let cameraY = 10,
@@ -66,7 +71,7 @@ export default {
         },
         { shadow: true }
       ),
-      new WHS.OrbitControlsModule(), // Uncomment to add free orbit camera controls
+      //new WHS.OrbitControlsModule(), // Uncomment to add free orbit camera controls
       new WHS.ResizeModule(),
       new PHYSICS.WorldModule({
         gravity: new THREE.Vector3(0, -10, 0),
@@ -163,8 +168,24 @@ export default {
     this.app.start(); // Run app.
 
     this.addBox();
+    this.addPanModel();
   },
   methods: {
+    addPanModel() {
+      const url = "../assets/models/pan.obj";
+
+      new WHS.Importer({
+        url: url,
+        loader: new OBJLoader(),
+
+        parser(object) {
+          return object;
+        },
+
+        position: [0, 100, 0]
+      }).addTo(this.app);
+    },
+
     addLights() {
       // Lights
       new WHS.PointLight({

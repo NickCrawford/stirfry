@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "physics-module-ammonext": "^0.1.2-fix.1",
+    "three-obj-loader": "^1.1.3",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "whs": "^2.1.9"
