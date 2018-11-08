@@ -1,15 +1,12 @@
 <template>
   <div id="app">
     <router-view/>
-    <main-canvas></main-canvas>
   </div>
 </template>
 
 <script>
-import MainCanvas from "@/components/MainCanvas.vue";
-
 export default {
-  components: { MainCanvas }
+  components: {}
 };
 </script>
 
