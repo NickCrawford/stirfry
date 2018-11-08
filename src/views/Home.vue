@@ -1,7 +1,8 @@
 <template>
   <div class="home">
-    <h1>Out to lunch!</h1>
-    <h2>Startup Stirfry will be back soon :)</h2>
+    <h2>Out to lunch!</h2>
+    <h1>Startup Stirfry</h1>
+    <h3>will be back soon</h3>
   </div>
 </template>
 
@@ -26,12 +27,14 @@ export default {
   color: white;
 }
 
-h1 {
-  margin: 1em;
+h2,
+h3 {
   color: #f5d6ba;
+  font-weight: lighter;
 }
 
-h2 {
+h1 {
+  margin: 1em;
   color: #d4b483;
 }
 </style>
