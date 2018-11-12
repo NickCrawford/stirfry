@@ -10,6 +10,19 @@
 // @ is an alias to /src
 import "cannon";
 import * as BABYLON from "babylonjs";
+import "babylonjs-loaders";
+
+let colors = {
+  blue: BABYLON.Color3.FromHexString("#4281A4"),
+  green: BABYLON.Color3.FromHexString("#48A9A6"),
+  background: BABYLON.Color3.FromHexString("#D0CBC7"),
+  ground: BABYLON.Color3.FromHexString("#E4DFDA"),
+  yellow: BABYLON.Color3.FromHexString("#D4B483"),
+  red: BABYLON.Color3.FromHexString("#C1666B"),
+  lid: BABYLON.Color3.FromHexString("#B05D62"),
+  skin: BABYLON.Color3.FromHexString("#F5D6BA"),
+  black: BABYLON.Color3.FromHexString("#162129")
+};
 
 export default {
   name: "home",
@@ -55,39 +68,53 @@ export default {
     initScene() {
       let scene = new BABYLON.Scene(this.engine);
 
-      scene.clearColor = BABYLON.Color3.Purple();
+      scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+      scene.clearColor = BABYLON.Color3.White();
 
       var camera = new BABYLON.FreeCamera(
         "Camera",
         new BABYLON.Vector3(0, 10, -15),
         scene
       );
-      // camera.attachControl(this.canvas, true);
+      camera.attachControl(this.canvas, true);
       camera.checkCollisions = true;
       camera.applyGravity = true;
       camera.setTarget(new BABYLON.Vector3(0, 0, 0));
 
-      var light = new BABYLON.DirectionalLight(
-        "dir02",
-        new BABYLON.Vector3(0.2, -1, 0),
-        scene
-      );
-      light.position = new BABYLON.Vector3(0, 80, 0);
+      // Light direction is up and left
+      // var light = new BABYLON.HemisphericLight(
+      //   "hemiLight",
+      //   new BABYLON.Vector3(-1, 1, 0),
+      //   scene
+      // );
+      // light.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
+      // light.specular = new BABYLON.Color3(1, 1, 1);
+      // light.groundColor = new BABYLON.Color3(1, 1, 1);
+
+      // var light = new BABYLON.DirectionalLight(
+      //   "dir02",
+      //   new BABYLON.Vector3(0.2, -1, 0),
+      //   scene
+      // );
+      // light.position = new BABYLON.Vector3(0, 80, 0);
 
       // Material
       var materialAmiga = new BABYLON.StandardMaterial("amiga", scene);
       var materialAmiga2 = new BABYLON.StandardMaterial("amiga", scene);
 
       // Shadows
-      var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
+      // var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
       // Physics
       scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
+      // scene.getPhysicsEngine().setTimeStep(1 / 200);
+      // scene.autoClear = false; // Color buffer
+      // scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
 
       // Spheres
       var y = 0;
-      for (var index = 0; index < 100; index++) {
-        var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 16, 3, scene);
+      for (var index = 0; index < 10; index++) {
+        var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 8, 1, scene);
         sphere.material = materialAmiga;
 
         sphere.position = new BABYLON.Vector3(
@@ -96,7 +123,7 @@ export default {
           Math.random() * 10 - 5
         );
 
-        shadowGenerator.addShadowCaster(sphere);
+        // shadowGenerator.addShadowCaster(sphere);
 
         sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
           sphere,
@@ -108,66 +135,10 @@ export default {
         y += 2;
       }
 
-      // Link
-      var spheres = [];
-      for (index = 0; index < 10; index++) {
-        sphere = BABYLON.Mesh.CreateSphere("Sphere0", 16, 1, scene);
-        spheres.push(sphere);
-        sphere.material = materialAmiga2;
-        sphere.position = new BABYLON.Vector3(
-          Math.random() * 20 - 10,
-          y,
-          Math.random() * 10 - 5
-        );
-
-        shadowGenerator.addShadowCaster(sphere);
-
-        sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
-          sphere,
-          BABYLON.PhysicsImpostor.SphereImpostor,
-          { mass: 1 },
-          scene
-        );
-      }
-
-      for (index = 0; index < 9; index++) {
-        spheres[index].setPhysicsLinkWith(
-          spheres[index + 1],
-          new BABYLON.Vector3(0, 0.5, 0),
-          new BABYLON.Vector3(0, -0.5, 0)
-        );
-      }
-
-      // Box
-      var box0 = BABYLON.Mesh.CreateBox("Box0", 3, scene);
-      box0.position = new BABYLON.Vector3(3, 30, 0);
-      var materialWood = new BABYLON.StandardMaterial("wood", scene);
-
-      materialWood.emissiveColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-      box0.material = materialWood;
-
-      shadowGenerator.addShadowCaster(box0);
-
-      // Compound
-      var part0 = BABYLON.Mesh.CreateBox("part0", 3, scene);
-      part0.position = new BABYLON.Vector3(3, 30, 0);
-      part0.material = materialWood;
-
-      var part1 = BABYLON.Mesh.CreateBox("part1", 3, scene);
-      part1.parent = part0; // We need a hierarchy for compound objects
-      part1.position = new BABYLON.Vector3(0, 3, 0);
-      part1.material = materialWood;
-
-      shadowGenerator.addShadowCaster(part0);
-      shadowGenerator.addShadowCaster(part1);
-      shadowGenerator.useBlurExponentialShadowMap = true;
-      shadowGenerator.useKernelBlur = true;
-      shadowGenerator.blurKernel = 32;
-
       // Playground
       var ground = BABYLON.Mesh.CreateBox("Ground", 1, scene);
       ground.scaling = new BABYLON.Vector3(100, 1, 100);
-      ground.position.y = -5.0;
+      ground.position.y = 0;
       ground.checkCollisions = true;
 
       var border0 = BABYLON.Mesh.CreateBox("border0", 1, scene);
@@ -175,47 +146,44 @@ export default {
       border0.position.y = -5.0;
       border0.position.x = -50.0;
       border0.checkCollisions = true;
+      border0.alpha = 0;
 
       var border1 = BABYLON.Mesh.CreateBox("border1", 1, scene);
       border1.scaling = new BABYLON.Vector3(1, 100, 100);
       border1.position.y = -5.0;
       border1.position.x = 50.0;
       border1.checkCollisions = true;
+      border1.alpha = 0;
 
       var border2 = BABYLON.Mesh.CreateBox("border2", 1, scene);
       border2.scaling = new BABYLON.Vector3(100, 100, 1);
       border2.position.y = -5.0;
       border2.position.z = 50.0;
       border2.checkCollisions = true;
+      border2.alpha = 0;
 
       var border3 = BABYLON.Mesh.CreateBox("border3", 1, scene);
       border3.scaling = new BABYLON.Vector3(100, 100, 1);
       border3.position.y = -5.0;
       border3.position.z = -50.0;
       border3.checkCollisions = true;
+      border3.alpha = 0.1;
 
       var groundMat = new BABYLON.StandardMaterial("groundMat", scene);
-      groundMat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-      groundMat.emissiveColor = new BABYLON.Color3(0.2, 0.2, 0.2);
+      groundMat.ambientColor = colors.skin;
       groundMat.backFaceCulling = false;
       ground.material = groundMat;
-      border0.material = groundMat;
-      border1.material = groundMat;
-      border2.material = groundMat;
-      border3.material = groundMat;
+      // border0.material = groundMat;
+      // border1.material = groundMat;
+      // border2.material = groundMat;
+      // border3.material = groundMat;
       ground.receiveShadows = true;
 
       // Physics
-      box0.physicsImpostor = new BABYLON.PhysicsImpostor(
-        box0,
-        BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 2, friction: 0.4, restitution: 0.3 },
-        scene
-      );
       ground.physicsImpostor = new BABYLON.PhysicsImpostor(
         ground,
         BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 0, friction: 0.5, restitution: 0.7 },
+        { mass: 0, friction: 0.9, restitution: 0.2 },
         scene
       );
       border0.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -240,13 +208,6 @@ export default {
         border3,
         BABYLON.PhysicsImpostor.BoxImpostor,
         { mass: 0 },
-        scene
-      );
-
-      part0.physicsImpostor = new BABYLON.PhysicsImpostor(
-        part0,
-        BABYLON.PhysicsImpostor.BoxImpostor,
-        { mass: 2, friction: 0.4, restitution: 0.3 },
         scene
       );
 
@@ -308,7 +269,69 @@ export default {
       this.currentMesh = null;
     },
 
-    initPan() {},
+    initPan() {
+      // Assets manager
+      var assetsManager = new BABYLON.AssetsManager(this.scene);
+
+      var meshTask = assetsManager.addMeshTask(
+        "Pan Loading task",
+        "",
+        "./assets/models/",
+        "pan.obj"
+      );
+
+      // You can handle success and error on a per-task basis (onSuccess, onError)
+      meshTask.onSuccess = function(task) {
+        // task.loadedMeshes.forEach(mesh => {
+        //   mesh.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+        //   mesh.position = new BABYLON.Vector3(0, 1, -4);
+        // });
+
+        console.log(
+          "aM-loaded pan... task.loadedMeshes.length: ",
+          task.loadedMeshes.length
+        );
+        // let pan = task.loadedMeshes[0];
+        let pan = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes]);
+        pan.position = new BABYLON.Vector3(0, 1, -4);
+        pan.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+
+        pan.physicsImpostor = new BABYLON.PhysicsImpostor(
+          pan,
+          BABYLON.PhysicsImpostor.MeshImpostor,
+          {
+            mass: 0,
+            friction: 1,
+            restitution: 0.1
+            // ignoreParent: true
+            // disableBidirectionalTransformation: true
+          },
+          this.scene
+        );
+
+        var panMat = new BABYLON.StandardMaterial("panMat", this.scene);
+        panMat.ambientColor = colors.black;
+        panMat.backFaceCulling = false;
+        pan.material = panMat;
+      };
+
+      // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
+      assetsManager.onTaskError = function(task) {
+        console.log("error while loading " + task.name);
+      };
+
+      // assetsManager.onFinish = (tasks) => {
+      //   this.engine.runRenderLoop(function() {
+      //     this.scene.render();
+      //   });
+      // };
+
+      // Can now change loading background color:
+      this.engine.loadingUIBackgroundColor = "#F5D6BA";
+
+      // Just call load to initiate the loading sequence
+      assetsManager.load();
+    },
 
     initIngredients() {}
   }
