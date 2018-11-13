@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
+  <div class="home" :class="{ 'show-cursor': showCursor }">
     <div class="debug-container">
-      <p>{{ zScalar }}</p>
+      <!-- <p>{{ zScalar }}</p> -->
     </div>
     <canvas id="renderCanvas"></canvas>
   </div>
@@ -14,6 +14,7 @@ import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
 let colors = {
+  white: BABYLON.Color3.FromHexString("#FFFFFF"),
   blue: BABYLON.Color3.FromHexString("#4281A4"),
   green: BABYLON.Color3.FromHexString("#48A9A6"),
   background: BABYLON.Color3.FromHexString("#D0CBC7"),
@@ -37,7 +38,9 @@ export default {
       assetsManager: null,
       hl: null,
       highlightedMesh: null,
-      zScalar: 0,
+      showCursor: false, // Show the cursor as a pointer
+
+      //World Objects
       veggies: {
         pepper: null
       }
@@ -51,12 +54,12 @@ export default {
     this.initPan();
     this.initIngredients();
     this.initPointerEvents();
+    this.initPhysicsGravityField();
 
     // Can now change loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
 
     // Just call load to initiate the loading sequence
-    console.log("loading");
     this.assetsManager.load();
 
     this.assetsManager.onFinish = tasks => {
@@ -64,6 +67,11 @@ export default {
         this.handleDragging();
         this.scene.render();
       });
+    };
+
+    // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
+    this.assetsManager.onTaskError = function(task) {
+      console.log("error while loading " + task.name);
     };
 
     window.addEventListener("resize", () => {
@@ -136,7 +144,7 @@ export default {
       // var shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
       // Physics
-      scene.enablePhysics(null, new BABYLON.CannonJSPlugin());
+      scene.enablePhysics();
       // scene.getPhysicsEngine().setTimeStep(1 / 200);
       // scene.autoClear = false; // Color buffer
       // scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
@@ -166,12 +174,12 @@ export default {
       }
 
       // Center indicator
-      let centSph = BABYLON.Mesh.CreateSphere("SphereCenter", 8, 3, scene);
+      let centSph = BABYLON.Mesh.CreateSphere("SphereCenter", 8, 6, scene);
       let centSphMat = new BABYLON.StandardMaterial("centerMat", scene);
       centSphMat.ambientColor = colors.red;
       centSph.material = centSphMat;
-      centSph.position = new BABYLON.Vector3(0, 0, 0);
-
+      centSph.position = new BABYLON.Vector3(0, 0.5, 0);
+      centSph.visibility = false;
       // Playground
       var groundWidth = 30, // X
         groundDepth = 20; // z
@@ -304,18 +312,20 @@ export default {
           mesh => {
             // console.log("mesh", mesh);
             return mesh == this.veggies.pepper;
-            // return mesh;
+            return mesh;
           }
         );
         if (pickInfo.hit && pickInfo.pickedMesh) {
-          pickInfo.pickedMesh.outlineColor = colors.blue;
+          pickInfo.pickedMesh.outlineColor = colors.white;
           pickInfo.pickedMesh.outlineWidth = 0.04;
           pickInfo.pickedMesh.renderOutline = true;
           this.highlightedMesh = pickInfo.pickedMesh;
+          this.showCursor = true;
         } else {
           if (this.highlightedMesh) {
             this.highlightedMesh.renderOutline = false;
             this.highlightedMesh = null;
+            this.showCursor = false;
           }
         }
 
@@ -346,10 +356,10 @@ export default {
           pickResult.pickedPoint.z
         );
 
-        if (pickedPoint.z > 0) {
-          pickedPoint = pickedPoint.multiplyByFloats(1, pickedPoint.z / 2, 0.5);
-          // pickedPoint.y = pickResult.pickedPoint.z / 2;
-        }
+        // if (pickedPoint.z > 0) {
+        //   pickedPoint = pickedPoint.multiplyByFloats(1, pickedPoint.z / 2, 0.5);
+        //   // pickedPoint.y = pickResult.pickedPoint.z / 2;
+        // }
         // this.zScalar = pickedPoint.z / 3;
 
         this.currentMesh.physicsImpostor.setLinearVelocity(
@@ -381,15 +391,19 @@ export default {
       meshTask.onSuccess = function(task) {
         // task.loadedMeshes.forEach(mesh => {
         //   mesh.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-        //   mesh.position = new BABYLON.Vector3(0, 1, -4);
+        //   mesh.position = new BABYLON.Vector3(0, 0.5, -3);
         // });
 
         console.log(
           "aM-loaded pan... task.loadedMeshes.length: ",
           task.loadedMeshes.length
         );
-        // let pan = task.loadedMeshes[0];
-        let pan = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes]);
+        let pan = task.loadedMeshes[1];
+        let handle = task.loadedMeshes[0];
+        handle.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+        handle.position = new BABYLON.Vector3(0, 0.5, -3);
+
+        // let pan = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes[0]]);
         pan.position = new BABYLON.Vector3(0, 0.5, -3);
         pan.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
 
@@ -407,14 +421,9 @@ export default {
         );
 
         var panMat = new BABYLON.StandardMaterial("panMat", this.scene);
-        panMat.ambientColor = colors.black;
+        panMat.ambientColor = colors.red;
         panMat.backFaceCulling = false;
         pan.material = panMat;
-      };
-
-      // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
-      this.assetsManager.onTaskError = function(task) {
-        console.log("error while loading " + task.name);
       };
     },
 
@@ -437,6 +446,8 @@ export default {
         pepper.position = new BABYLON.Vector3(0, 10, 0);
         // pepper.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
 
+        // task.loadedMeshes[0].material = pepperMat;
+
         pepper.physicsImpostor = new BABYLON.PhysicsImpostor(
           pepper,
           BABYLON.PhysicsImpostor.CylinderImpostor,
@@ -446,11 +457,30 @@ export default {
 
         this.veggies.pepper = pepper;
 
-        // var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
-        // pepperMat.ambientColor = new BABYLON.Color3.FromHexString("#FFFFFF");
-        // // panMat.backFaceCulling = false;
-        // pepper.material = pepperMat;
+        var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
+        pepperMat.ambientColor = new BABYLON.Color3(0.64, 0.046113, 0.079105);
+        // panMat.backFaceCulling = false;
+        pepper.material = pepperMat;
       };
+    },
+
+    initPhysicsGravityField() {
+      // Gravity field for ingredients in the pan
+      var physicsViewer = new BABYLON.Debug.PhysicsViewer();
+      var physicsHelper = new BABYLON.PhysicsHelper(this.scene);
+
+      var origin = new BABYLON.Vector3(0, 0.5, 0);
+      var radius = 4;
+      var strength = 8;
+      var falloff = BABYLON.PhysicsRadialImpulseFalloff.Linear; // or BABYLON.PhysicsRadialImpulseFalloff.Constant
+
+      var gravitationalFieldEvent = physicsHelper.gravitationalField(
+        origin,
+        radius,
+        strength,
+        falloff
+      );
+      gravitationalFieldEvent.enable(); // need to call, if you want to activate the gravitational field.
     }
   }
 };
@@ -460,6 +490,11 @@ export default {
 .home {
   width: 100%;
   height: 100%;
+  cursor: default;
+}
+
+.home.show-cursor {
+  cursor: pointer;
 }
 
 #renderCanvas {
