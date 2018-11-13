@@ -1,12 +1,88 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
-    <div class="debug-container">
-      <p>{{ selectedItems }}</p>
-      <p>{{ isClick }}, {{ startingClickPoint }}</p>
+    <div id="scroll-container">
+      <div class="debug-container">
+        <p>{{ selectedItems }}</p>
+        <p>{{ isClick }}, {{ startingClickPoint }}</p>
+      </div>
+      <canvas id="renderCanvas"></canvas>
+      
+      <div id="overlay-view">
+        <div id="heading-section">
+          <h1>Startup Stirfry</h1>
+          <h2>We create delicious designs</h2>
+        </div>
+        <div id="selection-section">
+          <h3>Let's get cooking!</h3>
+          <h4>Click on the ingredients you need for your project</h4>
+        </div>
+      </div>
     </div>
-    <canvas id="renderCanvas"></canvas>
   </div>
 </template>
+
+
+<style lang="css" scoped>
+.home {
+  width: 100%;
+  height: 100%;
+  cursor: unset;
+
+  overflow-y: auto;
+}
+
+#scroll-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.home.show-cursor {
+  cursor: pointer;
+}
+
+#renderCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+#overlay-view {
+  position: relative;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: auto;
+
+  pointer-events: none;
+}
+
+#heading-section {
+  height: 50vh;
+}
+
+#selection-section {
+  height: 50vh;
+}
+
+#heading-section *,
+#selection-section * {
+  pointer-events: auto;
+}
+
+.debug-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 1em;
+  background: black;
+  color: white;
+}
+</style>
 
 <script>
 // @ is an alias to /src
@@ -60,6 +136,7 @@ export default {
     this.initIngredients();
     this.initPointerEvents();
     this.initPhysicsGravityField();
+    this.handleScroll();
 
     // Can now change loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
@@ -86,6 +163,8 @@ export default {
 
   watch: {},
   methods: {
+    handleScroll() {},
+
     initEngine() {
       // Get the canvas DOM element
       this.canvas = document.getElementById("renderCanvas");
@@ -532,30 +611,3 @@ export default {
   }
 };
 </script>
-
-<style lang="css" scoped>
-.home {
-  width: 100%;
-  height: 100%;
-  cursor: default;
-}
-
-.home.show-cursor {
-  cursor: pointer;
-}
-
-#renderCanvas {
-  width: 100%;
-  height: 100%;
-  touch-action: none;
-}
-
-.debug-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 1em;
-  background: black;
-  color: white;
-}
-</style>
