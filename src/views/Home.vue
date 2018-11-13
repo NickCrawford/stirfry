@@ -1,7 +1,8 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
     <div class="debug-container">
-      <!-- <p>{{ zScalar }}</p> -->
+      <p>{{ selectedItems }}</p>
+      <p>{{ isClick }}, {{ startingClickPoint }}</p>
     </div>
     <canvas id="renderCanvas"></canvas>
   </div>
@@ -14,7 +15,7 @@ import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
 let colors = {
-  white: BABYLON.Color3.FromHexString("#FFFFFF"),
+  highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
   blue: BABYLON.Color3.FromHexString("#4281A4"),
   green: BABYLON.Color3.FromHexString("#48A9A6"),
   background: BABYLON.Color3.FromHexString("#D0CBC7"),
@@ -39,7 +40,11 @@ export default {
       hl: null,
       highlightedMesh: null,
       showCursor: false, // Show the cursor as a pointer
-
+      isClick: false, // Helps determine if the user is clicking or dragging an object
+      startingClickPoint: null,
+      selectedItems: {
+        pepper: false
+      }, // The selected items a user has clicked on
       //World Objects
       veggies: {
         pepper: null
@@ -281,8 +286,8 @@ export default {
     },
 
     onPointerDown(evt) {
-      console.log("pointer down", evt);
       if (evt.button !== 0) {
+        // Make sure we're left clicking
         return;
       }
 
@@ -291,32 +296,49 @@ export default {
         this.scene.pointerX,
         this.scene.pointerY,
         mesh => {
-          // console.log("mesh", mesh);
-          return mesh == this.veggies.pepper;
-          // return mesh;
+          return mesh == this.veggies.pepper; // Only let veggies be selected
         }
       );
       if (pickInfo.hit) {
         this.currentMesh = pickInfo.pickedMesh;
-        this.hl.addMesh(this.currentMesh, BABYLON.Color3.White());
-        console.log("currentMesh", this.currentMesh);
+        this.hl.addMesh(this.currentMesh, colors.highlightColor);
       }
+
+      //Determine if it'll be a click or drag; see more in onPointerMove
+      this.isClick = true;
+      this.startingClickPoint = new BABYLON.Vector2(
+        this.scene.pointerX,
+        this.scene.pointerY
+      );
     },
 
     onPointerMove(evt) {
+      // if the cursor moves far enough away from the starting point,
+      //we need to determine that the user is dragging the object instead of clicking
+      if (this.startingClickPoint) {
+        let currentPoint = new BABYLON.Vector2(
+          this.scene.pointerX,
+          this.scene.pointerY
+        ); // Set the current mouse point as a vector
+
+        if (
+          BABYLON.Vector2.Distance(currentPoint, this.startingClickPoint) > 25 // If the mouse has moved 25 pixles from where we originally moused down, we then know that the user is dragging
+        ) {
+          this.isClick = false;
+        }
+      }
+
       if (!this.currentMesh) {
         // check if we are under a mesh
         var pickInfo = this.scene.pick(
           this.scene.pointerX,
           this.scene.pointerY,
           mesh => {
-            // console.log("mesh", mesh);
-            return mesh == this.veggies.pepper;
-            return mesh;
+            return mesh == this.veggies.pepper; // Only let veggies be selected
           }
         );
         if (pickInfo.hit && pickInfo.pickedMesh) {
-          pickInfo.pickedMesh.outlineColor = colors.white;
+          pickInfo.pickedMesh.outlineColor = colors.highlightColor;
           pickInfo.pickedMesh.outlineWidth = 0.04;
           pickInfo.pickedMesh.renderOutline = true;
           this.highlightedMesh = pickInfo.pickedMesh;
@@ -334,14 +356,39 @@ export default {
     },
 
     onPointerUp(evt) {
-      if (this.currentMesh) {
+      if (this.currentMesh && !this.isClick) {
+        // If there is a selected mesh and the user is dragging (not just clicking the object)
+        this.hl.removeMesh(this.currentMesh); // Remove the highlight from the object
+        this.currentMesh = null;
+      } else if (this.currentMesh && this.isClick) {
+        // If clicking on the mesh...
+        // Throw into pan
+        this.throwObjectIntoPan(this.currentMesh);
+
+        // Add to selected items
+        this.addItemToList(this.currentMesh.name);
+
+        // Remove from selection like normal
         this.hl.removeMesh(this.currentMesh); // Remove the highlight from the object
         this.currentMesh = null;
       }
+
+      this.isClick = false;
+      this.startingClickPoint = null;
+    },
+
+    addItemToList(itemName) {
+      this.selectedItems[itemName] = true;
+    },
+
+    throwObjectIntoPan(babylonObject) {
+      babylonObject.physicsImpostor.setLinearVelocity(
+        new BABYLON.Vector3(10, 10, 10)
+      );
     },
 
     handleDragging() {
-      if (this.currentMesh) {
+      if (this.currentMesh && !this.isClick) {
         var pickResult = this.scene.pick(
           this.scene.pointerX,
           this.scene.pointerY,
@@ -412,7 +459,7 @@ export default {
           BABYLON.PhysicsImpostor.CylinderImpostor,
           {
             mass: 0,
-            friction: 1,
+            friction: 2,
             restitution: 0.1
             // ignoreParent: true
             // disableBidirectionalTransformation: true
@@ -451,7 +498,7 @@ export default {
         pepper.physicsImpostor = new BABYLON.PhysicsImpostor(
           pepper,
           BABYLON.PhysicsImpostor.CylinderImpostor,
-          { mass: 3, restitution: 0.4 },
+          { mass: 1, restitution: 0.2 },
           this.scene
         );
 
