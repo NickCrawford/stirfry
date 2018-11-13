@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <div class="debug-container">
+      <p>{{ zScalar }}</p>
     </div>
     <canvas id="renderCanvas"></canvas>
   </div>
@@ -32,20 +33,38 @@ export default {
       canvas: null,
       engine: null,
       scene: null,
-      currentMesh: null
+      currentMesh: null,
+      assetsManager: null,
+      hl: null,
+      highlightedMesh: null,
+      zScalar: 0,
+      veggies: {
+        pepper: null
+      }
     };
   },
 
   mounted() {
     this.initEngine();
     this.scene = this.initScene();
+    this.initAssetsManager();
     this.initPan();
     this.initIngredients();
     this.initPointerEvents();
 
-    this.engine.runRenderLoop(() => {
-      this.scene.render();
-    });
+    // Can now change loading background color:
+    this.engine.loadingUIBackgroundColor = "#F5D6BA";
+
+    // Just call load to initiate the loading sequence
+    console.log("loading");
+    this.assetsManager.load();
+
+    this.assetsManager.onFinish = tasks => {
+      this.engine.runRenderLoop(() => {
+        this.handleDragging();
+        this.scene.render();
+      });
+    };
 
     window.addEventListener("resize", () => {
       this.engine.resize();
@@ -69,17 +88,22 @@ export default {
       let scene = new BABYLON.Scene(this.engine);
 
       scene.ambientColor = new BABYLON.Color3(1, 1, 1);
-      scene.clearColor = BABYLON.Color3.White();
+      scene.clearColor = colors.blue;
 
       var camera = new BABYLON.FreeCamera(
         "Camera",
         new BABYLON.Vector3(0, 10, -15),
         scene
       );
-      camera.attachControl(this.canvas, true);
-      camera.checkCollisions = true;
-      camera.applyGravity = true;
+      // camera.attachControl(this.canvas, true);
       camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+
+      // Highlight layer for selecting items
+      let hl = new BABYLON.HighlightLayer("hl", scene);
+      hl.innerGlow = false;
+      hl.blurHorizontalSize = 2;
+      hl.blurVerticalSize = 2;
+      this.hl = hl;
 
       // Light direction is up and left
       // var light = new BABYLON.HemisphericLight(
@@ -91,12 +115,18 @@ export default {
       // light.specular = new BABYLON.Color3(1, 1, 1);
       // light.groundColor = new BABYLON.Color3(1, 1, 1);
 
-      // var light = new BABYLON.DirectionalLight(
+      // var light = new BABYLON.PointLight(
+      //   "pointLight",
+      //   new BABYLON.Vector3(1, 10, 1),
+      //   scene
+      // );
+
+      // var light1 = new BABYLON.DirectionalLight(
       //   "dir02",
       //   new BABYLON.Vector3(0.2, -1, 0),
       //   scene
       // );
-      // light.position = new BABYLON.Vector3(0, 80, 0);
+      // light1.position = new BABYLON.Vector3(0, 80, 0);
 
       // Material
       var materialAmiga = new BABYLON.StandardMaterial("amiga", scene);
@@ -135,37 +165,47 @@ export default {
         y += 2;
       }
 
+      // Center indicator
+      let centSph = BABYLON.Mesh.CreateSphere("SphereCenter", 8, 3, scene);
+      let centSphMat = new BABYLON.StandardMaterial("centerMat", scene);
+      centSphMat.ambientColor = colors.red;
+      centSph.material = centSphMat;
+      centSph.position = new BABYLON.Vector3(0, 0, 0);
+
       // Playground
+      var groundWidth = 30, // X
+        groundDepth = 20; // z
+
       var ground = BABYLON.Mesh.CreateBox("Ground", 1, scene);
-      ground.scaling = new BABYLON.Vector3(100, 1, 100);
+      ground.scaling = new BABYLON.Vector3(groundWidth, 1, groundDepth);
       ground.position.y = 0;
       ground.checkCollisions = true;
 
       var border0 = BABYLON.Mesh.CreateBox("border0", 1, scene);
       border0.scaling = new BABYLON.Vector3(1, 100, 100);
       border0.position.y = -5.0;
-      border0.position.x = -50.0;
+      border0.position.x = -groundWidth / 2;
       border0.checkCollisions = true;
       border0.alpha = 0;
 
       var border1 = BABYLON.Mesh.CreateBox("border1", 1, scene);
       border1.scaling = new BABYLON.Vector3(1, 100, 100);
       border1.position.y = -5.0;
-      border1.position.x = 50.0;
+      border1.position.x = groundWidth / 2;
       border1.checkCollisions = true;
       border1.alpha = 0;
 
       var border2 = BABYLON.Mesh.CreateBox("border2", 1, scene);
       border2.scaling = new BABYLON.Vector3(100, 100, 1);
       border2.position.y = -5.0;
-      border2.position.z = 50.0;
+      border2.position.z = groundDepth / 2;
       border2.checkCollisions = true;
       border2.alpha = 0;
 
       var border3 = BABYLON.Mesh.CreateBox("border3", 1, scene);
       border3.scaling = new BABYLON.Vector3(100, 100, 1);
       border3.position.y = -5.0;
-      border3.position.z = -50.0;
+      border3.position.z = -groundDepth / 2;
       border3.checkCollisions = true;
       border3.alpha = 0.1;
 
@@ -173,11 +213,12 @@ export default {
       groundMat.ambientColor = colors.skin;
       groundMat.backFaceCulling = false;
       ground.material = groundMat;
-      // border0.material = groundMat;
-      // border1.material = groundMat;
-      // border2.material = groundMat;
-      // border3.material = groundMat;
       ground.receiveShadows = true;
+
+      border0.visibility = false;
+      border1.visibility = false;
+      border2.visibility = false;
+      border3.visibility = false;
 
       // Physics
       ground.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -214,6 +255,11 @@ export default {
       return scene;
     },
 
+    initAssetsManager() {
+      this.assetsManager = new BABYLON.AssetsManager(this.scene);
+      console.log("assets manager", this.assetsManager);
+    },
+
     initPointerEvents() {
       this.canvas.addEventListener("pointermove", this.onPointerMove, false);
       this.canvas.addEventListener("pointerdown", this.onPointerDown, false);
@@ -236,44 +282,95 @@ export default {
       var pickInfo = this.scene.pick(
         this.scene.pointerX,
         this.scene.pointerY,
-        function(mesh) {
+        mesh => {
           // console.log("mesh", mesh);
-          // return mesh !== ground;
-          return mesh;
+          return mesh == this.veggies.pepper;
+          // return mesh;
         }
       );
       if (pickInfo.hit) {
         this.currentMesh = pickInfo.pickedMesh;
+        this.hl.addMesh(this.currentMesh, BABYLON.Color3.White());
         console.log("currentMesh", this.currentMesh);
       }
     },
 
     onPointerMove(evt) {
       if (!this.currentMesh) {
+        // check if we are under a mesh
+        var pickInfo = this.scene.pick(
+          this.scene.pointerX,
+          this.scene.pointerY,
+          mesh => {
+            // console.log("mesh", mesh);
+            return mesh == this.veggies.pepper;
+            // return mesh;
+          }
+        );
+        if (pickInfo.hit && pickInfo.pickedMesh) {
+          pickInfo.pickedMesh.outlineColor = colors.blue;
+          pickInfo.pickedMesh.outlineWidth = 0.04;
+          pickInfo.pickedMesh.renderOutline = true;
+          this.highlightedMesh = pickInfo.pickedMesh;
+        } else {
+          if (this.highlightedMesh) {
+            this.highlightedMesh.renderOutline = false;
+            this.highlightedMesh = null;
+          }
+        }
+
         return;
       }
-
-      this.currentMesh.physicsImpostor.applyForce(
-        new BABYLON.Vector3(0, 0, -20),
-        new BABYLON.Vector3(0, 0, 0)
-      );
-
-      // this.mouse
-      //         .project()
-      //         .multiply(new THREE.Vector3(1, 1, 0)) // Remove z index movement
-      //         .sub(this.selectedObject.position)
-      //         .multiplyScalar(3);
     },
 
     onPointerUp(evt) {
-      this.currentMesh = null;
+      if (this.currentMesh) {
+        this.hl.removeMesh(this.currentMesh); // Remove the highlight from the object
+        this.currentMesh = null;
+      }
+    },
+
+    handleDragging() {
+      if (this.currentMesh) {
+        var pickResult = this.scene.pick(
+          this.scene.pointerX,
+          this.scene.pointerY,
+          mesh => {
+            return mesh.name != "border3";
+          }
+        );
+
+        let pickedPoint = new BABYLON.Vector3(
+          pickResult.pickedPoint.x,
+          pickResult.pickedPoint.y,
+          pickResult.pickedPoint.z
+        );
+
+        if (pickedPoint.z > 0) {
+          pickedPoint = pickedPoint.multiplyByFloats(1, pickedPoint.z / 2, 0.5);
+          // pickedPoint.y = pickResult.pickedPoint.z / 2;
+        }
+        // this.zScalar = pickedPoint.z / 3;
+
+        this.currentMesh.physicsImpostor.setLinearVelocity(
+          pickedPoint
+
+            .subtract(
+              new BABYLON.Vector3(
+                this.currentMesh.position.x,
+                this.currentMesh.position.y,
+                this.currentMesh.position.z
+              )
+            )
+            .multiplyByFloats(3, 3, 3)
+        );
+      }
     },
 
     initPan() {
       // Assets manager
-      var assetsManager = new BABYLON.AssetsManager(this.scene);
 
-      var meshTask = assetsManager.addMeshTask(
+      var meshTask = this.assetsManager.addMeshTask(
         "Pan Loading task",
         "",
         "./assets/models/",
@@ -293,12 +390,12 @@ export default {
         );
         // let pan = task.loadedMeshes[0];
         let pan = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes]);
-        pan.position = new BABYLON.Vector3(0, 1, -4);
+        pan.position = new BABYLON.Vector3(0, 0.5, -3);
         pan.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
 
         pan.physicsImpostor = new BABYLON.PhysicsImpostor(
           pan,
-          BABYLON.PhysicsImpostor.MeshImpostor,
+          BABYLON.PhysicsImpostor.CylinderImpostor,
           {
             mass: 0,
             friction: 1,
@@ -316,24 +413,45 @@ export default {
       };
 
       // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
-      assetsManager.onTaskError = function(task) {
+      this.assetsManager.onTaskError = function(task) {
         console.log("error while loading " + task.name);
       };
-
-      // assetsManager.onFinish = (tasks) => {
-      //   this.engine.runRenderLoop(function() {
-      //     this.scene.render();
-      //   });
-      // };
-
-      // Can now change loading background color:
-      this.engine.loadingUIBackgroundColor = "#F5D6BA";
-
-      // Just call load to initiate the loading sequence
-      assetsManager.load();
     },
 
-    initIngredients() {}
+    initIngredients() {
+      var veggieTask = this.assetsManager.addMeshTask(
+        "Veggie Loading task",
+        "",
+        "./assets/models/",
+        "pepper.obj"
+      );
+
+      // You can handle success and error on a per-task basis (onSuccess, onError)
+      veggieTask.onSuccess = task => {
+        console.log(
+          "aM-loaded pepper... task.loadedMeshes.length: ",
+          task.loadedMeshes.length
+        );
+        // let pan = task.loadedMeshes[0];
+        let pepper = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes]);
+        pepper.position = new BABYLON.Vector3(0, 10, 0);
+        // pepper.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+
+        pepper.physicsImpostor = new BABYLON.PhysicsImpostor(
+          pepper,
+          BABYLON.PhysicsImpostor.CylinderImpostor,
+          { mass: 3, restitution: 0.4 },
+          this.scene
+        );
+
+        this.veggies.pepper = pepper;
+
+        // var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
+        // pepperMat.ambientColor = new BABYLON.Color3.FromHexString("#FFFFFF");
+        // // panMat.backFaceCulling = false;
+        // pepper.material = pepperMat;
+      };
+    }
   }
 };
 </script>
