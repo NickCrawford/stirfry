@@ -62,10 +62,18 @@
 }
 
 #heading-section {
-  height: 50vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
 }
 
 #selection-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
   height: 100vh;
 }
 
