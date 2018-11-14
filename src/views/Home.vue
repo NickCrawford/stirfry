@@ -141,6 +141,7 @@ export default {
       selectedItems: {
         pepper: false
       }, // The selected items a user has clicked on
+      currentScrollFrame: 0,
       //World Objects
       veggies: {
         pepper: null
@@ -204,9 +205,11 @@ export default {
       let scrollContainer = document.getElementById("overlay-view");
 
       let totalAnimationFrames = 100;
-      let progress =
-        scrollTop / (window.innerHeight - scrollContainer.clientHeight);
-      console.log("progress", progress);
+      let progress = Math.abs(
+        scrollTop / (window.innerHeight - scrollContainer.clientHeight)
+      );
+
+      let targetScrollFrame = Math.round(progress * 100);
 
       var alphaAnim = new BABYLON.Animation(
         "alphaAnim",
@@ -242,10 +245,17 @@ export default {
       this.scene.activeCamera.animations.push(betaAnim);
       this.scene.beginAnimation(
         this.scene.activeCamera,
-        0,
-        totalAnimationFrames,
-        false
+        this.currentScrollFrame,
+        targetScrollFrame,
+        true, // Loop?
+        1, // Speed ratio
+        null, // onAnimationEnd,
+        false, // animatable?
+        true // Stop Current?
       );
+
+      console.log(this.currentScrollFrame, targetScrollFrame);
+      this.currentScrollFrame = targetScrollFrame;
 
       // setTimeout(() => {
       //   console.log("moving camera");

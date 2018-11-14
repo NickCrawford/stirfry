@@ -11,6 +11,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import url("https://use.typekit.net/qdy3aps.css");
+
 * {
   margin: 0;
   padding: 0;
@@ -26,6 +28,10 @@ body {
   text-align: center;
 
   background-color: #162129;
+
+  font-family: ff-good-headline-web-pro, sans-serif;
+  font-weight: 300;
+  font-style: normal;
 }
 
 #app {
