@@ -66,21 +66,22 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
   color: black;
 }
 
 #heading-section h1 {
-  font-size: 5.063rem;
-  margin-top: 4.1em;
-  margin-bottom: 2em;
+  font-size: 9.25vh;
+  margin-top: 36vh;
+  margin-bottom: calc(15vh + 0.5em);
 }
 
 #heading-section .startup {
-  margin-left: 0.75ch;
+  margin-left: 0.6ch;
 }
 
 #heading-section .stirfry {
-  padding-left: 1.25ch;
+  padding-left: 1.2ch;
   color: white;
 }
 
@@ -717,6 +718,7 @@ export default {
         panMat.ambientColor = colors.black;
         panMat.backFaceCulling = false;
         pan.material = panMat;
+        handle.material = panMat;
       };
     },
 
