@@ -1,6 +1,6 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
-    <div id="scroll-container">
+    <div id="scroll-container" @scroll="handleScroll">
       <div class="debug-container">
         <p>{{ selectedItems }}</p>
         <p>{{ isClick }}, {{ startingClickPoint }}</p>
@@ -66,7 +66,7 @@
 }
 
 #selection-section {
-  height: 50vh;
+  height: 100vh;
 }
 
 #heading-section *,
@@ -103,6 +103,17 @@ let colors = {
   black: BABYLON.Color3.FromHexString("#162129")
 };
 
+let materials = {
+  blue: null,
+  green: null,
+  yellow: null,
+  red: null,
+  black: null
+};
+
+let cameraPosition1 = new BABYLON.Vector3(0, 15, -0.001),
+  cameraPosition2 = new BABYLON.Vector3(0, 10, -15);
+
 export default {
   name: "home",
   components: {},
@@ -111,6 +122,7 @@ export default {
       canvas: null,
       engine: null,
       scene: null,
+      cameraTargetPosition: null, // Where we want to camera to be in relation to the scroll
       currentMesh: null,
       assetsManager: null,
       hl: null,
@@ -136,7 +148,18 @@ export default {
     this.initIngredients();
     this.initPointerEvents();
     this.initPhysicsGravityField();
-    this.handleScroll();
+    // this.handleScroll();
+
+    // Init materials
+    for (const mat in materials) {
+      if (materials.hasOwnProperty(mat)) {
+        const element = materials[mat];
+        materials[mat] = new BABYLON.StandardMaterial(`${mat}`, this.scene);
+        materials[mat].ambientColor = colors[mat];
+      }
+    }
+
+    console.log(materials);
 
     // Can now change loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
@@ -163,7 +186,78 @@ export default {
 
   watch: {},
   methods: {
-    handleScroll() {},
+    handleScroll(e) {
+      let scrollTop = 0;
+      if (e) {
+        scrollTop = e.target.scrollTop;
+      }
+
+      // Get height of overlay container
+      let scrollContainer = document.getElementById("overlay-view");
+
+      let totalAnimationFrames = 100;
+      let progress =
+        scrollTop / (window.innerHeight - scrollContainer.clientHeight);
+      console.log("progress", progress);
+
+      var alphaAnim = new BABYLON.Animation(
+        "alphaAnim",
+        "position",
+        200,
+        BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+      );
+      var betaAnim = new BABYLON.Animation(
+        "betaAnim",
+        "rotation",
+        200,
+        BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+        BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+      );
+
+      var alphaKeys = [
+        { frame: 0, value: this.scene.activeCamera.position },
+        { frame: totalAnimationFrames, value: cameraPosition2 }
+      ];
+      var betaKeys = [
+        { frame: 0, value: this.scene.activeCamera.rotation },
+        {
+          frame: totalAnimationFrames,
+          value: new BABYLON.Vector3(0.588002620078922, 0, 0)
+        }
+      ];
+
+      alphaAnim.setKeys(alphaKeys);
+      betaAnim.setKeys(betaKeys);
+
+      this.scene.activeCamera.animations.push(alphaAnim);
+      this.scene.activeCamera.animations.push(betaAnim);
+      this.scene.beginAnimation(
+        this.scene.activeCamera,
+        0,
+        totalAnimationFrames,
+        false
+      );
+
+      // setTimeout(() => {
+      //   console.log("moving camera");
+      //   // this.camera.position = cameraPosition2;
+
+      //   var animationPlane = new BABYLON.Animation(
+      //     "anim",
+      //     "position",
+      //     30,
+      //     BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+      //     BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
+      //   );
+      //   var keys = [];
+      //   keys.push({ frame: 0, value: this.camera.position });
+      //   keys.push({ frame: 30, value: cameraPosition2 });
+      //   animationPlane.setKeys(keys);
+      //   this.camera.animations.push(animationPlane);
+      //   this.scene.beginAnimation(this.camera, 0, 30, false);
+      // }, 1000);
+    },
 
     initEngine() {
       // Get the canvas DOM element
@@ -182,13 +276,10 @@ export default {
       scene.ambientColor = new BABYLON.Color3(1, 1, 1);
       scene.clearColor = colors.blue;
 
-      var camera = new BABYLON.FreeCamera(
-        "Camera",
-        new BABYLON.Vector3(0, 10, -15),
-        scene
-      );
+      var camera = new BABYLON.FreeCamera("Camera", cameraPosition1, scene);
       // camera.attachControl(this.canvas, true);
       camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+      console.log(camera.rotation);
 
       // Highlight layer for selecting items
       let hl = new BABYLON.HighlightLayer("hl", scene);
@@ -547,7 +638,7 @@ export default {
         );
 
         var panMat = new BABYLON.StandardMaterial("panMat", this.scene);
-        panMat.ambientColor = colors.red;
+        panMat.ambientColor = colors.black;
         panMat.backFaceCulling = false;
         pan.material = panMat;
       };
@@ -583,10 +674,10 @@ export default {
 
         this.veggies.pepper = pepper;
 
-        var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
-        pepperMat.ambientColor = new BABYLON.Color3(0.64, 0.046113, 0.079105);
-        // panMat.backFaceCulling = false;
-        pepper.material = pepperMat;
+        // var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
+        // pepperMat.ambientColor = new BABYLON.Color3(0.64, 0.046113, 0.079105);
+        // // panMat.backFaceCulling = false;
+        pepper.material = materials.green;
       };
     },
 
