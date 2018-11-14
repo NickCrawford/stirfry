@@ -8,6 +8,10 @@
       <p>These are some of our past projects. </p>
       <p>Scroll down or click on a project to see more. </p>
     </div>
+    <div id="portfolio-showcase">
+      <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+      <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+    </div>
   </div>
 </template>
 
@@ -54,6 +58,28 @@ p {
   background-color: $green;
   transform: rotate(12deg);
   z-index: 0;
+}
+
+#portfolio-showcase {
+  grid-column: 1/3;
+  grid-row: 2 /3;
+  padding-top: 100px;
+
+  img {
+    position: absolute;
+    transform: translatex(-50%) rotatez(3deg) skew(-4deg);
+  }
+}
+
+.phone-image {
+  width: 50%;
+  z-index: 11;
+  left: 48%;
+  width: 30%;
+}
+.phone-shadow {
+  width: 35%;
+  left: 50%;
 }
 
 @media only screen and (min-width: 600px) {
