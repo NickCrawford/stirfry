@@ -25,10 +25,7 @@ export default new Router({
       name: "about",
       component: About
     },
-    {
-      path: "/*",
-      name: "404",
-      component: FourOhFour
-    }
+    { path: "/404", component: FourOhFour },
+    { path: "*", redirect: "/404" }
   ]
 });
