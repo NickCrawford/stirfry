@@ -8,7 +8,7 @@ import Portfolio from "./views/Portfolio.vue";
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   routes: [
     {
       path: "/portfolio",
@@ -16,7 +16,7 @@ export default new Router({
       component: Portfolio
     },
     {
-      path: "/",
+      path: "/home",
       name: "home",
       component: Home
     },
