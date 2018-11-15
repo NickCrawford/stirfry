@@ -3,8 +3,10 @@
 // // vue.config.js
 // module.exports = {
 //   configureWebpack: {
-//     resolve: {
-//       alias: whs
+//     externals: {
+//       // oimo: true,
+//       cannon: true
+//       // earcut: true
 //     }
 //   }
 // };
