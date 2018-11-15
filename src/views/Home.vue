@@ -79,11 +79,11 @@
 }
 
 #heading-section .startup {
-  margin-left: 0.6ch;
+  margin-left: 0.9ch;
 }
 
 #heading-section .stirfry {
-  padding-left: 1.2ch;
+  padding-left: 0.9ch;
   color: #f5d6ba;
 }
 
