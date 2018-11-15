@@ -1,6 +1,6 @@
 <template>
-  <div class="home" :class="{ 'show-cursor': showCursor }" @click="debugIt">
-    <div id="scroll-container" @scroll="handleScroll">
+  <div class="home" :class="{ 'show-cursor': showCursor }">
+    <div id="scroll-container" @scroll="handleScroll" tabindex="0">
       <div class="debug-container">
         <p>{{ selectedItems }}</p>
         <p>{{ isClick }}, {{ startingClickPoint }}</p>
@@ -9,7 +9,7 @@
       
       <div id="overlay-view">
         <div id="heading-section">
-          <h1><span class="startup">startup</span><span class="stirfry">stirfry</span></h1>
+          <h1><span class="startup">Startup</span><span class="stirfry">Stirfry</span></h1>
           <h2>We create delicious designs</h2>
         </div>
         <div id="selection-section">
@@ -67,13 +67,15 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  color: black;
+  color: #545454;
 }
 
 #heading-section h1 {
   font-size: 9.25vh;
   margin-top: 36vh;
   margin-bottom: calc(15vh + 0.5em);
+
+  text-transform: lowercase;
 }
 
 #heading-section .startup {
@@ -82,7 +84,7 @@
 
 #heading-section .stirfry {
   padding-left: 1.2ch;
-  color: white;
+  color: #f5d6ba;
 }
 
 #heading-section h2 {
@@ -138,7 +140,7 @@ let colors = {
   red: BABYLON.Color3.FromHexString("#C1666B"),
   lid: BABYLON.Color3.FromHexString("#B05D62"),
   skin: BABYLON.Color3.FromHexString("#F5D6BA"),
-  black: BABYLON.Color3.FromHexString("#162129")
+  black: BABYLON.Color3.FromHexString("#545454")
 };
 
 let materials = {
@@ -149,9 +151,11 @@ let materials = {
   black: null
 };
 
+// Define the camera positions for the animation
 let cameraPosition1 = new BABYLON.Vector3(0, 22, -4.5),
   cameraPosition2 = new BABYLON.Vector3(0, 10, -15);
 
+// Define the rotations
 let cameraRotation1 = new BABYLON.Vector3(
     Math.PI / 2 - 0.00001,
     (-Math.PI * 3) / 8,
@@ -168,17 +172,18 @@ export default {
       engine: null,
       scene: null,
       cameraTargetPosition: null, // Where we want to camera to be in relation to the scroll
-      currentMesh: null,
-      assetsManager: null,
-      hl: null,
-      highlightedMesh: null,
+      currentMesh: null, // Currently selected mesh with mouse
+      assetsManager: null, // Loads Babylon assets
+      hl: null, // Highlight Layer
+      highlightedMesh: null, // The current highlighted mesh (on hover)
       showCursor: false, // Show the cursor as a pointer
       isClick: false, // Helps determine if the user is clicking or dragging an object
-      startingClickPoint: null,
+      startingClickPoint: null, // Point where user started clicking/dragging
       selectedItems: {
         pepper: false
       }, // The selected items a user has clicked on
-      currentScrollFrame: 0,
+      currentScrollFrame: 0, // Used to determine which animation frame on the camera corresponds to the scroll position
+      scrollProgress: 0, // progress (float between 0.00 and 1.00) at which we've scrolled through the overlay-view
       //World Objects
       veggies: {
         pepper: null
@@ -193,7 +198,6 @@ export default {
     this.initPan();
     this.initIngredients();
     this.initPointerEvents();
-    this.initPhysicsGravityField();
     // this.handleScroll();
 
     // Init materials
@@ -205,8 +209,6 @@ export default {
       }
     }
 
-    console.log(materials);
-
     // Can now change loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
 
@@ -214,6 +216,8 @@ export default {
     this.assetsManager.load();
 
     this.assetsManager.onFinish = tasks => {
+      this.initPhysicsGravityField();
+
       this.engine.runRenderLoop(() => {
         this.handleDragging();
         this.scene.render();
@@ -232,9 +236,6 @@ export default {
 
   watch: {},
   methods: {
-    debugIt() {
-      console.info(this.scene.activeCamera);
-    },
     handleScroll(e) {
       let scrollTop = 0;
       if (e) {
@@ -245,11 +246,11 @@ export default {
       let scrollContainer = document.getElementById("overlay-view");
 
       let totalAnimationFrames = 100;
-      let progress = Math.abs(
+      this.scrollProgress = Math.abs(
         scrollTop / (window.innerHeight - scrollContainer.clientHeight)
       ); // (Decimal) the progress at which we've scrolled through the overlay-view
 
-      let targetScrollFrame = progress * 100; // The frame (integer) we want to go to based on scroll position
+      let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
       var alphaAnim = new BABYLON.Animation(
         "alphaAnim",
@@ -285,10 +286,6 @@ export default {
       betaAnim.setKeys(betaKeys);
 
       this.scene.activeCamera.animations = [alphaAnim, betaAnim];
-      // this.scene.activeCamera.animations = betaAnim;
-
-      // let lowerFrame = Math.min(this.currentScrollFrame, targetScrollFrame),
-      //   higherFrame = Math.max(this.currentScrollFrame, targetScrollFrame);
 
       this.scene.beginAnimation(
         this.scene.activeCamera,
@@ -301,32 +298,7 @@ export default {
         true // Stop Current?
       );
 
-      console.log(
-        `${this.currentScrollFrame} =>
-        ${targetScrollFrame}`,
-        this.scene.activeCamera.animations,
-        this.scene.activeCamera.rotation
-      );
       this.currentScrollFrame = targetScrollFrame;
-
-      // setTimeout(() => {
-      //   console.log("moving camera");
-      //   // this.camera.position = cameraPosition2;
-
-      //   var animationPlane = new BABYLON.Animation(
-      //     "anim",
-      //     "position",
-      //     30,
-      //     BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
-      //     BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT
-      //   );
-      //   var keys = [];
-      //   keys.push({ frame: 0, value: this.camera.position });
-      //   keys.push({ frame: 30, value: cameraPosition2 });
-      //   animationPlane.setKeys(keys);
-      //   this.camera.animations.push(animationPlane);
-      //   this.scene.beginAnimation(this.camera, 0, 30, false);
-      // }, 1000);
     },
 
     initEngine() {
@@ -396,33 +368,6 @@ export default {
 
       // Physics
       scene.enablePhysics();
-      // scene.getPhysicsEngine().setTimeStep(1 / 200);
-      // scene.autoClear = false; // Color buffer
-      // scene.autoClearDepthAndStencil = false; // Depth and stencil, obviously
-
-      // Spheres
-      var y = 0;
-      for (var index = 0; index < 10; index++) {
-        var sphere = BABYLON.Mesh.CreateSphere("Sphere0", 8, 1, scene);
-        sphere.material = materialAmiga;
-
-        sphere.position = new BABYLON.Vector3(
-          Math.random() * 20 - 10,
-          y,
-          Math.random() * 10 - 5
-        );
-
-        // shadowGenerator.addShadowCaster(sphere);
-
-        sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
-          sphere,
-          BABYLON.PhysicsImpostor.SphereImpostor,
-          { mass: 1 },
-          scene
-        );
-
-        y += 2;
-      }
 
       // Center indicator
       let centSph = BABYLON.Mesh.CreateSphere("SphereCenter", 8, 6, scene);
@@ -738,7 +683,7 @@ export default {
         );
         // let pan = task.loadedMeshes[0];
         let pepper = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes]);
-        pepper.position = new BABYLON.Vector3(0, 10, 0);
+        pepper.position = new BABYLON.Vector3(5, 10, 5);
         // pepper.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
 
         // task.loadedMeshes[0].material = pepperMat;
