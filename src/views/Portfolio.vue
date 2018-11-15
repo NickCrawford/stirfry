@@ -23,7 +23,7 @@
   height: 100vh;
   width: 100%;
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 35% 65%;
   grid-template-rows: 40% 60%;
   overflow: hidden;
 }
@@ -47,6 +47,7 @@ p {
   grid-column: 1/3;
   position: relative;
   z-index: 1;
+  transition-duration: .5s;
 }
 #portfolio-top::after {
   content: "";
@@ -83,6 +84,33 @@ p {
 }
 
 @media only screen and (min-width: 600px) {
+  #portfolio-top {
+    grid-column: 1/2;
+    grid-row: 1/3;
+  }
+  #portfolio-top::after {
+    content: "";
+    position: absolute;
+    left: auto;
+    right: -100px;
+    height: 120vh;
+    top: -10vh;
+    width: 200px;
+    background-color: $green;
+    transform: rotate(12deg);
+    z-index: 0;
+  }
 
+  #portfolio-showcase {
+    grid-column: 2/3;
+    grid-row: 1 /3;
+    padding-top: 100px;
+    position: relative;
+
+    img {
+      position: absolute;
+      transform: translatex(-50%) rotatez(3deg) skew(-4deg);
+    }
+  }
 }
 </style>
