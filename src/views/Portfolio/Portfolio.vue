@@ -1,12 +1,8 @@
 <template>
   <div id="portfolio">
     <div id="portfolio-top">
-      <h1>
-        Our Dishes <br>
-        <b>So Far...</b>
-      </h1>
-      <p>These are some of our past projects. </p>
-      <p>Scroll down or click on a project to see more. </p>
+      <!-- Loads in a logo and brief description of the project -->
+      <router-view name="top"></router-view>
     </div>
     <div id="portfolio-showcase">
       <img src="@/assets/images/sellout_phone.svg" class="phone-image">
@@ -32,7 +28,7 @@ h1 {
   font-weight: normal;
   font-size: 3em;
   margin: 30px;
-  position: relative;
+  position: relative; 
   z-index: 10;
 }
 p {
