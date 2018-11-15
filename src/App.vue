@@ -18,6 +18,7 @@ export default {
   padding: 0;
 }
 
+<<<<<<< HEAD
 html,
 body {
   overflow: hidden;
@@ -42,12 +43,26 @@ body {
   width: 100%;
   height: 100%;
 }
+=======
+html {
+  background-color: #162129;
+}
+
+#app {
+  font-family: Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  font-weight: 300;
+>>>>>>> master
 
 h1 {
   font-family: good-headline-web-pro-wide, sans-serif;
   font-weight: 800;
   font-style: normal;
 }
+<<<<<<< HEAD
 
 p {
   margin-bottom: 1.3em;
@@ -83,4 +98,6 @@ small,
 .font_small {
   font-size: 0.667em;
 }
+=======
+>>>>>>> master
 </style>
