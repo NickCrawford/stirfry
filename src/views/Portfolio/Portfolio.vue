@@ -19,7 +19,7 @@
   height: 100vh;
   width: 100%;
   display: grid;
-  grid-template-columns: 35% 65%;
+  grid-template-columns: 50% 50%;
   grid-template-rows: 40% 60%;
   overflow: hidden;
 }
@@ -69,10 +69,9 @@ p {
 }
 
 .phone-image {
-  width: 50%;
+  width: 60%;
   z-index: 11;
   left: 48%;
-  width: 30%;
 }
 .phone-shadow {
   width: 35%;
@@ -83,15 +82,16 @@ p {
   #portfolio-top {
     grid-column: 1/2;
     grid-row: 1/3;
+    background: none;
   }
   #portfolio-top::after {
     content: "";
     position: absolute;
     left: auto;
-    right: -100px;
-    height: 120vh;
-    top: -10vh;
-    width: 200px;
+    right: 0px;
+    height: 140vh;
+    top: -20vh;
+    width: 900px;
     background-color: $green;
     transform: rotate(12deg);
     z-index: 0;
@@ -105,7 +105,9 @@ p {
 
     img {
       position: absolute;
-      transform: translatex(-50%) rotatez(3deg) skew(-4deg);
+      left: 50%;
+      top: 50%;
+      transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
     }
   }
 }

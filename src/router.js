@@ -20,6 +20,7 @@ export default new Router({
       path: "/portfolio",
       name: "portfolio",
       component: Portfolio,
+      redirect: '/portfolio/sellout',
       children: [{
         path: 'sellout',
         components: {
