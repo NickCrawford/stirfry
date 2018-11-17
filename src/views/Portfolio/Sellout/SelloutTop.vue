@@ -1,7 +1,7 @@
 <template>
   <div id="sellout-top">
     <img src="@/assets/images/sellout/sellout_logo.png">
-    <p>These are some of our past projects. </p>
+    <p>. </p>
     <p>Scroll down or click on a project to see more. </p>
   </div>
 </template>
@@ -11,16 +11,20 @@
 h1, p, img {
   position: relative;
   z-index: 10;
+  text-align: left;
+}
+h1, p {
+  padding-left: 10%;
 }
 
 img {
   width: 100%;
-
+  
 }
 
 @media only screen and (min-width: 600px) {
   #sellout-top {
-    margin-top: 30vh;
+    margin-top: 20vh;
   }
 }
 </style>

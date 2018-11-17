@@ -7,3 +7,15 @@ $yellow: #D4B483;
 $red: #C1666B;
 $lid: #B05D62;
 $skin: #F5D6BA;
+
+$sellout-navy: #060034;
+
+@keyframes floatin {
+    from {
+        opacity: 0;
+        margin-bottom: -20px;
+    } to {
+        opacity: 1;
+        margin-bottom: 0px;
+    }
+}

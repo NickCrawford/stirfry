@@ -38,7 +38,7 @@ p {
 }
 
 #portfolio-top {
-  background: $green;
+  background: $sellout-navy;
   color: white;
   grid-column: 1/3;
   position: relative;
@@ -52,7 +52,7 @@ p {
   bottom: -15%;
   width: 120%;
   height: 200px;
-  background-color: $green;
+  background-color: $sellout-navy;
   transform: rotate(12deg);
   z-index: 0;
 }
@@ -69,12 +69,18 @@ p {
 }
 
 .phone-image {
-  width: 60%;
+  width: 40%;
+  max-width: 200px;
   z-index: 11;
   left: 48%;
+  margin-top: -20px;
+  margin-left: -20px;
+  /*animation: phonefloat 10s  infinite;*/
+  opacity: 1;
 }
 .phone-shadow {
-  width: 35%;
+  width: 45%;
+  max-width: 220px;
   left: 50%;
 }
 
@@ -91,8 +97,8 @@ p {
     right: 0px;
     height: 140vh;
     top: -20vh;
-    width: 900px;
-    background-color: $green;
+    width: 1000px;
+    background-color: $sellout-navy;
     transform: rotate(12deg);
     z-index: 0;
   }
@@ -102,6 +108,7 @@ p {
     grid-row: 1 /3;
     padding-top: 100px;
     position: relative;
+    animation: floatin .5s linear;
 
     img {
       position: absolute;
@@ -109,6 +116,19 @@ p {
       top: 50%;
       transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
     }
+  }
+}
+
+@keyframes phonefloat {
+  0% {
+    margin-top: -10px;
+    margin-left: -10px;
+  } 50% {
+    margin-top: -20px;
+    margin-left: -20px;
+  } 100% {
+    margin-top: -10px;
+    margin-left: -10px;
   }
 }
 </style>
