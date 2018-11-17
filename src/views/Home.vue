@@ -8,13 +8,14 @@
       <canvas id="renderCanvas"></canvas>
       
       <div id="overlay-view">
-        <div id="heading-section">
+        <div id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
           <img src="@/assets/img/stirfry-wordmark.svg" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/>
           <h2>We create delicious designs</h2>
         </div>
-        <div id="selection-section">
+        <div id="selection-section" :class="{ hidden: scrollProgress <= 0.90 }">
           <h3>Let's get cooking!</h3>
-          <h4>Click on the ingredients you need for your project</h4>
+          <h4>What ingredients do you need for your project?</h4>
+          <p>(Add items to the pan by clicking on them)</p>
         </div>
       </div>
     </div>
@@ -22,7 +23,7 @@
 </template>
 
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .home {
   width: 100%;
   height: 100%;
@@ -58,7 +59,6 @@
 
   width: 100%;
   height: auto;
-
   pointer-events: none;
 }
 
@@ -79,7 +79,7 @@
 #heading-section .logo {
   position: absolute;
   /* transform: translate(77.5%, 44.6%); */
-  transform: translate(-83.5%, -43%);
+  transform: translate(-83.5%, -40%);
 
   width: auto;
   height: 7vh;
@@ -87,33 +87,91 @@
 }
 
 #heading-section h2 {
+  position: relative;
   margin-top: 0;
   font-size: 3rem;
 
   grid-row-start: 2;
 }
 
+// Animations
+#heading-section {
+  .logo,
+  h2 {
+    transition: 0.2s opacity ease-out;
+    opacity: 1;
+  }
+
+  h2 {
+    transition-delay: 0.1s;
+  }
+}
+
+#heading-section.hidden {
+  .logo,
+  h2 {
+    opacity: 0;
+  }
+}
+
+//
+// Selection Section
+
+#selection-section {
+  display: grid;
+  grid-template-rows: auto auto 1fr 1fr;
+  grid-auto-columns: 1fr 1fr 1fr;
+
+  justify-items: center;
+  align-items: start;
+
+  min-height: 100vh;
+  /* padding-top: 4.5rem; */
+}
+
 #selection-section h3 {
   font-weight: 800;
-  margin-bottom: 2em;
 }
 
 #selection-section h4 {
   color: black;
+  width: auto;
+  display: inline-block;
 }
 
+#heading-section,
 #selection-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  color: white;
-  min-height: 100vh;
-  padding-top: 4.5rem;
+  padding: 0 1rem;
 }
 
 #heading-section *,
 #selection-section * {
   pointer-events: auto;
+}
+
+#selection-section {
+  * {
+    transition: 0.4s opacity ease, 0.8s transform ease;
+    transform: translateY(0em);
+    opacity: 1;
+  }
+
+  h4,
+  p {
+    transition-delay: 0.5s;
+  }
+}
+
+#selection-section.hidden {
+  * {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+
+  h4,
+  p {
+    transition-delay: 0s;
+  }
 }
 
 .debug-container {
@@ -333,7 +391,7 @@ export default {
       let scene = new BABYLON.Scene(this.engine);
 
       scene.ambientColor = new BABYLON.Color3(1, 1, 1);
-      scene.clearColor = colors.blue;
+      scene.clearColor = colors.skin;
 
       var camera = new BABYLON.UniversalCamera(
         "Camera",
@@ -747,9 +805,10 @@ export default {
         this.scene.getTransformMatrix(),
         this.scene.activeCamera.viewport.toGlobal(this.engine)
       );
+      let scrollContainer = document.getElementById("scroll-container");
 
       this.logoPosition.x = p.x;
-      this.logoPosition.y = p.y;
+      this.logoPosition.y = p.y + scrollContainer.scrollTop; // uncomment to lock in place
     }
   }
 };

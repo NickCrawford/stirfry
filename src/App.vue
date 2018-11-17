@@ -14,6 +14,7 @@ export default {
 @import url("https://use.typekit.net/qdy3aps.css");
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
@@ -27,7 +28,7 @@ body {
   padding: 0;
   text-align: center;
 
-  background-color: #162129;
+  background-color: #d0cbc7;
 
   font-family: ff-good-headline-web-pro, sans-serif;
   font-weight: 300;
@@ -83,4 +84,10 @@ small,
 .font_small {
   font-size: 0.667em;
 }
+
+// @media screen and (min-width: $md-bp) {
+//   body {
+
+//   }
+// }
 </style>
