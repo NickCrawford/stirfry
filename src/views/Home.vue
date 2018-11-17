@@ -1,15 +1,15 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
     <div id="scroll-container" @scroll="handleScroll" tabindex="0">
-      <div class="debug-container">
+      <div class="debug-container" v-if="false">
         <p>{{ selectedItems }}</p>
-        <p>{{ isClick }}, {{ startingClickPoint }}</p>
+        <p>{{ scrollProgress }}</p>
       </div>
       <canvas id="renderCanvas"></canvas>
       
       <div id="overlay-view">
         <div id="heading-section">
-          <h1><span class="startup">Startup</span><span class="stirfry">Stirfry</span></h1>
+          <img src="@/assets/img/stirfry-wordmark.svg" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/>
           <h2>We create delicious designs</h2>
         </div>
         <div id="selection-section">
@@ -27,17 +27,18 @@
   width: 100%;
   height: 100%;
   cursor: unset;
-
-  overflow-y: auto;
-}
-
-#scroll-container {
-  height: 100%;
-  overflow-y: auto;
 }
 
 .home.show-cursor {
   cursor: pointer;
+}
+
+#scroll-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 #renderCanvas {
@@ -62,33 +63,34 @@
 }
 
 #heading-section {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  position: relative;
+  height: 100%;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  grid-template-columns: 1fr;
+
   align-items: center;
+
   color: #545454;
 }
 
-#heading-section h1 {
-  font-size: 9.25vh;
-  margin-top: 36vh;
-  margin-bottom: calc(15vh + 0.5em);
+#heading-section .logo {
+  position: absolute;
+  /* transform: translate(77.5%, 44.6%); */
+  transform: translate(-83.5%, -43%);
 
-  text-transform: lowercase;
-}
-
-#heading-section .startup {
-  margin-left: 0.9ch;
-}
-
-#heading-section .stirfry {
-  padding-left: 0.9ch;
-  color: #f5d6ba;
+  width: auto;
+  height: 7vh;
+  margin: 0;
 }
 
 #heading-section h2 {
+  margin-top: 0;
   font-size: 3rem;
+
+  grid-row-start: 2;
 }
 
 #selection-section h3 {
@@ -116,11 +118,12 @@
 
 .debug-container {
   position: absolute;
-  top: 0;
+  top: 2rem;
   left: 0;
   padding: 1em;
   background: black;
   color: white;
+  z-index: 999;
 }
 </style>
 
@@ -187,6 +190,12 @@ export default {
       //World Objects
       veggies: {
         pepper: null
+      },
+
+      //Logo position
+      logoPosition: {
+        x: 0,
+        y: 0
       }
     };
   },
@@ -198,7 +207,6 @@ export default {
     this.initPan();
     this.initIngredients();
     this.initPointerEvents();
-    // this.handleScroll();
 
     // Init materials
     for (const mat in materials) {
@@ -216,6 +224,7 @@ export default {
     this.assetsManager.load();
 
     this.assetsManager.onFinish = tasks => {
+      // These actions can only be handled after the scene has loaded
       this.initPhysicsGravityField();
 
       this.engine.runRenderLoop(() => {
@@ -227,6 +236,10 @@ export default {
     // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
     this.assetsManager.onTaskError = function(task) {
       console.log("error while loading " + task.name);
+    };
+
+    this.scene.afterRender = () => {
+      this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
     };
 
     window.addEventListener("resize", () => {
@@ -251,6 +264,10 @@ export default {
       ); // (Decimal) the progress at which we've scrolled through the overlay-view
 
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
+
+      if (targetScrollFrame > totalAnimationFrames) {
+        targetScrollFrame = totalAnimationFrames;
+      }
 
       var alphaAnim = new BABYLON.Animation(
         "alphaAnim",
@@ -721,6 +738,18 @@ export default {
         falloff
       );
       gravitationalFieldEvent.enable(); // need to call, if you want to activate the gravitational field.
+    },
+
+    setLogoPosition() {
+      var p = BABYLON.Vector3.Project(
+        new BABYLON.Vector3(0, 0.5, 0),
+        BABYLON.Matrix.Identity(),
+        this.scene.getTransformMatrix(),
+        this.scene.activeCamera.viewport.toGlobal(this.engine)
+      );
+
+      this.logoPosition.x = p.x;
+      this.logoPosition.y = p.y;
     }
   }
 };
