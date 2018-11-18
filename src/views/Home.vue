@@ -8,14 +8,14 @@
       <canvas id="renderCanvas"></canvas>
       
       <!-- Hints users to continue scrolling -->
-      <div class="scroll-indicator">
+      <a class="scroll-indicator" href="#selection-section">
         <transition name="fade">
           <p v-if="scrollProgress >= 0.05 && scrollProgress <= 0.90">Keep scrolling</p>
         </transition>
         <transition name="fade">
           <div class="scroll-arrow" v-if="scrollProgress <= 0.90"></div>
         </transition>
-      </div>
+      </a>
 
       <div id="overlay-view">
         <div id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
@@ -67,6 +67,8 @@
   z-index: 10;
 
   transform: translateX(-50%);
+
+  cursor: pointer;
 }
 
 .scroll-indicator .scroll-arrow {
