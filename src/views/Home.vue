@@ -1,6 +1,6 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
-    <div id="scroll-container" @scroll="handleScroll" tabindex="0">
+    <div id="scroll-container" @scroll="handleScroll">
       <div class="debug-container" v-if="false">
         <p>{{ selectedItems }}</p>
         <p>{{ scrollProgress }}</p>
@@ -17,16 +17,21 @@
         </transition>
       </a>
 
-      <div id="overlay-view">
-        <div id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
-          <img src="@/assets/img/stirfry-wordmark.svg" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/>
-          <h2>We create delicious designs</h2>
-        </div>
-        <div id="selection-section" :class="{ hidden: scrollProgress <= 0.90 }">
+      <div id="overlay-view" tabindex="0">
+        <section id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
+          <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
+          <h2>We're a creative agency with taste.</h2>
+        </section>
+
+        <section id="about-section" v-if="false">
+          <h2>Cooking up delicious digital media</h2>
+        </section>
+
+        <section id="selection-section" :class="{ hidden: scrollProgress <= 0.90 }">
           <h3>Let's get cooking!</h3>
-          <h4>What ingredients do you need for your project?</h4>
+          <h4>What services does your project need?</h4>
           <p>(Add items to the pan by clicking on them)</p>
-        </div>
+        </section>
       </div>
     </div>
   </div>
@@ -45,6 +50,7 @@
 }
 
 #scroll-container {
+  position: relative;
   width: 100%;
   height: 100%;
   overflow-y: scroll;
@@ -69,6 +75,8 @@
   transform: translateX(-50%);
 
   cursor: pointer;
+  text-decoration: none;
+  color: black;
 }
 
 .scroll-indicator .scroll-arrow {
@@ -361,6 +369,8 @@ export default {
       if (e) {
         scrollTop = e.target.scrollTop;
       }
+
+      console.log("handleScroll", scrollTop);
 
       // Get height of overlay container
       let scrollContainer = document.getElementById("overlay-view");
