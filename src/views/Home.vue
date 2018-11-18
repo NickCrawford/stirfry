@@ -7,6 +7,16 @@
       </div>
       <canvas id="renderCanvas"></canvas>
       
+      <!-- Hints users to continue scrolling -->
+      <div class="scroll-indicator">
+        <transition name="fade">
+          <p v-if="scrollProgress >= 0.05 && scrollProgress <= 0.90">Keep scrolling</p>
+        </transition>
+        <transition name="fade">
+          <div class="scroll-arrow" v-if="scrollProgress <= 0.90"></div>
+        </transition>
+      </div>
+
       <div id="overlay-view">
         <div id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
           <img src="@/assets/img/stirfry-wordmark.svg" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/>
@@ -40,6 +50,41 @@
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+}
+
+#scroll-container .scroll-indicator {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+
+  width: auto;
+
+  margin: 0 auto;
+  padding: 1em;
+
+  text-align: center;
+
+  z-index: 10;
+
+  transform: translateX(-50%);
+}
+
+.scroll-indicator .scroll-arrow {
+  margin: 0 auto;
+
+  animation: hover-vertical 1s ease-in-out infinite;
+
+  &:after {
+    content: "";
+    display: block;
+    border: 2px solid black;
+    border-left: none;
+    border-top: none;
+    transform: scaleY(0.66) rotate(45deg);
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 auto;
+  }
 }
 
 #renderCanvas {
@@ -100,6 +145,7 @@
   h2 {
     transition: 0.2s opacity ease-out;
     opacity: 1;
+    pointer-events: all;
   }
 
   h2 {
@@ -111,6 +157,7 @@
   .logo,
   h2 {
     opacity: 0;
+    pointer-events: none;
   }
 }
 

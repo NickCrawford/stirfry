@@ -11,7 +11,11 @@ export default {
 </script>
 
 <style lang="scss">
+// Import Fonts
 @import url("https://use.typekit.net/qdy3aps.css");
+
+// Import Styles
+@import "@/assets/styles/index.scss";
 
 * {
   box-sizing: border-box;
