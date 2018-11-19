@@ -1,18 +1,14 @@
 <template>
   <div id="portfolio">
-    <div id="portfolio-top">
+    <div id="portfolio-top"
+      :class="[ $route.name + '-top']">
       <!-- Loads in a logo and brief description of the project -->
       <router-view name="top"></router-view>
     </div>
     
-    <!--<div id="portfolio-showcase">
-      <div class="portfolio-images">
-        <img src="@/assets/images/sellout_phone.svg" class="phone-image">
-        <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
-      </div>
-    </div>-->
     <div id="portfolio-showcase">
-      <flickity ref="flickity" :options="flickityOptions" id="flickity-container">
+      <flickity ref="showcase-flickity" :options="flickityOptions" id="flickity-container"
+        v-on:init="doSomething()">
         <div class="portfolio-image-container">
           <img src="@/assets/images/sellout/sellout_phone.svg" class="phone-image">
           <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
@@ -23,14 +19,6 @@
         </div>
       </flickity>
     </div>
-    
-    
-    <!--<flickity ref="flickity" :options="flickityOptions" id="flickity-container">
-      <div id="portfolio-showcase" class="carousel-cell">
-        <img src="@/assets/images/sellout_phone.svg" class="phone-image">
-        <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
-      </div>
-    </flickity>-->
       
   </div>
 </template>
@@ -45,10 +33,15 @@ export default {
         initialIndex: 3,
         prevNextButtons: true,
         pageDots: false,
-        wrapAround: true
+        wrapAround: true,
         
         // any options from Flickity can be used
-      }
+      },
+
+      showcaseRoutes: [
+        'sellout',
+        'theron'
+      ]
     }
   },
   components: {
@@ -56,11 +49,22 @@ export default {
   },
   methods: {
     next() {
-      this.$refs.flickity.next();
+      this.$refs['showcase-flickity'].next();
     },
     
     previous() {
-      this.$refs.flickity.previous();
+      this.$refs['showcase-flickity'].previous();
+    },
+    doSomething() {
+      console.log("Initiated listener!!");
+      
+      var vm = this;
+
+      this.$refs['showcase-flickity'].select( this.showcaseRoutes.indexOf(this.$route.name) );
+
+      this.$refs['showcase-flickity'].on( 'select', function( index ) {
+        vm.$router.push({ name: vm.showcaseRoutes[index] });
+      });
     }
   }
 }
@@ -71,7 +75,7 @@ export default {
 
 /* The entire page, setting up grid: */
 #portfolio {
-  background: $white;
+  background: $background;
   height: 100vh;
   width: 100%;
   display: grid;
@@ -84,7 +88,7 @@ export default {
 h1 {
   font-weight: normal;
   font-size: 3em;
-  margin: 30px;
+  margin-top: 30px;
   position: relative; 
   z-index: 10;
 }
@@ -95,25 +99,32 @@ p {
 }
 
 /* Portfolio descriptions, on the top on mobile/left on desktop: */
-#portfolio-top {
+
+.sellout-top::after {
   background: $sellout-navy;
+}
+
+.theron-top::after {
+  background-color: $theron-gray;
+}
+#portfolio-top {
   color: white;
   grid-column: 1/3;
   position: relative;
   z-index: 1;
-  transition-duration: .5s;
+  transition-duration: 1s;
 }
 #portfolio-top::after {
   content: "";
   position: absolute;
   left: -10%;
   bottom: -15%;
-  width: 120%;
-  height: 200px;
-  background-color: $sellout-navy;
+  width: 140%;
+  height: 500px;
   transform: rotate(12deg);
   box-shadow: $box-shading-heavy;
   z-index: 0;
+  transition-duration: 1s;
 }
 
 /* Flickity container for portfolio: */
@@ -128,6 +139,8 @@ p {
 
   position: relative;
   height: 100%;
+  width: 90%;
+  margin: 0 auto;
 
   grid-column: 2/3;
   grid-row: 1/3;
@@ -155,7 +168,7 @@ p {
   width: 60%;
   max-width: 230px;
   z-index: 11;
-  left: 48%;
+  left: 52%;
   top: 55%;
   margin-top: -10px;
   margin-left: -10px;
@@ -166,7 +179,7 @@ p {
   position: absolute;
   width: 67%;
   max-width: 250px;
-  left: 50%;
+  left: 54%;
   top: 55%;
 }
 
@@ -184,7 +197,6 @@ p {
     height: 140vh;
     top: -20vh;
     width: 1000px;
-    background-color: $sellout-navy;
     transform: rotate(12deg);
     z-index: 0;
   }

@@ -6,6 +6,8 @@ import FourOhFour from "./views/FourOhFour.vue";
 
 import Portfolio from "./views/Portfolio/Portfolio.vue";
 import SelloutTop from "./views/Portfolio/Sellout/SelloutTop.vue";
+import TheronTop from "./views/Portfolio/Theron/TheronTop.vue";
+
 
 Vue.use(Router);
 
@@ -20,13 +22,23 @@ export default new Router({
       path: "/portfolio",
       name: "portfolio",
       component: Portfolio,
-      redirect: '/portfolio/sellout',
-      children: [{
-        path: 'sellout',
-        components: {
-          top: SelloutTop
+      redirect: "/portfolio/sellout",
+      children: [
+        {
+          path: "sellout",
+          name: "sellout",
+          components: {
+            top: SelloutTop
+          }
+        },
+        {
+          path: "theron",
+          name: "theron",
+          components: {
+            top: TheronTop
+          }
         }
-      }]
+      ]
     },
     {
       path: "/",
