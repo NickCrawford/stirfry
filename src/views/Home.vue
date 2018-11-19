@@ -20,7 +20,7 @@
       <div id="overlay-view" tabindex="0">
         <section id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
           <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
-          <h2>We're a creative agency with taste.</h2>
+          <h2>We're a creative agency &mdash; with taste.</h2>
         </section>
 
         <section id="about-section" v-if="false">
@@ -29,8 +29,11 @@
 
         <section id="selection-section" :class="{ hidden: scrollProgress <= 0.90 }">
           <h3>Let's get cooking!</h3>
-          <h4>What services does your project need?</h4>
+          <h4>What will we be working on?</h4>
           <p>(Add items to the pan by clicking on them)</p>
+
+          <div class="toggle"></div>
+
         </section>
       </div>
     </div>
@@ -248,6 +251,8 @@ import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
+import WordToggle from "@/components/shared/WordToggle";
+
 let colors = {
   highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
   blue: BABYLON.Color3.FromHexString("#4281A4"),
@@ -283,7 +288,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: {},
+  components: { WordToggle },
   data() {
     return {
       canvas: null,
@@ -369,8 +374,6 @@ export default {
       if (e) {
         scrollTop = e.target.scrollTop;
       }
-
-      console.log("handleScroll", scrollTop);
 
       // Get height of overlay container
       let scrollContainer = document.getElementById("overlay-view");
@@ -476,9 +479,9 @@ export default {
       //   new BABYLON.Vector3(-1, 1, 0),
       //   scene
       // );
-      // light.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
-      // light.specular = new BABYLON.Color3(1, 1, 1);
-      // light.groundColor = new BABYLON.Color3(1, 1, 1);
+      // light.diffuse = new BABYLON.Color3(0.5, 0, 0.5);
+      // light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+      // light.groundColor = new BABYLON.Color3(0.5, 0.5, 0.5);
 
       // var light = new BABYLON.PointLight(
       //   "pointLight",
@@ -802,15 +805,28 @@ export default {
     },
 
     initIngredients() {
-      var veggieTask = this.assetsManager.addMeshTask(
-        "Veggie Loading task",
+      // BABYLON.SceneLoader.Append(
+      //   "./assets/models/",
+      //   "pepper.babylon",
+      //   this.scene,
+      //   scene => {
+      //     console.log("Found!");
+      //   }
+      // );
+
+      //       BABYLON.SceneLoader.Append("./", "duck.gltf", scene, function (scene) {
+      //     // do something with the scene
+      // });
+
+      var pepperTask = this.assetsManager.addMeshTask(
+        "Pepper task",
         "",
         "./assets/models/",
-        "pepper.obj"
+        "pepper.babylon"
       );
 
       // You can handle success and error on a per-task basis (onSuccess, onError)
-      veggieTask.onSuccess = task => {
+      pepperTask.onSuccess = task => {
         console.log(
           "aM-loaded pepper... task.loadedMeshes.length: ",
           task.loadedMeshes.length
@@ -831,10 +847,18 @@ export default {
 
         this.veggies.pepper = pepper;
 
+        var simpleMaterial = new BABYLON.StandardMaterial(
+          "texture2",
+          this.scene
+        );
+
+        // simpleMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0); //Green
+        // pepper.material = simpleMaterial;
+
         // var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
         // pepperMat.ambientColor = new BABYLON.Color3(0.64, 0.046113, 0.079105);
         // // panMat.backFaceCulling = false;
-        pepper.material = materials.green;
+        // pepper.material = materials.green;
       };
     },
 
