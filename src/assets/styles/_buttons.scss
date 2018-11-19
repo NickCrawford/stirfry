@@ -1,11 +1,18 @@
 .swipe-button {
-  display: inline-block;
-  border-bottom: 0.05em solid $text-color;
+}
 
-  color: $text-color;
+.link-style {
+  display: inline-block;
+  // border-bottom: 0.05em solid $text-color;
+
+  color: $blue;
 
   font-size: 1.5em;
   text-decoration: none;
 
   cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

@@ -32,7 +32,7 @@
           <transition name="fade">
             <div class="subheader" v-show="scrollProgress >= scrollBreakPoint.headline">
               <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
-              <router-link :to="{ name: 'about' }" class="swipe-button">Learn more</router-link>
+              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
             </div>
           </transition>
         </section>
