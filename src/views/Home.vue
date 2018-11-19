@@ -325,7 +325,7 @@ export default {
     this.scene = this.initScene();
     this.initAssetsManager();
     this.initPan();
-    this.initIngredients();
+    // this.initIngredients();
     this.initPointerEvents();
 
     // Init materials
@@ -345,10 +345,10 @@ export default {
 
     this.assetsManager.onFinish = tasks => {
       // These actions can only be handled after the scene has loaded
-      this.initPhysicsGravityField();
+      // this.initPhysicsGravityField();
 
       this.engine.runRenderLoop(() => {
-        this.handleDragging();
+        // this.handleDragging();
         this.scene.render();
       });
     };
