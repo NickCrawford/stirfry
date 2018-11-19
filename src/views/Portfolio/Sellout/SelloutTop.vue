@@ -2,7 +2,7 @@
   <div id="sellout-top">
     <img src="@/assets/images/sellout/sellout_logo.png">
     <p class="subtitle-text">A webapp to help local bands and venues organize. </p>
-    <p>Scroll down or click on a project to see more. </p>
+    <p v-if="0">Scroll down or click on a project to see more. </p>
   </div>
 </template>
 
@@ -24,6 +24,7 @@ img {
 
 #sellout-top {
   padding: 0px 10%;
+  position: absolute;
 }
 
 @media only screen and (min-width: 600px) {

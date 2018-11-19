@@ -1,25 +1,31 @@
 <template>
-  <div id="portfolio">
-    <div id="portfolio-top"
-      :class="[ $route.name + '-top']">
-      <!-- Loads in a logo and brief description of the project -->
-      <router-view name="top"></router-view>
-    </div>
-    
-    <div id="portfolio-showcase">
-      <flickity ref="showcase-flickity" :options="flickityOptions" id="flickity-container"
-        v-on:init="doSomething()">
-        <div class="portfolio-image-container">
-          <img src="@/assets/images/sellout/sellout_phone.svg" class="phone-image">
-          <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
-        </div>
-        <div class="portfolio-image-container">
-          <img src="@/assets/images/theron/theron_phone.svg" class="phone-image">
-          <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
-        </div>
-      </flickity>
-    </div>
+  <div id="portfolio-and-studies">
+    <div id="portfolio">
+      <div id="portfolio-top"
+        :class="[ $route.name + '-top']">
+        <!-- Loads in a logo and brief description of the project -->
+        <router-view name="top"></router-view>
+      </div>
       
+      <div id="portfolio-showcase">
+        <div class="project-label"
+          :class="[ $route.name + '-label']">
+          Website Design
+        </div>
+        <flickity ref="showcase-flickity" :options="flickityOptions" id="flickity-container"
+          v-on:init="doSomething()">
+          <div class="portfolio-image-container">
+            <img src="@/assets/images/sellout/sellout_phone.svg" class="phone-image">
+            <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+          </div>
+          <div class="portfolio-image-container">
+            <img src="@/assets/images/theron/theron_phone.svg" class="phone-image">
+            <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+          </div>
+        </flickity>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -129,9 +135,27 @@ p {
 
 /* Flickity container for portfolio: */
 #portfolio-showcase {
-  
+  position: relative;
   grid-column: 1/3;
   grid-row: 2 /3;
+}
+
+.project-label {
+  padding: 10px 25px 10px 100px;
+  color: white;
+  transition-duration: .5s;
+  position: absolute;
+  font-weight: bold;
+  left: 0px;
+  top: 30px;
+  box-shadow: $box-shading;
+  animation: label-pop-in .5s linear;
+}
+.sellout-label {
+  background: $blue;
+}
+.theron-label {
+  background: $red;
 }
 
 /* Flickity container, obviously: */
@@ -240,6 +264,16 @@ p {
   } 100% {
     margin-top: -10px;
     margin-left: -10px;
+  }
+}
+
+@keyframes label-pop-in {
+  0% {
+    left: -200px;
+  } 75% {
+    left: 20px;
+  } 100% {
+    left: 0px;
   }
 }
 </style>

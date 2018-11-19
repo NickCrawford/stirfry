@@ -1,8 +1,8 @@
 <template>
-  <div id="sellout-top">
+  <div id="theron-top">
     <h1>Theron Brown</h1>
-    <p class="subtitle-text">Theron's website</p>
-    <p>Scroll down or click on a project to see more. </p>
+    <p class="subtitle-text">A personal website for jazz musician Theron Brown.</p>
+    <p>Check it out <a href="https://www.theronbrownmusic.com/" target="_blank">here.</a> </p>
   </div>
 </template>
 
@@ -20,19 +20,25 @@ h1 {
 .subtitle-text {
   font-size: 24px;
 }
+a {
+  color: white;
+  font-weight: bold;
+}
 
 img {
   width: 100%;
   
 }
 
-#sellout-top {
+#theron-top {
   padding: 0px 10%;
+  position: absolute;
+  top: 0px;
 }
 
 @media only screen and (min-width: 600px) {
-  #sellout-top {
-    margin-top: 20vh;
+  #theron-top {
+    margin-top: 25vh;
     padding: 0px;
   }
   h1, p {
@@ -42,7 +48,8 @@ img {
   }
   h1 {
     margin-top: 20px;
-    margin-bottom: 0px;
+    margin-bottom: 30px;
+
   }
 }
 </style>
