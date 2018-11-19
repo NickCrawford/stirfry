@@ -26,11 +26,11 @@
         
         <section id="about">
           <transition name="fade">
-            <h1 v-show="scrollProgress >= scrollBreakPoint.about">Cooking up delicious design</h1>
+            <h1 v-show="scrollProgress >= scrollBreakPoint.headline">Cooking up delicious design</h1>
           </transition>
 
           <transition name="fade">
-            <div class="subheader" v-show="scrollProgress <= scrollBreakPoint.selection">
+            <div class="subheader" v-show="scrollProgress >= scrollBreakPoint.headline">
               <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
               <router-link :to="{ name: 'about' }" class="swipe-button">Learn more</router-link>
             </div>
@@ -52,6 +52,8 @@
 
 
 <style lang="scss" scoped>
+@import "~@/GlobalVars.scss";
+
 .home {
   width: 100%;
   height: 100%;
@@ -158,8 +160,12 @@ section * {
   transform: translate(-83.5%, -40%);
 
   width: auto;
-  height: 7vh;
+  height: 4.65vh;
   margin: 0;
+
+  @media screen and (min-width: $md-bp) {
+    height: 7vh;
+  }
 }
 
 #headline h2 {
@@ -247,14 +253,23 @@ section * {
 #about {
   display: grid;
   grid-template-rows: auto;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   justify-items: start;
+  align-content: start;
 
-  min-height: 33vh;
+  min-height: 50vh;
 
   text-align: left;
 
   padding: 0 5vw;
+
+  font-size: 0.75em;
+
+  @media screen and (min-width: $md-bp) {
+    grid-template-columns: 1fr 1fr;
+
+    font-size: unset;
+  }
 }
 
 #about h1 {
@@ -365,6 +380,7 @@ export default {
     this.initPan();
     // this.initIngredients();
     this.initPointerEvents();
+    this.handleMobileCameraView(window.innerWidth);
 
     // Init materials
     for (const mat in materials) {
@@ -400,13 +416,24 @@ export default {
       this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
     };
 
-    window.addEventListener("resize", () => {
+    window.addEventListener("resize", e => {
       this.engine.resize();
+      this.handleMobileCameraView(e.target.innerWidth);
     });
   },
 
   watch: {},
   methods: {
+    handleMobileCameraView(windowWidth) {
+      console.log(windowWidth);
+      // Adjust for mobile sized screens
+      if (windowWidth < 768) {
+        cameraPosition1.y = 35;
+      } else {
+        cameraPosition1.y = 22;
+      }
+    },
+
     handleScroll(e) {
       let scrollTop = 0;
       if (e) {
