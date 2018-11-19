@@ -10,6 +10,9 @@ $skin: #F5D6BA;
 
 $sellout-navy: #060034;
 
+$box-shading: 2px 2px 10px rgba(0,0,0,.5);
+$box-shading-heavy: 2px 2px 20px rgba(0,0,0,.8);
+
 @keyframes floatin {
     from {
         opacity: 0;

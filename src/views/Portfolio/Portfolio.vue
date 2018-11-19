@@ -14,11 +14,11 @@
     <div id="portfolio-showcase">
       <flickity ref="flickity" :options="flickityOptions" id="flickity-container">
         <div class="portfolio-image-container">
-          <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+          <img src="@/assets/images/sellout/sellout_phone.svg" class="phone-image">
           <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
         </div>
         <div class="portfolio-image-container">
-          <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+          <img src="@/assets/images/theron/theron_phone.svg" class="phone-image">
           <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
         </div>
       </flickity>
@@ -112,6 +112,7 @@ p {
   height: 200px;
   background-color: $sellout-navy;
   transform: rotate(12deg);
+  box-shadow: $box-shading-heavy;
   z-index: 0;
 }
 
