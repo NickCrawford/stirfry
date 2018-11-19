@@ -8,26 +8,36 @@
       <canvas id="renderCanvas"></canvas>
       
       <!-- Hints users to continue scrolling -->
-      <a class="scroll-indicator" href="#selection-section">
+      <a class="scroll-indicator" href="#selection">
         <transition name="fade">
-          <p v-if="scrollProgress >= 0.05 && scrollProgress <= 0.90">Keep scrolling</p>
+          <p v-if="scrollProgress >= scrollBreakPoint.headline && scrollProgress <= scrollBreakPoint.selection">Keep scrolling</p>
         </transition>
         <transition name="fade">
-          <div class="scroll-arrow" v-if="scrollProgress <= 0.90"></div>
+          <div class="scroll-arrow" v-if="scrollProgress <= scrollBreakPoint.selection"></div>
         </transition>
       </a>
 
       <div id="overlay-view" tabindex="0">
-        <section id="heading-section" :class="{ 'hidden': scrollProgress >= 0.05 }">
+        <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
           <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
-          <h2>We're a creative agency &mdash; with taste.</h2>
+          <h2>A creative agency &mdash; with taste.</h2>
         </section>
 
-        <section id="about-section" v-if="false">
-          <h2>Cooking up delicious digital media</h2>
+        
+        <section id="about">
+          <transition name="fade">
+            <h1 v-show="scrollProgress >= scrollBreakPoint.about">Cooking up delicious design</h1>
+          </transition>
+
+          <transition name="fade">
+            <div class="subheader" v-show="scrollProgress <= scrollBreakPoint.selection">
+              <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
+              <router-link :to="{ name: 'about' }" class="swipe-button">Learn more</router-link>
+            </div>
+          </transition>
         </section>
 
-        <section id="selection-section" :class="{ hidden: scrollProgress <= 0.90 }">
+        <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
           <h3>Let's get cooking!</h3>
           <h4>What will we be working on?</h4>
           <p>(Add items to the pan by clicking on them)</p>
@@ -120,7 +130,15 @@
   pointer-events: none;
 }
 
-#heading-section {
+section {
+  padding: 0 1rem;
+}
+
+section * {
+  pointer-events: auto;
+}
+
+#headline {
   position: relative;
   height: 100%;
   min-height: 100vh;
@@ -134,7 +152,7 @@
   color: #545454;
 }
 
-#heading-section .logo {
+#headline .logo {
   position: absolute;
   /* transform: translate(77.5%, 44.6%); */
   transform: translate(-83.5%, -40%);
@@ -144,7 +162,7 @@
   margin: 0;
 }
 
-#heading-section h2 {
+#headline h2 {
   position: relative;
   margin-top: 0;
   font-size: 3rem;
@@ -153,7 +171,7 @@
 }
 
 // Animations
-#heading-section {
+#headline {
   .logo,
   h2 {
     transition: 0.2s opacity ease-out;
@@ -166,7 +184,7 @@
   }
 }
 
-#heading-section.hidden {
+#headline.hidden {
   .logo,
   h2 {
     opacity: 0;
@@ -177,7 +195,7 @@
 //
 // Selection Section
 
-#selection-section {
+#selection {
   display: grid;
   grid-template-rows: auto auto 1fr 1fr;
   grid-auto-columns: 1fr 1fr 1fr;
@@ -189,27 +207,17 @@
   /* padding-top: 4.5rem; */
 }
 
-#selection-section h3 {
+#selection h3 {
   font-weight: 800;
 }
 
-#selection-section h4 {
+#selection h4 {
   color: black;
   width: auto;
   display: inline-block;
 }
 
-#heading-section,
-#selection-section {
-  padding: 0 1rem;
-}
-
-#heading-section *,
-#selection-section * {
-  pointer-events: auto;
-}
-
-#selection-section {
+#selection {
   * {
     transition: 0.4s opacity ease, 0.8s transform ease;
     transform: translateY(0em);
@@ -222,7 +230,7 @@
   }
 }
 
-#selection-section.hidden {
+#selection.hidden {
   * {
     opacity: 0;
     transform: translateY(0.5em);
@@ -232,6 +240,29 @@
   p {
     transition-delay: 0s;
   }
+}
+
+//
+// About Section
+#about {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  justify-items: start;
+
+  min-height: 33vh;
+
+  text-align: left;
+
+  padding: 0 5vw;
+}
+
+#about h1 {
+  margin-bottom: 0;
+}
+
+#about .subheader {
+  grid-column-start: 1;
 }
 
 .debug-container {
@@ -316,6 +347,13 @@ export default {
       logoPosition: {
         x: 0,
         y: 0
+      },
+
+      // Scrolling breakpoints used in HTML Template
+      scrollBreakPoint: {
+        headline: 0.05,
+        about: 0.33,
+        selection: 0.9
       }
     };
   },
@@ -599,7 +637,6 @@ export default {
 
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
-      console.log("assets manager", this.assetsManager);
     },
 
     initPointerEvents() {
