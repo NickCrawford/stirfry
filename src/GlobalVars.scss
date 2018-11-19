@@ -1,24 +1,17 @@
+$blue: #4281a4;
+$green: #48a9a6;
+$background: #d0cbc7;
+$ground: #e4dfda;
+$yellow: #d4b483;
+$red: #c1666b;
+$lid: #b05d62;
+$skin: #f5d6ba;
 
-$blue: #4281A4;
-$green: #48A9A6;
-$darker-white: #D0CBC7;
-$white: #E4DFDA;
-$yellow: #D4B483;
-$red: #C1666B;
-$lid: #B05D62;
-$skin: #F5D6BA;
+$text-color: black;
 
 $sellout-navy: #060034;
 
 $box-shading: 2px 2px 10px rgba(0,0,0,.5);
 $box-shading-heavy: 2px 2px 20px rgba(0,0,0,.8);
 
-@keyframes floatin {
-    from {
-        opacity: 0;
-        margin-bottom: -20px;
-    } to {
-        opacity: 1;
-        margin-bottom: 0px;
-    }
-}
+

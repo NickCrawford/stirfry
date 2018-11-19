@@ -2,6 +2,8 @@
   <div class="four-oh-four">
     <h1>Oh no!</h1>
     <h3>This page doesn't exist.</h3>
+
+    <router-link :to="{ name: 'home' }">Go home</router-link>
   </div>
 </template>
 

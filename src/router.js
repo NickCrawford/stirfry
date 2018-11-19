@@ -29,7 +29,7 @@ export default new Router({
       }]
     },
     {
-      path: "/home",
+      path: "/",
       name: "home",
       component: Home
     },

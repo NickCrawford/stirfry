@@ -1,43 +1,113 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
-    <div id="scroll-container" @scroll="handleScroll" tabindex="0">
-      <div class="debug-container">
+    <div id="scroll-container" @scroll="handleScroll">
+      <div class="debug-container" v-if="false">
         <p>{{ selectedItems }}</p>
-        <p>{{ isClick }}, {{ startingClickPoint }}</p>
+        <p>{{ scrollProgress }}</p>
       </div>
       <canvas id="renderCanvas"></canvas>
       
-      <div id="overlay-view">
-        <div id="heading-section">
-          <h1><span class="startup">Startup</span><span class="stirfry">Stirfry</span></h1>
-          <h2>We create delicious designs</h2>
-        </div>
-        <div id="selection-section">
+      <!-- Hints users to continue scrolling -->
+      <a class="scroll-indicator" href="#selection">
+        <transition name="fade">
+          <p v-if="scrollProgress >= scrollBreakPoint.headline && scrollProgress <= scrollBreakPoint.selection">Keep scrolling</p>
+        </transition>
+        <transition name="fade">
+          <div class="scroll-arrow" v-if="scrollProgress <= scrollBreakPoint.selection"></div>
+        </transition>
+      </a>
+
+      <div id="overlay-view" tabindex="0">
+        <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
+          <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
+          <h2>A creative agency &mdash; with taste.</h2>
+        </section>
+
+        
+        <section id="about">
+          <transition name="fade">
+            <h1 v-show="scrollProgress >= scrollBreakPoint.about">Cooking up delicious design</h1>
+          </transition>
+
+          <transition name="fade">
+            <div class="subheader" v-show="scrollProgress <= scrollBreakPoint.selection">
+              <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
+              <router-link :to="{ name: 'about' }" class="swipe-button">Learn more</router-link>
+            </div>
+          </transition>
+        </section>
+
+        <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
           <h3>Let's get cooking!</h3>
-          <h4>Click on the ingredients you need for your project</h4>
-        </div>
+          <h4>What will we be working on?</h4>
+          <p>(Add items to the pan by clicking on them)</p>
+
+          <div class="toggle"></div>
+
+        </section>
       </div>
     </div>
   </div>
 </template>
 
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .home {
   width: 100%;
   height: 100%;
   cursor: unset;
-
-  overflow-y: auto;
-}
-
-#scroll-container {
-  height: 100%;
-  overflow-y: auto;
 }
 
 .home.show-cursor {
   cursor: pointer;
+}
+
+#scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+#scroll-container .scroll-indicator {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+
+  width: auto;
+
+  margin: 0 auto;
+  padding: 1em;
+
+  text-align: center;
+
+  z-index: 10;
+
+  transform: translateX(-50%);
+
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+
+.scroll-indicator .scroll-arrow {
+  margin: 0 auto;
+
+  animation: hover-vertical 1s ease-in-out infinite;
+
+  &:after {
+    content: "";
+    display: block;
+    border: 2px solid black;
+    border-left: none;
+    border-top: none;
+    transform: scaleY(0.66) rotate(45deg);
+    width: 1.5em;
+    height: 1.5em;
+    margin: 0 auto;
+  }
 }
 
 #renderCanvas {
@@ -57,70 +127,152 @@
 
   width: 100%;
   height: auto;
-
   pointer-events: none;
 }
 
-#heading-section {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+section {
+  padding: 0 1rem;
+}
+
+section * {
+  pointer-events: auto;
+}
+
+#headline {
+  position: relative;
+  height: 100%;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  grid-template-columns: 1fr;
+
   align-items: center;
+
   color: #545454;
 }
 
-#heading-section h1 {
-  font-size: 9.25vh;
-  margin-top: 36vh;
-  margin-bottom: calc(15vh + 0.5em);
+#headline .logo {
+  position: absolute;
+  /* transform: translate(77.5%, 44.6%); */
+  transform: translate(-83.5%, -40%);
 
-  text-transform: lowercase;
+  width: auto;
+  height: 7vh;
+  margin: 0;
 }
 
-#heading-section .startup {
-  margin-left: 0.9ch;
-}
-
-#heading-section .stirfry {
-  padding-left: 0.9ch;
-  color: #f5d6ba;
-}
-
-#heading-section h2 {
+#headline h2 {
+  position: relative;
+  margin-top: 0;
   font-size: 3rem;
+
+  grid-row-start: 2;
 }
 
-#selection-section h3 {
-  font-weight: 800;
-  margin-bottom: 2em;
+// Animations
+#headline {
+  .logo,
+  h2 {
+    transition: 0.2s opacity ease-out;
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  h2 {
+    transition-delay: 0.1s;
+  }
 }
 
-#selection-section h4 {
-  color: black;
+#headline.hidden {
+  .logo,
+  h2 {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
-#selection-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  color: white;
+//
+// Selection Section
+
+#selection {
+  display: grid;
+  grid-template-rows: auto auto 1fr 1fr;
+  grid-auto-columns: 1fr 1fr 1fr;
+
+  justify-items: center;
+  align-items: start;
+
   min-height: 100vh;
-  padding-top: 4.5rem;
+  /* padding-top: 4.5rem; */
 }
 
-#heading-section *,
-#selection-section * {
-  pointer-events: auto;
+#selection h3 {
+  font-weight: 800;
+}
+
+#selection h4 {
+  color: black;
+  width: auto;
+  display: inline-block;
+}
+
+#selection {
+  * {
+    transition: 0.4s opacity ease, 0.8s transform ease;
+    transform: translateY(0em);
+    opacity: 1;
+  }
+
+  h4,
+  p {
+    transition-delay: 0.5s;
+  }
+}
+
+#selection.hidden {
+  * {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+
+  h4,
+  p {
+    transition-delay: 0s;
+  }
+}
+
+//
+// About Section
+#about {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
+  justify-items: start;
+
+  min-height: 33vh;
+
+  text-align: left;
+
+  padding: 0 5vw;
+}
+
+#about h1 {
+  margin-bottom: 0;
+}
+
+#about .subheader {
+  grid-column-start: 1;
 }
 
 .debug-container {
   position: absolute;
-  top: 0;
+  top: 2rem;
   left: 0;
   padding: 1em;
   background: black;
   color: white;
+  z-index: 999;
 }
 </style>
 
@@ -129,6 +281,8 @@
 import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
+
+import WordToggle from "@/components/shared/WordToggle";
 
 let colors = {
   highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
@@ -165,7 +319,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: {},
+  components: { WordToggle },
   data() {
     return {
       canvas: null,
@@ -187,6 +341,19 @@ export default {
       //World Objects
       veggies: {
         pepper: null
+      },
+
+      //Logo position
+      logoPosition: {
+        x: 0,
+        y: 0
+      },
+
+      // Scrolling breakpoints used in HTML Template
+      scrollBreakPoint: {
+        headline: 0.05,
+        about: 0.33,
+        selection: 0.9
       }
     };
   },
@@ -196,9 +363,8 @@ export default {
     this.scene = this.initScene();
     this.initAssetsManager();
     this.initPan();
-    this.initIngredients();
+    // this.initIngredients();
     this.initPointerEvents();
-    // this.handleScroll();
 
     // Init materials
     for (const mat in materials) {
@@ -216,10 +382,11 @@ export default {
     this.assetsManager.load();
 
     this.assetsManager.onFinish = tasks => {
-      this.initPhysicsGravityField();
+      // These actions can only be handled after the scene has loaded
+      // this.initPhysicsGravityField();
 
       this.engine.runRenderLoop(() => {
-        this.handleDragging();
+        // this.handleDragging();
         this.scene.render();
       });
     };
@@ -227,6 +394,10 @@ export default {
     // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
     this.assetsManager.onTaskError = function(task) {
       console.log("error while loading " + task.name);
+    };
+
+    this.scene.afterRender = () => {
+      this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
     };
 
     window.addEventListener("resize", () => {
@@ -251,6 +422,10 @@ export default {
       ); // (Decimal) the progress at which we've scrolled through the overlay-view
 
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
+
+      if (targetScrollFrame > totalAnimationFrames) {
+        targetScrollFrame = totalAnimationFrames;
+      }
 
       var alphaAnim = new BABYLON.Animation(
         "alphaAnim",
@@ -316,7 +491,7 @@ export default {
       let scene = new BABYLON.Scene(this.engine);
 
       scene.ambientColor = new BABYLON.Color3(1, 1, 1);
-      scene.clearColor = colors.blue;
+      scene.clearColor = colors.skin;
 
       var camera = new BABYLON.UniversalCamera(
         "Camera",
@@ -342,9 +517,9 @@ export default {
       //   new BABYLON.Vector3(-1, 1, 0),
       //   scene
       // );
-      // light.diffuse = new BABYLON.Color3(0.5, 0.5, 0.5);
-      // light.specular = new BABYLON.Color3(1, 1, 1);
-      // light.groundColor = new BABYLON.Color3(1, 1, 1);
+      // light.diffuse = new BABYLON.Color3(0.5, 0, 0.5);
+      // light.specular = new BABYLON.Color3(0.5, 0.5, 0.5);
+      // light.groundColor = new BABYLON.Color3(0.5, 0.5, 0.5);
 
       // var light = new BABYLON.PointLight(
       //   "pointLight",
@@ -462,7 +637,6 @@ export default {
 
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
-      console.log("assets manager", this.assetsManager);
     },
 
     initPointerEvents() {
@@ -668,15 +842,28 @@ export default {
     },
 
     initIngredients() {
-      var veggieTask = this.assetsManager.addMeshTask(
-        "Veggie Loading task",
+      // BABYLON.SceneLoader.Append(
+      //   "./assets/models/",
+      //   "pepper.babylon",
+      //   this.scene,
+      //   scene => {
+      //     console.log("Found!");
+      //   }
+      // );
+
+      //       BABYLON.SceneLoader.Append("./", "duck.gltf", scene, function (scene) {
+      //     // do something with the scene
+      // });
+
+      var pepperTask = this.assetsManager.addMeshTask(
+        "Pepper task",
         "",
         "./assets/models/",
-        "pepper.obj"
+        "pepper.babylon"
       );
 
       // You can handle success and error on a per-task basis (onSuccess, onError)
-      veggieTask.onSuccess = task => {
+      pepperTask.onSuccess = task => {
         console.log(
           "aM-loaded pepper... task.loadedMeshes.length: ",
           task.loadedMeshes.length
@@ -697,10 +884,18 @@ export default {
 
         this.veggies.pepper = pepper;
 
+        var simpleMaterial = new BABYLON.StandardMaterial(
+          "texture2",
+          this.scene
+        );
+
+        // simpleMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0); //Green
+        // pepper.material = simpleMaterial;
+
         // var pepperMat = new BABYLON.StandardMaterial("pepperMat", this.scene);
         // pepperMat.ambientColor = new BABYLON.Color3(0.64, 0.046113, 0.079105);
         // // panMat.backFaceCulling = false;
-        pepper.material = materials.green;
+        // pepper.material = materials.green;
       };
     },
 
@@ -721,6 +916,19 @@ export default {
         falloff
       );
       gravitationalFieldEvent.enable(); // need to call, if you want to activate the gravitational field.
+    },
+
+    setLogoPosition() {
+      var p = BABYLON.Vector3.Project(
+        new BABYLON.Vector3(0, 0.5, 0),
+        BABYLON.Matrix.Identity(),
+        this.scene.getTransformMatrix(),
+        this.scene.activeCamera.viewport.toGlobal(this.engine)
+      );
+      let scrollContainer = document.getElementById("scroll-container");
+
+      this.logoPosition.x = p.x;
+      this.logoPosition.y = p.y + scrollContainer.scrollTop; // uncomment to lock in place
     }
   }
 };
