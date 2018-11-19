@@ -4,16 +4,72 @@
       <!-- Loads in a logo and brief description of the project -->
       <router-view name="top"></router-view>
     </div>
+    
+    <!--<div id="portfolio-showcase">
+      <div class="portfolio-images">
+        <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+        <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+      </div>
+    </div>-->
     <div id="portfolio-showcase">
-      <img src="@/assets/images/sellout_phone.svg" class="phone-image">
-      <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+      <flickity ref="flickity" :options="flickityOptions" id="flickity-container">
+        <div class="portfolio-image-container">
+          <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+          <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+        </div>
+        <div class="portfolio-image-container">
+          <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+          <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+        </div>
+      </flickity>
     </div>
+    
+    
+    <!--<flickity ref="flickity" :options="flickityOptions" id="flickity-container">
+      <div id="portfolio-showcase" class="carousel-cell">
+        <img src="@/assets/images/sellout_phone.svg" class="phone-image">
+        <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+      </div>
+    </flickity>-->
+      
   </div>
 </template>
+
+<script>
+import Flickity from 'vue-flickity';
+
+export default {
+  data() {
+    return {
+      flickityOptions: {
+        initialIndex: 3,
+        prevNextButtons: true,
+        pageDots: false,
+        wrapAround: true
+        
+        // any options from Flickity can be used
+      }
+    }
+  },
+  components: {
+    Flickity
+  },
+  methods: {
+    next() {
+      this.$refs.flickity.next();
+    },
+    
+    previous() {
+      this.$refs.flickity.previous();
+    }
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
 
+/* The entire page, setting up grid: */
 #portfolio {
   background: $white;
   height: 100vh;
@@ -24,6 +80,7 @@
   overflow: hidden;
 }
 
+/* Text styling for this page: */
 h1 {
   font-weight: normal;
   font-size: 3em;
@@ -37,6 +94,7 @@ p {
   position: relative;
 }
 
+/* Portfolio descriptions, on the top on mobile/left on desktop: */
 #portfolio-top {
   background: $sellout-navy;
   color: white;
@@ -57,31 +115,58 @@ p {
   z-index: 0;
 }
 
+/* Flickity container for portfolio: */
 #portfolio-showcase {
+  
   grid-column: 1/3;
   grid-row: 2 /3;
-  padding-top: 100px;
+}
+
+/* Flickity container, obviously: */
+#flickity-container {
+
+  position: relative;
+  height: 100%;
+
+  grid-column: 2/3;
+  grid-row: 1/3;
+}
+
+
+/* Image containers themselves, inside flickity: */
+.portfolio-image-container {
+  position: relative;
+  min-width: 200px;
+  min-height: 200px;
+  width: 50%;
+  height: 100%;
+  animation: floatin .5s linear;
+  margin: 0px 200px;
 
   img {
-    position: absolute;
-    transform: translatex(-50%) rotatez(3deg) skew(-4deg);
+    transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
   }
 }
 
+/* Images: */
 .phone-image {
-  width: 40%;
-  max-width: 200px;
+  position: absolute;
+  width: 60%;
+  max-width: 230px;
   z-index: 11;
   left: 48%;
-  margin-top: -20px;
-  margin-left: -20px;
+  top: 55%;
+  margin-top: -10px;
+  margin-left: -10px;
   /*animation: phonefloat 10s  infinite;*/
   opacity: 1;
 }
 .phone-shadow {
-  width: 45%;
-  max-width: 220px;
+  position: absolute;
+  width: 67%;
+  max-width: 250px;
   left: 50%;
+  top: 55%;
 }
 
 @media only screen and (min-width: 600px) {
@@ -106,14 +191,27 @@ p {
   #portfolio-showcase {
     grid-column: 2/3;
     grid-row: 1 /3;
+  }
+
+  .portfolio-image-container {
+    height: 100vh;
+  } 
+
+  .phone-image {
+    width: 80%;
+  }
+  .phone-shadow {
+    width: 87%;
+  }
+  
+
+  .portfolio-images {
+    
     padding-top: 100px;
     position: relative;
-    animation: floatin .5s linear;
 
     img {
-      position: absolute;
-      left: 50%;
-      top: 50%;
+      
       transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
     }
   }
@@ -131,4 +229,10 @@ p {
     margin-left: -10px;
   }
 }
+</style>
+
+<style>
+.flickity-viewport {
+    overflow: visible;
+  }
 </style>
