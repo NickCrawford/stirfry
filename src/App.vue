@@ -25,9 +25,9 @@ export default {
 
 html,
 body {
-  overflow: hidden;
+  overflow-y: auto;
   width: 100%;
-  height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
   text-align: center;
@@ -43,9 +43,9 @@ body {
 }
 
 #app {
-  overflow: hidden;
+  // overflow: hidden;
   width: 100%;
-  height: 100%;
+  // height: 100%;
 }
 
 // @media screen and (min-width: $md-bp) {

@@ -1,6 +1,6 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
-    <div id="scroll-container" @scroll="handleScroll">
+    <div id="scroll-container">
       <div class="debug-container" v-if="false">
         <p>{{ selectedItems }}</p>
         <p>{{ scrollProgress }}</p>
@@ -17,7 +17,7 @@
         </transition>
       </a>
 
-      <div id="overlay-view" tabindex="0">
+      <div id="overlay-view">
         <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
           <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
           <h2>A creative agency &mdash; with taste.</h2>
@@ -38,16 +38,18 @@
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
-          <h3>Let's get cooking!</h3>
-          <h4>What will we be working on?</h4>
-          <p>(Add items to the pan by clicking on them)</p>
+          <h3 class="heading">Let's get cooking!</h3>
+          <div class="prompt">
+            <h4>What will we be working on?</h4>
+            <!-- <p>(Add items to the pan by clicking on them)</p> -->
+          </div>
 
           <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
           <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
           <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
           <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
+          <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
           <checkbox-item v-model="selectedItems.other">Something Else</checkbox-item>
-
         </section>
       </div>
     </div>
@@ -60,7 +62,7 @@
 
 .home {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   cursor: unset;
 }
 
@@ -71,8 +73,8 @@
 #scroll-container {
   position: relative;
   width: 100%;
-  height: 100%;
-  overflow-y: scroll;
+  // height: 100%;
+  // overflow-y: visible;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
@@ -207,24 +209,58 @@ section * {
 
 #selection {
   display: grid;
-  grid-template-rows: auto auto 1fr 1fr;
-  grid-auto-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    "heading"
+    "prompt"
+    "option1"
+    "option2"
+    "option3"
+    "option4"
+    "option5"
+    "option6";
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
 
   justify-items: center;
   align-items: start;
 
   min-height: 100vh;
-  /* padding-top: 4.5rem; */
+  padding: 0 5vw;
+
+  @media screen and (min-width: $md-bp) {
+    grid-template-areas:
+      "heading heading heading"
+      "prompt prompt prompt"
+      "option1 pan option2"
+      "option3 pan option4"
+      "option5 pan option6"
+      "finish finish finish";
+    grid-template-rows: auto auto 1fr 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    align-items: center;
+  }
 }
 
-#selection h3 {
+#selection .heading {
+  grid-area: heading;
   font-weight: 800;
+}
+
+#selection .prompt {
+  grid-area: prompt;
 }
 
 #selection h4 {
   color: black;
   width: auto;
   display: inline-block;
+}
+
+@for $i from 1 through 6 {
+  .checkbox-item:nth-of-type(#{$i}) {
+    grid-area: option + $i;
+  }
 }
 
 #selection {
@@ -234,9 +270,16 @@ section * {
     opacity: 1;
   }
 
-  h4,
-  p {
+  .heading,
+  .prompt {
     transition-delay: 0.5s;
+  }
+
+  @for $i from 1 through 6 {
+    .checkbox-item:nth-of-type(#{$i}) {
+      transition-delay: 0.5s + ((($i + 1) % 2) / 10 + ($i / 10)) / 2;
+      // This looks crazy, but its simply a way for us to fluidly animation the list items from top left to bottom right
+    }
   }
 }
 
@@ -246,8 +289,9 @@ section * {
     transform: translateY(0.5em);
   }
 
-  h4,
-  p {
+  .heading,
+  .prompt,
+  .checkbox-item {
     transition-delay: 0s;
   }
 }
@@ -365,6 +409,7 @@ export default {
         branding: false,
         app: false,
         marketing: false,
+        social: false,
         other: false
       },
 
@@ -388,9 +433,10 @@ export default {
     this.scene = this.initScene();
     this.initAssetsManager();
     this.initPan();
-    // this.initIngredients();
+    // this.initIngredients(); // TODO: Uncomment when we readd ingredients
     this.initPointerEvents();
     this.handleMobileCameraView(window.innerWidth);
+    this.handleScroll(0);
 
     // Init materials
     for (const mat in materials) {
@@ -409,10 +455,10 @@ export default {
 
     this.assetsManager.onFinish = tasks => {
       // These actions can only be handled after the scene has loaded
-      // this.initPhysicsGravityField();
+      // this.initPhysicsGravityField();  // TODO: Uncomment when we readd ingredients
 
       this.engine.runRenderLoop(() => {
-        // this.handleDragging();
+        // this.handleDragging();  // TODO: Uncomment when we readd ingredients
         this.scene.render();
       });
     };
@@ -430,12 +476,15 @@ export default {
       this.engine.resize();
       this.handleMobileCameraView(e.target.innerWidth);
     });
+
+    window.addEventListener("scroll", e => {
+      this.handleScroll(e);
+    });
   },
 
   watch: {},
   methods: {
     handleMobileCameraView(windowWidth) {
-      console.log(windowWidth);
       // Adjust for mobile sized screens
       if (windowWidth < 768) {
         cameraPosition1.y = 35;
@@ -445,10 +494,11 @@ export default {
     },
 
     handleScroll(e) {
-      let scrollTop = 0;
-      if (e) {
-        scrollTop = e.target.scrollTop;
-      }
+      let scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop;
+      // if (e) {
+      //   scrollTop = e.target.scrollTop;
+      // }
 
       // Get height of overlay container
       let scrollContainer = document.getElementById("overlay-view");
