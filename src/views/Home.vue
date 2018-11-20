@@ -42,7 +42,11 @@
           <h4>What will we be working on?</h4>
           <p>(Add items to the pan by clicking on them)</p>
 
-          <div class="toggle"></div>
+          <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
+          <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
+          <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
+          <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
+          <checkbox-item v-model="selectedItems.other">Something Else</checkbox-item>
 
         </section>
       </div>
@@ -297,7 +301,7 @@ import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
-import WordToggle from "@/components/shared/WordToggle";
+import CheckboxItem from "@/components/shared/CheckboxItem";
 
 let colors = {
   highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
@@ -334,7 +338,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: { WordToggle },
+  components: { CheckboxItem },
   data() {
     return {
       canvas: null,
@@ -348,14 +352,20 @@ export default {
       showCursor: false, // Show the cursor as a pointer
       isClick: false, // Helps determine if the user is clicking or dragging an object
       startingClickPoint: null, // Point where user started clicking/dragging
-      selectedItems: {
-        pepper: false
-      }, // The selected items a user has clicked on
       currentScrollFrame: 0, // Used to determine which animation frame on the camera corresponds to the scroll position
       scrollProgress: 0, // progress (float between 0.00 and 1.00) at which we've scrolled through the overlay-view
       //World Objects
       veggies: {
         pepper: null
+      },
+
+      //// The selected items/services a user has clicked on
+      selectedItems: {
+        web: false,
+        branding: false,
+        app: false,
+        marketing: false,
+        other: false
       },
 
       //Logo position
@@ -450,7 +460,7 @@ export default {
 
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
-      if (targetScrollFrame > totalAnimationFrames) {
+      if (targetScrollFrame >= totalAnimationFrames) {
         targetScrollFrame = totalAnimationFrames;
       }
 
