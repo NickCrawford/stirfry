@@ -21,12 +21,12 @@
         </label>
 
         <p class="section-label">Services Needed:</p>
-        <label v-for="(service, key, index) in services" :key="index" class="checkbox">
+        <label v-for="(service, key, index) in form.services" :key="index" class="checkbox">
           <input
             type="checkbox"
             name="service"
             :value="service"
-            :checked="services[service]"
+            :checked="form.services[service]"
           />
           <span>{{ key }}</span>
         </label>
@@ -60,27 +60,27 @@ export default {
       form: {
         clientName: "",
         clientEmail: "",
-        note: '',
-      },
-      services: {
-        "Web Design & Development": false,
-        "Branding & Creative Design": false,
-        "iOS or Android Development": false,
-        "Marketing Strategy": false,
-        "Social Media Marketing": false,
-        Other: false
+        note: "",
+        services: {
+          "Web Design & Development": false,
+          "Branding & Creative Design": false,
+          "iOS or Android Development": false,
+          "Marketing Strategy": false,
+          "Social Media Marketing": false,
+          Other: false
+        }
       }
     };
   },
 
   methods: {
     handleSubmit() {
-      fetch('/', {
-        method: 'POST',
+      fetch("/", {
+        method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: this.encode({
-          'form-name': 'client-interest-form',
-          {...this.form, ...this.services}
+          "form-name": "client-interest-form",
+          ...this.form
         })
       })
         .then(() => {
