@@ -59,7 +59,8 @@ export default {
     return {
       form: {
         clientName: "",
-        clientEmail: ""
+        clientEmail: "",
+        note: '',
       },
       services: {
         "Web Design & Development": false,
@@ -74,7 +75,14 @@ export default {
 
   methods: {
     handleSubmit() {
-      fetch("/", {})
+      fetch('/', {
+        method: 'POST',
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: this.encode({
+          'form-name': 'client-interest-form',
+          {...this.form, ...this.services}
+        })
+      })
         .then(() => {
           this.$router.push("thanks");
         })
