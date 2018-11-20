@@ -49,11 +49,11 @@
           <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
           <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
           <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
-          <checkbox-item v-model="selectedItems.other">Something Else</checkbox-item>
+          <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
 
           <div class="finish-container">
             <transition name="fade" duration="800">
-              <router-link :to="{ name: '' }" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
+              <router-link :to="{ name: 'contact' }" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
             </transition>
           </div>
         </section>
