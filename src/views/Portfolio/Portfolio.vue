@@ -10,7 +10,7 @@
       <div id="portfolio-showcase">
         <div class="project-label"
           :class="[ $route.name + '-label']">
-          Website Design
+          <span>Website Design</span>
         </div>
         <flickity ref="showcase-flickity" :options="flickityOptions" id="flickity-container"
           v-on:init="doSomething()">
@@ -141,15 +141,22 @@ p {
 }
 
 .project-label {
-  padding: 10px 25px 10px 100px;
+  padding: 10px 200px 10px 25px;
   color: white;
   transition-duration: .5s;
   position: absolute;
   font-weight: bold;
-  left: 0px;
-  top: 30px;
+  left: 5%;
+  top: 40px;
   box-shadow: $box-shading;
+  transform: skewx(-20deg);
+  
+  display: none;
   animation: label-pop-in .5s linear;
+}
+span {
+  display: block;
+  transform: skewx(200deg);
 }
 .sellout-label {
   background: $blue;
@@ -223,6 +230,10 @@ p {
     width: 1000px;
     transform: rotate(12deg);
     z-index: 0;
+  }
+  .project-label {
+    padding: 10px 25px 10px 100px;
+    display: block;
   }
 
   #portfolio-showcase {
