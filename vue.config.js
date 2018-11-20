@@ -1,12 +1,21 @@
-// const whs = require("./node_modules/whs/tools/alias");
+const path = require("path");
+const PrerenderSPAPlugin = require("prerender-spa-plugin");
 
-// // vue.config.js
-// module.exports = {
-//   configureWebpack: {
-//     externals: {
-//       // oimo: true,
-//       cannon: true
-//       // earcut: true
-//     }
-//   }
-// };
+module.exports = {
+  configureWebpack: () => {
+    if (process.env.NODE_ENV !== "production") return;
+    return {
+      plugins: [
+        new PrerenderSPAPlugin(
+          // Absolute path to compiled SPA
+          path.resolve(__dirname, "dist"),
+          // List of routes to prerender
+          ["/", "/contact", "/about"],
+          {
+            // options
+          }
+        )
+      ]
+    };
+  }
+};

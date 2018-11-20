@@ -1,6 +1,6 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
-    <div id="scroll-container" @scroll="handleScroll">
+    <div id="scroll-container">
       <div class="debug-container" v-if="false">
         <p>{{ selectedItems }}</p>
         <p>{{ scrollProgress }}</p>
@@ -17,7 +17,7 @@
         </transition>
       </a>
 
-      <div id="overlay-view" tabindex="0">
+      <div id="overlay-view">
         <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
           <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
           <h2>A creative agency &mdash; with taste.</h2>
@@ -26,24 +26,36 @@
         
         <section id="about">
           <transition name="fade">
-            <h1 v-show="scrollProgress >= scrollBreakPoint.about">Cooking up delicious design</h1>
+            <h1 v-show="scrollProgress >= scrollBreakPoint.headline">Cooking up delicious design</h1>
           </transition>
 
           <transition name="fade">
-            <div class="subheader" v-show="scrollProgress <= scrollBreakPoint.selection">
+            <div class="subheader" v-show="scrollProgress >= scrollBreakPoint.headline">
               <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
-              <router-link :to="{ name: 'about' }" class="swipe-button">Learn more</router-link>
+              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
             </div>
           </transition>
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
-          <h3>Let's get cooking!</h3>
-          <h4>What will we be working on?</h4>
-          <p>(Add items to the pan by clicking on them)</p>
+          <h3 class="heading">Let's get cooking!</h3>
+          <div class="prompt">
+            <h4>What can we help you with?</h4>
+            <!-- <p>(Add items to the pan by clicking on them)</p> -->
+          </div>
 
-          <div class="toggle"></div>
+          <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
+          <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
+          <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
+          <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
+          <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
+          <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
 
+          <div class="finish-container">
+            <transition name="fade" duration="800">
+              <router-link :to="{ name: 'contact' }" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
+            </transition>
+          </div>
         </section>
       </div>
     </div>
@@ -52,9 +64,11 @@
 
 
 <style lang="scss" scoped>
+@import "~@/GlobalVars.scss";
+
 .home {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   cursor: unset;
 }
 
@@ -65,8 +79,8 @@
 #scroll-container {
   position: relative;
   width: 100%;
-  height: 100%;
-  overflow-y: scroll;
+  // height: 100%;
+  // overflow-y: visible;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
@@ -158,8 +172,12 @@ section * {
   transform: translate(-83.5%, -40%);
 
   width: auto;
-  height: 7vh;
+  height: 4.65vh;
   margin: 0;
+
+  @media screen and (min-width: $md-bp) {
+    height: 7vh;
+  }
 }
 
 #headline h2 {
@@ -197,24 +215,65 @@ section * {
 
 #selection {
   display: grid;
-  grid-template-rows: auto auto 1fr 1fr;
-  grid-auto-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    "heading"
+    "prompt"
+    "option1"
+    "option2"
+    "option3"
+    "option4"
+    "option5"
+    "option6"
+    "finish";
+  grid-template-rows: auto;
+  grid-template-columns: 1fr;
 
   justify-items: center;
   align-items: start;
 
   min-height: 100vh;
-  /* padding-top: 4.5rem; */
+  padding: 0 5vw 5vh;
+
+  @media screen and (min-width: $md-bp) {
+    grid-template-areas:
+      "heading heading heading"
+      "prompt prompt prompt"
+      "option1 pan option2"
+      "option3 pan option4"
+      "option5 finish option6";
+    grid-template-rows: auto auto 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    align-items: center;
+  }
 }
 
-#selection h3 {
+#selection .heading {
+  grid-area: heading;
   font-weight: 800;
+}
+
+#selection .prompt {
+  grid-area: prompt;
+}
+
+#selection .finish-container {
+  grid-area: finish;
+  align-self: end;
+
+  animation: hover-vertical 1.8s ease-in-out infinite;
 }
 
 #selection h4 {
   color: black;
   width: auto;
   display: inline-block;
+}
+
+@for $i from 1 through 6 {
+  .checkbox-item:nth-of-type(#{$i}) {
+    grid-area: option + $i;
+  }
 }
 
 #selection {
@@ -224,9 +283,16 @@ section * {
     opacity: 1;
   }
 
-  h4,
-  p {
+  .heading,
+  .prompt {
     transition-delay: 0.5s;
+  }
+
+  @for $i from 1 through 6 {
+    .checkbox-item:nth-of-type(#{$i}) {
+      transition-delay: 0.5s + ((($i + 1) % 2) / 10 + ($i / 10)) / 2;
+      // This looks crazy, but its simply a way for us to fluidly animation the list items from top left to bottom right
+    }
   }
 }
 
@@ -236,8 +302,9 @@ section * {
     transform: translateY(0.5em);
   }
 
-  h4,
-  p {
+  .heading,
+  .prompt,
+  .checkbox-item {
     transition-delay: 0s;
   }
 }
@@ -247,14 +314,23 @@ section * {
 #about {
   display: grid;
   grid-template-rows: auto;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   justify-items: start;
+  align-content: start;
 
-  min-height: 33vh;
+  min-height: 50vh;
 
   text-align: left;
 
   padding: 0 5vw;
+
+  font-size: 0.75em;
+
+  @media screen and (min-width: $md-bp) {
+    grid-template-columns: 1fr 1fr;
+
+    font-size: unset;
+  }
 }
 
 #about h1 {
@@ -282,7 +358,7 @@ import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
-import WordToggle from "@/components/shared/WordToggle";
+import CheckboxItem from "@/components/shared/CheckboxItem";
 
 let colors = {
   highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
@@ -319,7 +395,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: { WordToggle },
+  components: { CheckboxItem },
   data() {
     return {
       canvas: null,
@@ -333,14 +409,21 @@ export default {
       showCursor: false, // Show the cursor as a pointer
       isClick: false, // Helps determine if the user is clicking or dragging an object
       startingClickPoint: null, // Point where user started clicking/dragging
-      selectedItems: {
-        pepper: false
-      }, // The selected items a user has clicked on
       currentScrollFrame: 0, // Used to determine which animation frame on the camera corresponds to the scroll position
       scrollProgress: 0, // progress (float between 0.00 and 1.00) at which we've scrolled through the overlay-view
       //World Objects
       veggies: {
         pepper: null
+      },
+
+      //// The selected items/services a user has clicked on
+      selectedItems: {
+        web: false,
+        branding: false,
+        app: false,
+        marketing: false,
+        social: false,
+        other: false
       },
 
       //Logo position
@@ -358,13 +441,29 @@ export default {
     };
   },
 
+  computed: {
+    // Checks to see if any checkboxes have be selected
+    isItemSelected() {
+      for (const item in this.selectedItems) {
+        if (this.selectedItems.hasOwnProperty(item)) {
+          const value = this.selectedItems[item];
+          if (value) return true;
+        }
+      }
+
+      return false;
+    }
+  },
+
   mounted() {
     this.initEngine();
     this.scene = this.initScene();
     this.initAssetsManager();
     this.initPan();
-    // this.initIngredients();
+    // this.initIngredients(); // TODO: Uncomment when we readd ingredients
     this.initPointerEvents();
+    this.handleMobileCameraView(window.innerWidth);
+    this.handleScroll(0);
 
     // Init materials
     for (const mat in materials) {
@@ -383,10 +482,10 @@ export default {
 
     this.assetsManager.onFinish = tasks => {
       // These actions can only be handled after the scene has loaded
-      // this.initPhysicsGravityField();
+      // this.initPhysicsGravityField();  // TODO: Uncomment when we readd ingredients
 
       this.engine.runRenderLoop(() => {
-        // this.handleDragging();
+        // this.handleDragging();  // TODO: Uncomment when we readd ingredients
         this.scene.render();
       });
     };
@@ -400,18 +499,37 @@ export default {
       this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
     };
 
-    window.addEventListener("resize", () => {
+    window.addEventListener("resize", e => {
       this.engine.resize();
+      this.handleMobileCameraView(e.target.innerWidth);
     });
+
+    window.addEventListener("scroll", e => {
+      this.handleScroll(e);
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll(0));
+    console.log("scrolling Destroyed");
   },
 
   watch: {},
   methods: {
-    handleScroll(e) {
-      let scrollTop = 0;
-      if (e) {
-        scrollTop = e.target.scrollTop;
+    handleMobileCameraView(windowWidth) {
+      // Adjust for mobile sized screens
+      if (windowWidth < 768) {
+        cameraPosition1.y = 35;
+      } else {
+        cameraPosition1.y = 22;
       }
+    },
+
+    handleScroll(e) {
+      let scrollTop =
+        document.documentElement.scrollTop || document.body.scrollTop;
+      // if (e) {
+      //   scrollTop = e.target.scrollTop;
+      // }
 
       // Get height of overlay container
       let scrollContainer = document.getElementById("overlay-view");
@@ -423,7 +541,7 @@ export default {
 
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
-      if (targetScrollFrame > totalAnimationFrames) {
+      if (targetScrollFrame >= totalAnimationFrames) {
         targetScrollFrame = totalAnimationFrames;
       }
 
@@ -637,6 +755,7 @@ export default {
 
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
+      this.assetsManager.useDefaultLoadingScreen = false;
     },
 
     initPointerEvents() {
@@ -925,7 +1044,7 @@ export default {
         this.scene.getTransformMatrix(),
         this.scene.activeCamera.viewport.toGlobal(this.engine)
       );
-      let scrollContainer = document.getElementById("scroll-container");
+      let scrollContainer = document.getElementById("scroll-container"); //document.documentElement.scrollTop || document.body.scrollTop;
 
       this.logoPosition.x = p.x;
       this.logoPosition.y = p.y + scrollContainer.scrollTop; // uncomment to lock in place

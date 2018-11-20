@@ -25,9 +25,9 @@ export default {
 
 html,
 body {
-  overflow: hidden;
+  overflow-y: auto;
   width: 100%;
-  height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
   text-align: center;
@@ -37,15 +37,14 @@ body {
   font-family: ff-good-headline-web-pro, sans-serif;
   font-weight: 300;
   font-style: normal;
-  font-weight: 400;
   line-height: 1.45;
   font-size: 1em;
 }
 
 #app {
-  overflow: hidden;
+  // overflow: hidden;
   width: 100%;
-  height: 100%;
+  // height: 100%;
 }
 
 // @media screen and (min-width: $md-bp) {

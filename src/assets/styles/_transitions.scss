@@ -7,19 +7,20 @@
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
   transform: translateY(0.5rem);
+  // transition: 0.4s opacity ease, 0.8s transform ease;
 }
 
 @keyframes hover-vertical {
   0% {
-    transform: translateY(0%);
+    transform: translateY(0);
   }
 
   50% {
-    transform: translateY(-50%);
+    transform: translateY(-1rem);
   }
 
   100% {
-    transform: translateY(0%);
+    transform: translateY(0);
   }
 }
 
