@@ -7,6 +7,7 @@
 
   // Uncchecked
   .checkbox-label {
+    display: inline-block;
     position: relative;
     padding: 0.5em 1em;
 
@@ -28,11 +29,13 @@
   // MASK - Unchecked
   .checkbox-input + .checkbox-label:before {
     content: "";
+    display: block;
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+    right: 0;
 
     z-index: -1;
 
@@ -114,4 +117,24 @@ input[type="checkbox"]:checked + label:before {
   &:hover {
     text-decoration: underline;
   }
+}
+
+.stirfry-button {
+  margin: 0.25em auto 1em;
+  padding: 0.5em 1em;
+  background: $blue;
+  border: none;
+  box-shadow: none;
+  border-radius: 3px;
+
+  color: white;
+
+  font-family: ff-good-headline-web-pro, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 1.5em;
+
+  cursor: pointer;
+
+  text-transform: lowercase;
 }

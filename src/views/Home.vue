@@ -40,7 +40,7 @@
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
           <h3 class="heading">Let's get cooking!</h3>
           <div class="prompt">
-            <h4>What will we be working on?</h4>
+            <h4>What can we help you with?</h4>
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
           </div>
 
@@ -50,6 +50,12 @@
           <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
           <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
           <checkbox-item v-model="selectedItems.other">Something Else</checkbox-item>
+
+          <div class="finish-container">
+            <transition name="fade" duration="800">
+              <router-link :to="{ name: '' }" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
+            </transition>
+          </div>
         </section>
       </div>
     </div>
@@ -217,7 +223,8 @@ section * {
     "option3"
     "option4"
     "option5"
-    "option6";
+    "option6"
+    "finish";
   grid-template-rows: auto;
   grid-template-columns: 1fr;
 
@@ -225,7 +232,7 @@ section * {
   align-items: start;
 
   min-height: 100vh;
-  padding: 0 5vw;
+  padding: 0 5vw 5vh;
 
   @media screen and (min-width: $md-bp) {
     grid-template-areas:
@@ -233,9 +240,8 @@ section * {
       "prompt prompt prompt"
       "option1 pan option2"
       "option3 pan option4"
-      "option5 pan option6"
-      "finish finish finish";
-    grid-template-rows: auto auto 1fr 1fr 1fr auto;
+      "option5 finish option6";
+    grid-template-rows: auto auto 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr;
 
     align-items: center;
@@ -249,6 +255,13 @@ section * {
 
 #selection .prompt {
   grid-area: prompt;
+}
+
+#selection .finish-container {
+  grid-area: finish;
+  align-self: end;
+
+  animation: hover-vertical 1.8s ease-in-out infinite;
 }
 
 #selection h4 {
@@ -426,6 +439,20 @@ export default {
         selection: 0.9
       }
     };
+  },
+
+  computed: {
+    // Checks to see if any checkboxes have be selected
+    isItemSelected() {
+      for (const item in this.selectedItems) {
+        if (this.selectedItems.hasOwnProperty(item)) {
+          const value = this.selectedItems[item];
+          if (value) return true;
+        }
+      }
+
+      return false;
+    }
   },
 
   mounted() {
@@ -1012,7 +1039,7 @@ export default {
         this.scene.getTransformMatrix(),
         this.scene.activeCamera.viewport.toGlobal(this.engine)
       );
-      let scrollContainer = document.getElementById("scroll-container");
+      let scrollContainer = document.getElementById("scroll-container"); //document.documentElement.scrollTop || document.body.scrollTop;
 
       this.logoPosition.x = p.x;
       this.logoPosition.y = p.y + scrollContainer.scrollTop; // uncomment to lock in place

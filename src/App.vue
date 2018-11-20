@@ -37,7 +37,6 @@ body {
   font-family: ff-good-headline-web-pro, sans-serif;
   font-weight: 300;
   font-style: normal;
-  font-weight: 400;
   line-height: 1.45;
   font-size: 1em;
 }
