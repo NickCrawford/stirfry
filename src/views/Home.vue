@@ -24,17 +24,13 @@
         </section>
 
         
-        <section id="about">
-          <transition name="fade">
-            <h1 v-show="scrollProgress >= scrollBreakPoint.headline">Cooking up delicious design</h1>
-          </transition>
+        <section id="about" :class="{ 'hidden': scrollProgress <= scrollBreakPoint.about  }">
+            <h1>Cooking up delicious design</h1>
 
-          <transition name="fade">
-            <div class="subheader" v-show="scrollProgress >= scrollBreakPoint.headline">
+            <div class="subheader">
               <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
               <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
             </div>
-          </transition>
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
@@ -168,6 +164,8 @@ section * {
 
 #headline .logo {
   position: absolute;
+  top: 50%;
+  left: 50%;
   /* transform: translate(77.5%, 44.6%); */
   transform: translate(-83.5%, -40%);
 
@@ -341,6 +339,22 @@ section * {
   grid-column-start: 1;
 }
 
+// Animations
+#about {
+  * {
+    transition: 0.4s opacity ease, 0.8s transform ease;
+    transform: translateY(0em);
+    opacity: 1;
+  }
+}
+
+#about.hidden {
+  * {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+}
+
 .debug-container {
   position: absolute;
   top: 2rem;
@@ -435,8 +449,8 @@ export default {
       // Scrolling breakpoints used in HTML Template
       scrollBreakPoint: {
         headline: 0.05,
-        about: 0.33,
-        selection: 0.9
+        about: 0.2,
+        selection: 0.75
       }
     };
   },
@@ -752,7 +766,7 @@ export default {
 
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
-      this.assetsManager.useDefaultLoadingScreen = false;
+      // this.assetsManager.useDefaultLoadingScreen = false;
     },
 
     initPointerEvents() {
