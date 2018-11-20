@@ -70,6 +70,18 @@ export default {
         Other: false
       }
     };
+  },
+
+  methods: {
+    handleSubmit() {
+      fetch("/", {})
+        .then(() => {
+          this.$router.push("thanks");
+        })
+        .catch(() => {
+          this.$router.push("404");
+        });
+    }
   }
 };
 </script>
