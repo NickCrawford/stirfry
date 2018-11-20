@@ -508,6 +508,10 @@ export default {
       this.handleScroll(e);
     });
   },
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll(0));
+    console.log("scrolling Destroyed");
+  },
 
   watch: {},
   methods: {
