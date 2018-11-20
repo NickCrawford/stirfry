@@ -24,7 +24,7 @@
         <label v-for="(service, key, index) in services" :key="index" class="checkbox">
           <input
             type="checkbox"
-            name="service"
+            name="services"
             :value="service"
             :checked="services[service]"
             v-model="services[key]"
