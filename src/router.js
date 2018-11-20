@@ -3,7 +3,11 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import About from "./views/About.vue";
 import FourOhFour from "./views/FourOhFour.vue";
-import Portfolio from "./views/Portfolio.vue";
+
+import Portfolio from "./views/Portfolio/Portfolio.vue";
+import SelloutTop from "./views/Portfolio/Sellout/SelloutTop.vue";
+import TheronTop from "./views/Portfolio/Theron/TheronTop.vue";
+
 
 Vue.use(Router);
 
@@ -11,9 +15,30 @@ export default new Router({
   mode: "history",
   routes: [
     {
+      path: "/",
+      redirect: "/home",
+    },
+    {
       path: "/portfolio",
       name: "portfolio",
-      component: Portfolio
+      component: Portfolio,
+      redirect: "/portfolio/sellout",
+      children: [
+        {
+          path: "sellout",
+          name: "sellout",
+          components: {
+            top: SelloutTop
+          }
+        },
+        {
+          path: "theron",
+          name: "theron",
+          components: {
+            top: TheronTop
+          }
+        }
+      ]
     },
     {
       path: "/",
