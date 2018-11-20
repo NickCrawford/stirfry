@@ -8,16 +8,11 @@ import Portfolio from "./views/Portfolio/Portfolio.vue";
 import SelloutTop from "./views/Portfolio/Sellout/SelloutTop.vue";
 import TheronTop from "./views/Portfolio/Theron/TheronTop.vue";
 
-
 Vue.use(Router);
 
 export default new Router({
   mode: "history",
   routes: [
-    {
-      path: "/",
-      redirect: "/home",
-    },
     {
       path: "/portfolio",
       name: "portfolio",
