@@ -21,12 +21,13 @@
         </label>
 
         <p class="section-label">Services Needed:</p>
-        <label v-for="(service, key, index) in form.services" :key="index" class="checkbox">
+        <label v-for="(service, key, index) in services" :key="index" class="checkbox">
           <input
             type="checkbox"
             name="service"
             :value="service"
-            :checked="form.services[service]"
+            :checked="services[service]"
+            v-model="services[key]"
           />
           <span>{{ key }}</span>
         </label>
@@ -61,16 +62,27 @@ export default {
         clientName: "",
         clientEmail: "",
         note: "",
-        services: {
-          "Web Design & Development": false,
-          "Branding & Creative Design": false,
-          "iOS or Android Development": false,
-          "Marketing Strategy": false,
-          "Social Media Marketing": false,
-          Other: false
-        }
+        services: ""
+      },
+      services: {
+        "Web Design & Development": false,
+        "Branding & Creative Design": false,
+        "iOS or Android Development": false,
+        "Marketing Strategy": false,
+        "Social Media Marketing": false,
+        Other: false
       }
     };
+  },
+
+  computed: {
+    servicesString() {
+      return Object.keys(this.services)
+        .map(key => {
+          if (this.services[key]) return key;
+        })
+        .join(",");
+    }
   },
 
   methods: {
@@ -83,6 +95,7 @@ export default {
     },
 
     handleSubmit() {
+      this.form.services = this.servicesString;
       fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },

@@ -487,6 +487,7 @@ export default {
       this.engine.runRenderLoop(() => {
         // this.handleDragging();  // TODO: Uncomment when we readd ingredients
         this.scene.render();
+        this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
       });
     };
 
@@ -495,21 +496,17 @@ export default {
       console.log("error while loading " + task.name);
     };
 
-    this.scene.afterRender = () => {
-      this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
-    };
+    this.scene.afterRender = () => {};
 
     window.addEventListener("resize", e => {
       this.engine.resize();
       this.handleMobileCameraView(e.target.innerWidth);
     });
 
-    window.addEventListener("scroll", e => {
-      this.handleScroll(e);
-    });
+    window.addEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
-    window.removeEventListener("scroll", this.handleScroll(0));
+    window.removeEventListener("scroll", this.handleScroll);
     console.log("scrolling Destroyed");
   },
 
@@ -1046,8 +1043,10 @@ export default {
       );
       let scrollContainer = document.getElementById("scroll-container"); //document.documentElement.scrollTop || document.body.scrollTop;
 
-      this.logoPosition.x = p.x;
-      this.logoPosition.y = p.y + scrollContainer.scrollTop; // uncomment to lock in place
+      if (scrollContainer) {
+        this.logoPosition.x = p.x;
+        this.logoPosition.y = p.y + scrollContainer.scrollTop; // uncomment to lock in place
+      }
     }
   }
 };
