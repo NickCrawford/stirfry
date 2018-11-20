@@ -755,6 +755,7 @@ export default {
 
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
+      this.assetsManager.useDefaultLoadingScreen = false;
     },
 
     initPointerEvents() {
