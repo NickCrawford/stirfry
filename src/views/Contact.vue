@@ -9,15 +9,15 @@
         data-netlify="true"
         data-netlify-honeypot="bot-field"
         @submit.prevent="handleSubmit">
-        <input type="hidden" name="form-name" value="ask-team-vue" />
+        <input type="hidden" name="form-name" value="client-interest-form" />
         <label class="stirfry-input">
           <span>Your Full Name:</span>
-          <input type="text" v-model="form.clientName" placeholder="Tony Stark" required>
+          <input type="text" name="clientName" v-model="form.clientName" placeholder="Tony Stark" required>
         </label>
 
         <label class="stirfry-input">
           <span>Your Email:</span>
-          <input type="email" v-model="form.clientEmail" placeholder="tony@starkindustries.com" required>
+          <input type="email" name="clientEmail" v-model="form.clientEmail" placeholder="tony@starkindustries.com" required>
         </label>
 
         <p class="section-label">Services Needed:</p>
@@ -33,7 +33,7 @@
 
         <label class="stirfry-input">
           <span>Leave Us a Note:</span>
-          <textarea v-model="form.note" rows="4" placeholder="This is a good place to tell us a little about you and your project..."></textarea>
+          <textarea v-model="form.note" name="note" rows="4" placeholder="This is a good place to tell us a little about you and your project..."></textarea>
         </label>
 
         <input type="submit" class="stirfry-button" value="Submit »">
