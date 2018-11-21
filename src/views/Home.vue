@@ -319,6 +319,7 @@ section * {
   min-height: 50vh;
 
   text-align: left;
+  color: $text-color;
 
   padding: 0 5vw;
 
@@ -470,6 +471,10 @@ export default {
   },
 
   mounted() {
+    if (window.navigator.userAgent.includes("Headless")) {
+      return;
+    }
+
     this.initEngine();
     this.scene = this.initScene();
     this.initAssetsManager();
@@ -766,6 +771,7 @@ export default {
 
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
+      this.engine.loadingUIText = "Loading Startup Stirfry...";
       // this.assetsManager.useDefaultLoadingScreen = false;
     },
 
