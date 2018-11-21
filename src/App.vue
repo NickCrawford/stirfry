@@ -1,12 +1,17 @@
 <template>
   <div id="app">
+    <header-bar></header-bar>
     <router-view/>
   </div>
 </template>
 
 <script>
+import HeaderBar from "@/components/HeaderBar";
+
 export default {
-  components: {}
+  components: {
+    HeaderBar
+  }
 };
 </script>
 
