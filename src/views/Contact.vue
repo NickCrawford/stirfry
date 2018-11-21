@@ -56,6 +56,17 @@
 export default {
   name: "Contact",
 
+  props: {
+    selectedItems: {
+      type: Object,
+      // Object or array defaults must be returned from
+      // a factory function
+      default: function() {
+        return {};
+      }
+    }
+  },
+
   data() {
     return {
       form: {
@@ -64,14 +75,7 @@ export default {
         note: "",
         services: ""
       },
-      services: {
-        "Web Design & Development": false,
-        "Branding & Creative Design": false,
-        "iOS or Android Development": false,
-        "Marketing Strategy": false,
-        "Social Media Marketing": false,
-        Other: false
-      }
+      services: {}
     };
   },
 
@@ -83,6 +87,10 @@ export default {
         })
         .join(",");
     }
+  },
+
+  mounted() {
+    this.services = this.setServices();
   },
 
   methods: {
@@ -110,6 +118,18 @@ export default {
         .catch(() => {
           this.$router.push("404");
         });
+    },
+
+    setServices() {
+      return {
+        "Web Design & Development": this.$props.selectedItems.web || false,
+        "Branding & Creative Design":
+          this.$props.selectedItems.branding || false,
+        "iOS or Android Development": this.$props.selectedItems.app || false,
+        "Marketing Strategy": this.$props.selectedItems.marketing || false,
+        "Social Media Marketing": this.$props.selectedItems.social || false,
+        Other: this.$props.selectedItems.other || false
+      };
     }
   }
 };

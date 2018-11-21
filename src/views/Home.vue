@@ -49,7 +49,7 @@
 
           <div class="finish-container">
             <transition name="fade" duration="800">
-              <router-link :to="{ name: 'contact' }" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
+              <router-link :to="{ name: 'contact', params: { selectedItems: selectedItems }}" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
             </transition>
           </div>
         </section>
@@ -159,7 +159,7 @@ section * {
 
   align-items: center;
 
-  color: #545454;
+  color: $text-color;
 }
 
 #headline .logo {
