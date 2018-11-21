@@ -32,7 +32,7 @@ body {
   padding: 0;
   text-align: center;
 
-  background-color: #d0cbc7;
+  background-color: $skin;
 
   font-family: ff-good-headline-web-pro, sans-serif;
   font-weight: 300;
@@ -46,10 +46,4 @@ body {
   width: 100%;
   // height: 100%;
 }
-
-// @media screen and (min-width: $md-bp) {
-//   body {
-
-//   }
-// }
 </style>
