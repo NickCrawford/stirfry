@@ -397,12 +397,12 @@ let materials = {
 };
 
 // Define the camera positions for the animation
-let cameraPosition1 = new BABYLON.Vector3(0, 22, -4.5),
+let cameraPosition1 = new BABYLON.Vector3(0, 20, 0),
   cameraPosition2 = new BABYLON.Vector3(0, 10, -15);
 
 // Define the rotations
 let cameraRotation1 = new BABYLON.Vector3(
-    Math.PI / 2 - 0.00001,
+     Math.PI / 2 - 0.00001,
     (-Math.PI * 3) / 8,
     0
   ),
@@ -474,15 +474,18 @@ export default {
     if (window.navigator.userAgent.includes("Headless")) {
       return;
     }
-
+    
     this.initEngine();
-    this.scene = this.initScene();
-    this.initAssetsManager();
-    this.initPan();
-    // this.initIngredients(); // TODO: Uncomment when we readd ingredients
-    this.initPointerEvents();
-    this.handleMobileCameraView(window.innerWidth);
-    this.handleScroll(0);
+    this.initScene();
+    
+    // this.initAssetsManager();
+    // this.initPan();
+    // this.initObjects();
+    //this.initIngredients(); // TODO: Uncomment when we readd ingredients
+    
+    // this.initPointerEvents(); // Done in initScene() now
+    // this.handleMobileCameraView(window.innerWidth);
+    
 
     // Init materials
     for (const mat in materials) {
@@ -496,6 +499,8 @@ export default {
     // Can now change loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
 
+
+/*
     // Just call load to initiate the loading sequence
     this.assetsManager.load();
 
@@ -508,14 +513,12 @@ export default {
         this.scene.render();
         this.setLogoPosition(); // Find the position of the pan so we can transform the wordmark over it
       });
-    };
+    }; 
 
     // But you can also do it on the assets manager itself (onTaskSuccess, onTaskError)
     this.assetsManager.onTaskError = function(task) {
       console.log("error while loading " + task.name);
-    };
-
-    this.scene.afterRender = () => {};
+    };*/
 
     window.addEventListener("resize", e => {
       this.engine.resize();
@@ -614,7 +617,7 @@ export default {
       // Get the canvas DOM element
       this.canvas = document.getElementById("renderCanvas");
 
-      // Load the 3D engine
+      // Load the 3d engine
       this.engine = new BABYLON.Engine(this.canvas, true, {
         preserveDrawingBuffer: true,
         stencil: true
@@ -622,28 +625,78 @@ export default {
     },
 
     initScene() {
-      let scene = new BABYLON.Scene(this.engine);
+      var vm = this;
+        // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
+      BABYLON.SceneLoader.Load("./assets/models/pan_scene/", "pan_scene.babylon", this.engine, function (scene) {
 
-      scene.ambientColor = new BABYLON.Color3(1, 1, 1);
-      scene.clearColor = colors.skin;
+        vm.scene = scene;
+        // var camera = new BABYLON.UniversalCamera(
+        //   "Camera",
+        //   cameraPosition1,
+        //   vm.scene
+        // );  
+        // camera.rotation.x = cameraRotation1.x;
+        // camera.rotation.y = cameraRotation1.y;
+        var camera = scene.activeCamera; // Fetching camera from blender
 
-      var camera = new BABYLON.UniversalCamera(
-        "Camera",
-        cameraPosition1,
-        scene
-      );
+        //camera.attachControl(vm.canvas, false); // Allows user to move camera with mouse
+
+        vm.scene.clearColor = colors.skin;
+        vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+
+        vm.engine.runRenderLoop(function() {
+            scene.render();
+        });
+
+        window.addEventListener("resize", function () {
+            vm.engine.resize();
+        });
+
+        // Highlight layer for selecting items
+        let hl = new BABYLON.HighlightLayer("hl", vm.scene);
+        hl.innerGlow = false;
+        hl.blurHorizontalSize = 2;
+        hl.blurVerticalSize = 2;
+        vm.hl = hl;
+
+        // Physics
+        vm.scene.enablePhysics();
+        vm.scene.debugLayer.show({
+    overlay:true, 
+});
+        console.log(vm.scene.debugLayer);
+
+        // var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
+
+
+        //
+        vm.initPointerEvents();
+
+        vm.handleScroll(0);
+      });
+
+      
+    
+      return;
+
+
+      // let scene = new BABYLON.Scene(this.engine);
+
+      // scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+      // scene.clearColor = colors.skin;
+
+      // var camera = new BABYLON.UniversalCamera(
+      //   "Camera",
+      //   cameraPosition1,
+      //   scene
+      // );
       //new BABYLON.FreeCamera("Camera", cameraPosition1, scene);
       // camera.attachControl(this.canvas, true);
       // camera.lockedTarget = new BABYLON.Vector3(0, 0, 0);
-      camera.rotation.x = cameraRotation1.x;
-      camera.rotation.y = cameraRotation1.y;
+      // camera.rotation.x = cameraRotation1.x;
+      // camera.rotation.y = cameraRotation1.y;
 
-      // Highlight layer for selecting items
-      let hl = new BABYLON.HighlightLayer("hl", scene);
-      hl.innerGlow = false;
-      hl.blurHorizontalSize = 2;
-      hl.blurVerticalSize = 2;
-      this.hl = hl;
+      
 
       // Light direction is up and left
       // var light = new BABYLON.HemisphericLight(
@@ -1033,6 +1086,15 @@ export default {
         // // panMat.backFaceCulling = false;
         // pepper.material = materials.green;
       };
+    },
+
+    initObjects() {
+      BABYLON.SceneLoader.Append("./assets/models/donut/", 
+      "donut.babylon", 
+      this.scene, 
+      function (scene) {
+        // do something with the scene
+      });
     },
 
     initPhysicsGravityField() {

@@ -25,7 +25,7 @@
         </flickity>
       </div>
     </div>
-
+    <router-link name="case-study"></router-link>
   </div>
 </template>
 
