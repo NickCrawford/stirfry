@@ -167,7 +167,7 @@ section * {
   top: 50%;
   left: 50%;
   /* transform: translate(77.5%, 44.6%); */
-  transform: translate(-83.5%, -40%);
+  transform: translate(-55%, -130%);
 
   width: auto;
   height: 4.65vh;
@@ -316,6 +316,8 @@ section * {
   justify-items: start;
   align-content: start;
 
+  // background: $green;
+
   min-height: 50vh;
 
   text-align: left;
@@ -431,6 +433,18 @@ export default {
         pepper: null
       },
 
+      // Clickable, draggable objects:
+      ingredients: {
+        redPepper: null,
+        greenPepper: null
+      },
+
+      // Immobile objects
+      staticObjects: {
+        table: null,
+        backWall: null,
+      },
+
       //// The selected items/services a user has clicked on
       selectedItems: {
         web: false,
@@ -475,8 +489,18 @@ export default {
       return;
     }
     
-    this.initEngine();
-    this.initScene();
+    // 
+    this.initEngine();    // Loads canvas & render engine 
+    this.initScene();     // Loads assets, calls other functions on completion
+
+    // Loading background color:
+    this.engine.loadingUIBackgroundColor = "#F5D6BA";
+
+    window.addEventListener("resize", e => {
+      this.engine.resize();
+      this.handleMobileCameraView(e.target.innerWidth);
+    });
+
     
     // this.initAssetsManager();
     // this.initPan();
@@ -485,21 +509,6 @@ export default {
     
     // this.initPointerEvents(); // Done in initScene() now
     // this.handleMobileCameraView(window.innerWidth);
-    
-
-    // Init materials
-    for (const mat in materials) {
-      if (materials.hasOwnProperty(mat)) {
-        const element = materials[mat];
-        materials[mat] = new BABYLON.StandardMaterial(`${mat}`, this.scene);
-        materials[mat].ambientColor = colors[mat];
-      }
-    }
-
-    // Can now change loading background color:
-    this.engine.loadingUIBackgroundColor = "#F5D6BA";
-
-
 /*
     // Just call load to initiate the loading sequence
     this.assetsManager.load();
@@ -520,12 +529,6 @@ export default {
       console.log("error while loading " + task.name);
     };*/
 
-    window.addEventListener("resize", e => {
-      this.engine.resize();
-      this.handleMobileCameraView(e.target.innerWidth);
-    });
-
-    window.addEventListener("scroll", this.handleScroll);
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
@@ -625,27 +628,25 @@ export default {
     },
 
     initScene() {
-      var vm = this;
+
+      var vm = this;  // This is important! Using `this` in the following callback function won't work,
+                      // use `vm` instead.
+
         // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
       BABYLON.SceneLoader.Load("./assets/models/pan_scene/", "pan_scene.babylon", this.engine, function (scene) {
 
-        vm.scene = scene;
-        // var camera = new BABYLON.UniversalCamera(
-        //   "Camera",
-        //   cameraPosition1,
-        //   vm.scene
-        // );  
-        // camera.rotation.x = cameraRotation1.x;
-        // camera.rotation.y = cameraRotation1.y;
-        var camera = scene.activeCamera; // Fetching camera from blender
+        vm.scene = scene; 
+
+        var camera = scene.activeCamera; // Fetching camera from our blender file
 
         //camera.attachControl(vm.canvas, false); // Allows user to move camera with mouse
 
-        vm.scene.clearColor = colors.skin;
-        vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+        vm.scene.clearColor = colors.skin;    // Scene bg color
+        vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);  // Makes our flat colors appear brightly
 
         vm.engine.runRenderLoop(function() {
             scene.render();
+            vm.setLogoPosition();
         });
 
         window.addEventListener("resize", function () {
@@ -662,17 +663,29 @@ export default {
         // Physics
         vm.scene.enablePhysics();
         vm.scene.debugLayer.show({
-    overlay:true, 
-});
+          overlay:true, 
+        });
         console.log(vm.scene.debugLayer);
 
-        // var light = new BABYLON.HemisphericLight("HemiLight", new BABYLON.Vector3(0, 1, 0), scene);
 
+        // Let's add physics properties to all our objects!
 
-        //
+        vm.addIngredientPhysics('redPepper');
+        vm.addIngredientPhysics('greenPepper');
+
+        vm.addStaticPhysics('table');
+        vm.addStaticPhysics('backWall');
+
+        // Adding ability to select things
         vm.initPointerEvents();
 
+
+
+
+
+        // setting up scroll handler
         vm.handleScroll(0);
+        window.addEventListener("scroll", vm.handleScroll);
       });
 
       
@@ -822,6 +835,34 @@ export default {
       return scene;
     },
 
+    // Adds physics to an ingredient. This will allow the user to select the ingredient
+    // and move it around!
+    addIngredientPhysics(id) {
+      this.ingredients[id] = this.scene.getMeshByID(id);
+      console.log("Adding " + id, this.ingredients[id]);
+
+      this.ingredients[id].physicsImpostor = new BABYLON.PhysicsImpostor(
+        this.ingredients[id],
+        BABYLON.PhysicsImpostor.CylinderImpostor,
+        { mass: 1, restitution: 0.2 },
+        this.scene
+      );
+    },
+
+    // Adds solid, static physics to an object
+    addStaticPhysics(id) {
+      this.staticObjects[id] = this.scene.getMeshByID(id);
+      console.log("Adding " + id, this.staticObjects[id]);
+
+      this.staticObjects[id].physicsImpostor = new BABYLON.PhysicsImpostor(
+        this.staticObjects[id],
+        BABYLON.PhysicsImpostor.BoxImpostor,
+        { mass: 0 },
+        this.scene
+      );
+    },
+
+    // No longer used!
     initAssetsManager() {
       this.assetsManager = new BABYLON.AssetsManager(this.scene);
       this.engine.loadingUIText = "Loading Startup Stirfry...";
@@ -851,7 +892,13 @@ export default {
         this.scene.pointerX,
         this.scene.pointerY,
         mesh => {
-          return mesh == this.veggies.pepper; // Only let veggies be selected
+          // Only lets us select from our ingredients
+          for (var index in this.ingredients) {
+            if (mesh == this.ingredients[index]) {
+              return true;
+            }
+          }
+          return false;
         }
       );
       if (pickInfo.hit) {
@@ -869,7 +916,7 @@ export default {
 
     onPointerMove(evt) {
       // if the cursor moves far enough away from the starting point,
-      //we need to determine that the user is dragging the object instead of clicking
+      // we need to determine that the user is dragging the object instead of clicking
       if (this.startingClickPoint) {
         let currentPoint = new BABYLON.Vector2(
           this.scene.pointerX,
