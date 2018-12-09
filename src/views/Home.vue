@@ -5,6 +5,8 @@
         <p>{{ selectedItems }}</p>
         <p>{{ scrollProgress }}</p>
       </div>
+
+      <div id="babylonDebugger"></div>
       <canvas id="renderCanvas"></canvas>
       
       <!-- Hints users to continue scrolling -->
@@ -436,7 +438,11 @@ export default {
       // Clickable, draggable objects:
       ingredients: {
         redPepper: null,
-        greenPepper: null
+        greenPepper: null,
+        tofu1: null,
+        tofu2: null,
+        tofu3: null,
+        tofu4: null,
       },
 
       // Immobile objects
@@ -662,25 +668,32 @@ export default {
 
         // Physics
         vm.scene.enablePhysics();
-        vm.scene.debugLayer.show({
-          overlay:true, 
-        });
-        console.log(vm.scene.debugLayer);
+        
 
 
         // Let's add physics properties to all our objects!
 
-        vm.addIngredientPhysics('redPepper');
-        vm.addIngredientPhysics('greenPepper');
+        const ingredientIds = ['redPepper', 'greenPepper', 'tofu1', 'tofu2', 'tofu3', 'tofu4']
+
+        for (var id in ingredientIds) {
+          vm.addIngredientPhysics(ingredientIds[id]);
+        }
 
         vm.addStaticPhysics('table');
         vm.addStaticPhysics('backWall');
+        vm.addStaticPhysics('pan');
+        vm.addStaticPhysics('cuttingBoard');
 
         // Adding ability to select things
         vm.initPointerEvents();
 
 
-
+        console.log("um are we getting here?");
+        scene.debugLayer.show({
+          overlay:false, 
+          globalRoot:document.getElementById('#babylonDebugger')
+        });
+        console.log(vm.scene.debugLayer);
 
 
         // setting up scroll handler
@@ -839,7 +852,6 @@ export default {
     // and move it around!
     addIngredientPhysics(id) {
       this.ingredients[id] = this.scene.getMeshByID(id);
-      console.log("Adding " + id, this.ingredients[id]);
 
       this.ingredients[id].physicsImpostor = new BABYLON.PhysicsImpostor(
         this.ingredients[id],
@@ -852,7 +864,6 @@ export default {
     // Adds solid, static physics to an object
     addStaticPhysics(id) {
       this.staticObjects[id] = this.scene.getMeshByID(id);
-      console.log("Adding " + id, this.staticObjects[id]);
 
       this.staticObjects[id].physicsImpostor = new BABYLON.PhysicsImpostor(
         this.staticObjects[id],
@@ -903,6 +914,7 @@ export default {
       );
       if (pickInfo.hit) {
         this.currentMesh = pickInfo.pickedMesh;
+        console.warn(this.currentMesh);
         this.hl.addMesh(this.currentMesh, colors.highlightColor);
       }
 
@@ -1077,6 +1089,7 @@ export default {
       };
     },
 
+    // No longer used!
     initIngredients() {
       // BABYLON.SceneLoader.Append(
       //   "./assets/models/",
