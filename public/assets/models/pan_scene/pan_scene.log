@@ -10,10 +10,20 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		Mat Weight Precision:  2
 		texture directory   :  /Users/benholland/github.com/stirfry/public/assets/models/pan_scene/
 	Python World class constructor completed
+	processing begun of mesh:  table.001
+		processing begun of Standard material:  Skin Table
+		processing begun of Standard material:  skin table darker
+		processing begun of multimaterial:  pan_scene.Multimaterial#0
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
 	processing begun of mesh:  tofu4
 		processing begun of Standard material:  tofuMain
 		processing begun of Standard material:  tofuShading
-		processing begun of multimaterial:  pan_scene.Multimaterial#0
+		processing begun of multimaterial:  pan_scene.Multimaterial#1
 		num positions      :  14
 		num normals        :  14
 		num uvs            :  0
@@ -21,11 +31,35 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  36
 	processing begun of mesh:  tofu3
-		mesh is an instance of :  tofu4.  Processing halted.
+		registered as also a user of material:  tofuMain
+		registered as also a user of material:  tofuShading
+		processing begun of multimaterial:  pan_scene.Multimaterial#2
+		num positions      :  14
+		num normals        :  14
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  36
 	processing begun of mesh:  tofu2
-		mesh is an instance of :  tofu4.  Processing halted.
+		registered as also a user of material:  tofuMain
+		registered as also a user of material:  tofuShading
+		processing begun of multimaterial:  pan_scene.Multimaterial#3
+		num positions      :  14
+		num normals        :  14
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  36
 	processing begun of mesh:  tofu1
-		mesh is an instance of :  tofu4.  Processing halted.
+		registered as also a user of material:  tofuMain
+		registered as also a user of material:  tofuShading
+		processing begun of multimaterial:  pan_scene.Multimaterial#4
+		num positions      :  14
+		num normals        :  14
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  36
 	processing begun of mesh:  backWall
 		processing begun of Standard material:  Material
 		num positions      :  4
@@ -35,7 +69,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		num colors         :  0
 		num indices        :  6
 	processing begun of mesh:  table
-		processing begun of Standard material:  Skin Table
+		registered as also a user of material:  Skin Table
 		num positions      :  4
 		num normals        :  4
 		num uvs            :  0
@@ -45,7 +79,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 	processing begun of mesh:  pan
 		processing begun of Standard material:  Material.006
 		processing begun of Standard material:  pan bottom
-		processing begun of multimaterial:  pan_scene.Multimaterial#1
+		processing begun of multimaterial:  pan_scene.Multimaterial#5
 		num positions      :  5594
 		num normals        :  5594
 		num uvs            :  0
@@ -56,7 +90,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 	processing begun of mesh:  plate
 		processing begun of Standard material:  plate light
 		processing begun of Standard material:  plate darker
-		processing begun of multimaterial:  pan_scene.Multimaterial#2
+		processing begun of multimaterial:  pan_scene.Multimaterial#6
 		num positions      :  9858
 		num normals        :  9858
 		num uvs            :  0
@@ -67,7 +101,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Green Cup Outside
 		processing begun of Standard material:  Green cup inside
 		processing begun of Standard material:  Green cup bottom
-		processing begun of multimaterial:  pan_scene.Multimaterial#3
+		processing begun of multimaterial:  pan_scene.Multimaterial#7
 		num positions      :  17481
 		num normals        :  17481
 		num uvs            :  0
@@ -77,7 +111,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 	processing begun of mesh:  saltShaker
 		processing begun of Standard material:  salt shaker base
 		processing begun of Standard material:  shaker cap
-		processing begun of multimaterial:  pan_scene.Multimaterial#4
+		processing begun of multimaterial:  pan_scene.Multimaterial#8
 		num positions      :  118892
 		num normals        :  118892
 		num uvs            :  0
@@ -87,7 +121,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 	processing begun of mesh:  pepperShaker
 		processing begun of Standard material:  pepper shaker  base
 		processing begun of Standard material:  shaker cap.001
-		processing begun of multimaterial:  pan_scene.Multimaterial#5
+		processing begun of multimaterial:  pan_scene.Multimaterial#9
 		num positions      :  118892
 		num normals        :  118892
 		num uvs            :  0
@@ -96,8 +130,10 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		num indices        :  710976
 	processing begun of mesh:  cuttingBoard
 		processing begun of Standard material:  cutting board
-		num positions      :  4608
-		num normals        :  4608
+		processing begun of Standard material:  cutting board shading
+		processing begun of multimaterial:  pan_scene.Multimaterial#10
+		num positions      :  4824
+		num normals        :  4824
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
@@ -108,7 +144,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.005
 		processing begun of Standard material:  Material.000
 		processing begun of Standard material:  Material.007
-		processing begun of multimaterial:  pan_scene.Multimaterial#6
+		processing begun of multimaterial:  pan_scene.Multimaterial#11
 		num positions      :  13058
 		num normals        :  13058
 		num uvs            :  0
@@ -121,7 +157,7 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.010
 		processing begun of Standard material:  Material.009
 		processing begun of Standard material:  Material.008
-		processing begun of multimaterial:  pan_scene.Multimaterial#7
+		processing begun of multimaterial:  pan_scene.Multimaterial#12
 		num positions      :  13058
 		num normals        :  13058
 		num uvs            :  0
@@ -147,4 +183,4 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 26.0365 secs
+elapsed time:  0 min, 26.2841 secs

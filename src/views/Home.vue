@@ -673,12 +673,19 @@ export default {
 
         // Let's add physics properties to all our objects!
 
-        const ingredientIds = ['redPepper', 'greenPepper', 'tofu1', 'tofu2', 'tofu3', 'tofu4']
+        const ingredientIds = [
+          'redPepper', 
+          'greenPepper', 
+          'tofu1', 
+          'tofu2', 
+          'tofu3', 
+          'tofu4']
 
         for (var id in ingredientIds) {
           vm.addIngredientPhysics(ingredientIds[id]);
         }
 
+        const staticObjectIds = []
         vm.addStaticPhysics('table');
         vm.addStaticPhysics('backWall');
         vm.addStaticPhysics('pan');
@@ -688,12 +695,10 @@ export default {
         vm.initPointerEvents();
 
 
-        console.log("um are we getting here?");
         scene.debugLayer.show({
           overlay:false, 
           globalRoot:document.getElementById('#babylonDebugger')
         });
-        console.log(vm.scene.debugLayer);
 
 
         // setting up scroll handler
@@ -914,7 +919,7 @@ export default {
       );
       if (pickInfo.hit) {
         this.currentMesh = pickInfo.pickedMesh;
-        console.warn(this.currentMesh);
+        console.log(this.currentMesh);
         this.hl.addMesh(this.currentMesh, colors.highlightColor);
       }
 
@@ -948,7 +953,13 @@ export default {
           this.scene.pointerX,
           this.scene.pointerY,
           mesh => {
-            return mesh == this.veggies.pepper; // Only let veggies be selected
+          // Only lets us select from our ingredients
+          for (var index in this.ingredients) {
+            if (mesh == this.ingredients[index]) {
+              return true;
+            }
+          }
+          return false; 
           }
         );
         if (pickInfo.hit && pickInfo.pickedMesh) {
