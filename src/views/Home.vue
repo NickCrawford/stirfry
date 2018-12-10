@@ -27,12 +27,12 @@
 
         
         <section id="about" :class="{ 'hidden': scrollProgress <= scrollBreakPoint.about  }">
-            <h1>Cooking up delicious design</h1>
+          <h1>Cooking up delicious design</h1>
 
-            <div class="subheader">
-              <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
-              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
-            </div>
+          <div class="subheader">
+            <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
+            <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
+          </div>
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
@@ -42,12 +42,20 @@
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
           </div>
 
+          <!--
           <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
           <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
           <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
           <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
           <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
           <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
+          -->
+
+          <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
+          <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
+          <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
+          <checkbox-item v-model="selectedItems.marketing">Marketing & Social Media</checkbox-item>
+
 
           <div class="finish-container">
             <transition name="fade" duration="800">
@@ -336,6 +344,7 @@ section * {
   }
 }
 
+
 #about h1 {
   margin-bottom: 0;
 }
@@ -471,7 +480,7 @@ export default {
       scrollBreakPoint: {
         headline: 0.05,
         about: 0.2,
-        selection: 0.75
+        selection: 0.90
       }
     };
   },
@@ -510,7 +519,6 @@ export default {
     
     // this.initAssetsManager();
     // this.initPan();
-    // this.initObjects();
     //this.initIngredients(); // TODO: Uncomment when we readd ingredients
     
     // this.initPointerEvents(); // Done in initScene() now
@@ -679,13 +687,19 @@ export default {
           'tofu1', 
           'tofu2', 
           'tofu3', 
-          'tofu4']
+          'tofu4',
+        ];
 
         for (var id in ingredientIds) {
           vm.addIngredientPhysics(ingredientIds[id]);
         }
 
-        const staticObjectIds = []
+        const staticObjectIds = [
+          'table', 
+          'backWall', 
+          'pan', 
+          'cuttingBoard',
+        ];
         vm.addStaticPhysics('table');
         vm.addStaticPhysics('backWall');
         vm.addStaticPhysics('pan');
@@ -1159,14 +1173,6 @@ export default {
       };
     },
 
-    initObjects() {
-      BABYLON.SceneLoader.Append("./assets/models/donut/", 
-      "donut.babylon", 
-      this.scene, 
-      function (scene) {
-        // do something with the scene
-      });
-    },
 
     initPhysicsGravityField() {
       // Gravity field for ingredients in the pan
