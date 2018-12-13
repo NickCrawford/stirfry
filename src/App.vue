@@ -25,7 +25,7 @@ export default {
 
 html,
 body {
-  overflow-y: auto;
+  // overflow-y: auto;
   width: 100%;
   height: auto;
   margin: 0;

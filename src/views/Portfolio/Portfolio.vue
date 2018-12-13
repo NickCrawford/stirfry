@@ -1,296 +1,265 @@
 <template>
-  <div id="portfolio-and-studies">
-    <div id="portfolio">
-      <div id="portfolio-top"
-        :class="[ $route.name + '-top']">
-        <!-- Loads in a logo and brief description of the project -->
-        <router-view name="top"></router-view>
-      </div>
-      
-      <div id="portfolio-showcase">
-        <div class="project-label"
-          :class="[ $route.name + '-label']">
-          <span>Website Design</span>
+  <div id="portfolio-page">
+    <div class="space">Try to scroll down! :)</div>
+
+    <section class="portfolio-container">
+      <div class="flex-row">
+        <div class="image-container">
+          <div class="image-offset">
+            <div class="portfolio-images">
+              <div
+                class="portfolio-image-animation"
+                style="transform: translate(0%, -100%) matrix(1, 0, 0, 1, 0, 0);"
+              ></div>
+              <div class="portfolio-image" style="z-index: 1;">
+                <img
+                  src="https://uploads.codesandbox.io/uploads/user/41ceb113-e589-40de-ae64-60f07fc72bcc/1Y95-2.png"
+                  class="img"
+                  alt
+                >
+              </div>
+              <div class="portfolio-image" style="z-index: 1;">
+                <img
+                  src="https://uploads.codesandbox.io/uploads/user/41ceb113-e589-40de-ae64-60f07fc72bcc/WpSi-3.png"
+                  class="img"
+                  alt
+                >
+              </div>
+            </div>
+          </div>
         </div>
-        <flickity ref="showcase-flickity" :options="flickityOptions" id="flickity-container"
-          v-on:init="doSomething()">
-          <div class="portfolio-image-container">
-            <img src="@/assets/images/sellout/sellout_phone.svg" class="phone-image">
-            <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+        <div class="portfolio-text-container">
+          <div class="text-content" id="itemA">
+            <div class="text-content-inner">
+              <div>
+                <h1 class="heading">Nulla</h1>
+                <p
+                  class="description"
+                >Nulla ac ultrices lectus. Nam lacinia elit sit amet turpis porttitor, in gravida purus consectetur. Praesent viverra nisl nec lobortis facilisis. Nunc nibh mi, tincidunt id tempor vel, aliquam eu urna.</p>
+              </div>
+            </div>
           </div>
-          <div class="portfolio-image-container">
-            <img src="@/assets/images/theron/theron_phone.svg" class="phone-image">
-            <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
+          <div class="text-content" id="itemB">
+            <div class="text-content-inner">
+              <div>
+                <h1 class="heading">Etiam</h1>
+                <p
+                  class="description"
+                >Sed non eleifend orci. Etiam ut quam vitae ligula sagittis sagittis. Duis ac metus at elit convallis lobortis. In hac habitasse platea dictumst. Praesent vel ligula leo.</p>
+              </div>
+            </div>
           </div>
-        </flickity>
+        </div>
       </div>
-    </div>
-    <router-link name="case-study"></router-link>
+    </section>
+
+    <div class="space">This is the end of our adventure</div>
   </div>
 </template>
 
 <script>
-import Flickity from 'vue-flickity';
-
 export default {
   data() {
     return {
-      flickityOptions: {
-        initialIndex: 3,
-        prevNextButtons: true,
-        pageDots: false,
-        wrapAround: true,
-        
-        // any options from Flickity can be used
-      },
-
-      showcaseRoutes: [
-        'sellout',
-        'theron'
-      ]
-    }
+      projects: [{}, {}, {}, {}]
+    };
   },
-  components: {
-    Flickity
-  },
-  methods: {
-    next() {
-      this.$refs['showcase-flickity'].next();
-    },
-    
-    previous() {
-      this.$refs['showcase-flickity'].previous();
-    },
-    doSomething() {
-      console.log("Initiated listener!!");
-      
-      var vm = this;
-
-      this.$refs['showcase-flickity'].select( this.showcaseRoutes.indexOf(this.$route.name) );
-
-      this.$refs['showcase-flickity'].on( 'select', function( index ) {
-        vm.$router.push({ name: vm.showcaseRoutes[index] });
-      });
-    }
-  }
-}
+  components: {},
+  methods: {}
+};
 </script>
+
+<style lang="scss">
+</style>
+
 
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
 
-/* The entire page, setting up grid: */
-#portfolio {
-  background: $background;
+.portfolio-container {
+  margin: 0 auto;
+  padding-left: 30px;
+  padding-right: 30px;
+  max-width: 1320px;
+  position: relative;
+}
+@media (min-width: 420px) {
+  .portfolio-container {
+    max-width: 1350px;
+  }
+}
+@media (min-width: 720px) {
+  .portfolio-container {
+    padding-left: 50px;
+    padding-right: 50px;
+    max-width: 1390px;
+  }
+}
+@media (min-width: 1080px) {
+  .portfolio-container {
+    padding-left: 70px;
+    padding-right: 70px;
+    max-width: 1430px;
+  }
+}
+
+.portfolio-navigation {
+  position: absolute;
+  top: 150px;
+  bottom: 0;
+  right: 70px;
+  z-index: 2;
+}
+
+.navigation-buttons {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  .navigation-buttons {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    flex-direction: column;
+    position: sticky;
+    top: 150px;
+  }
+}
+
+.navigation-button {
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-style: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  margin-bottom: 30px;
+  cursor: pointer;
+  transition: color 200ms ease-in-out;
+}
+.navigation-button:focus {
+  outline: none;
+}
+.navigation-button.isActive {
+  color: #ab80ff;
+}
+
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  margin-left: -15px;
+  margin-right: -15px;
+  flex-direction: row;
+}
+
+.image-container {
+  flex: none;
+  align-self: stretch;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 41.66667%;
+}
+
+.image-offset {
+  margin-left: -30px;
+  position: sticky;
+  top: 0;
   height: 100vh;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: 40% 60%;
   overflow: hidden;
 }
-
-/* Text styling for this page: */
-h1 {
-  font-weight: normal;
-  font-size: 3em;
-  margin-top: 30px;
-  position: relative; 
-  z-index: 10;
+@media (min-width: 720px) {
+  .image-offset {
+    margin-left: -50px;
+  }
 }
-p {
-  opacity: 0.5;
-  z-index: 10;
+@media (min-width: 1080px) {
+  .image-offset {
+    margin-left: -70px;
+  }
+}
+@media (min-width: 1430px) {
+  .image-offset {
+    margin-left: calc((100vw - 1290px) / -2);
+  }
+}
+
+.portfolio-images {
   position: relative;
-}
-
-/* Portfolio descriptions, on the top on mobile/left on desktop: */
-
-.sellout-top::after {
-  background: $sellout-navy;
-}
-
-.theron-top::after {
-  background-color: $theron-gray;
-}
-#portfolio-top {
-  color: white;
-  grid-column: 1/3;
-  position: relative;
-  z-index: 1;
-  transition-duration: 1s;
-}
-#portfolio-top::after {
-  content: "";
-  position: absolute;
-  left: -10%;
-  bottom: -15%;
-  width: 140%;
-  height: 500px;
-  transform: rotate(12deg);
-  box-shadow: $box-shading-heavy;
-  z-index: 0;
-  transition-duration: 1s;
-}
-
-/* Flickity container for portfolio: */
-#portfolio-showcase {
-  position: relative;
-  grid-column: 1/3;
-  grid-row: 2 /3;
-}
-
-.project-label {
-  padding: 10px 200px 10px 25px;
-  color: white;
-  transition-duration: .5s;
-  position: absolute;
-  font-weight: bold;
-  left: 5%;
-  top: 40px;
-  box-shadow: $box-shading;
-  transform: skewx(-20deg);
-  
-  display: none;
-  animation: label-pop-in .5s linear;
-}
-span {
-  display: block;
-  transform: skewx(200deg);
-}
-.sellout-label {
-  background: $blue;
-}
-.theron-label {
-  background: $red;
-}
-
-/* Flickity container, obviously: */
-#flickity-container {
-
-  position: relative;
+  width: 100%;
   height: 100%;
-  width: 90%;
-  margin: 0 auto;
-
-  grid-column: 2/3;
-  grid-row: 1/3;
 }
 
-
-/* Image containers themselves, inside flickity: */
-.portfolio-image-container {
-  position: relative;
-  min-width: 200px;
-  min-height: 200px;
-  width: 50%;
+.portfolio-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  animation: floatin .5s linear;
-  margin: 0px 200px;
-
-  img {
-    transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
-  }
 }
 
-/* Images: */
-.phone-image {
+.portfolio-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.portfolio-image-animation {
   position: absolute;
-  width: 60%;
-  max-width: 230px;
-  z-index: 11;
-  left: 52%;
-  top: 55%;
-  margin-top: -10px;
-  margin-left: -10px;
-  /*animation: phonefloat 10s  infinite;*/
-  opacity: 1;
-}
-.phone-shadow {
-  position: absolute;
-  width: 67%;
-  max-width: 250px;
-  left: 54%;
-  top: 55%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  background-color: #ab80ff;
+  transform: translateY(-100%);
+  will-change: transform;
 }
 
-@media only screen and (min-width: 600px) {
-  #portfolio-top {
-    grid-column: 1/2;
-    grid-row: 1/3;
-    background: none;
+.portfolio-text-container {
+  flex: none;
+  align-self: stretch;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 58.33333%;
+}
+@media (min-width: 720px) {
+  .portfolio-text-container {
+    flex: none;
+    align-self: stretch;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 50%;
+    margin-left: 8.33333%;
   }
-  #portfolio-top::after {
-    content: "";
-    position: absolute;
-    left: auto;
-    right: 0px;
-    height: 140vh;
-    top: -20vh;
-    width: 1000px;
-    transform: rotate(12deg);
-    z-index: 0;
-  }
-  .project-label {
-    padding: 10px 25px 10px 100px;
-    display: block;
-  }
+}
 
-  #portfolio-showcase {
-    grid-column: 2/3;
-    grid-row: 1 /3;
-  }
-
-  .portfolio-image-container {
+.text-content {
+  position: relative;
+  min-height: 100vh;
+}
+@media (min-width: 720px) {
+  .text-content {
     height: 100vh;
-  } 
-
-  .phone-image {
-    width: 80%;
-  }
-  .phone-shadow {
-    width: 87%;
-  }
-  
-
-  .portfolio-images {
-    
-    padding-top: 100px;
-    position: relative;
-
-    img {
-      
-      transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
-    }
   }
 }
-
-@keyframes phonefloat {
-  0% {
-    margin-top: -10px;
-    margin-left: -10px;
-  } 50% {
-    margin-top: -20px;
-    margin-left: -20px;
-  } 100% {
-    margin-top: -10px;
-    margin-left: -10px;
-  }
+.text-content-inner {
+  position: absolute;
+  bottom: 10vh;
 }
 
-@keyframes label-pop-in {
-  0% {
-    left: -200px;
-  } 75% {
-    left: 20px;
-  } 100% {
-    left: 0px;
-  }
+/* For testing */
+.space {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  text-align: center;
+  border-bottom: 1px solid red;
 }
-</style>
-
-<style>
-.flickity-viewport {
-    overflow: visible;
-  }
 </style>
