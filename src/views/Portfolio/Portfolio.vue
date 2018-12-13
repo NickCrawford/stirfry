@@ -4,6 +4,29 @@
 
     <section class="portfolio-container">
       <div class="flex-row">
+        <div class="portfolio-text-container">
+          <div class="text-content" id="itemA">
+            <div class="text-content-inner">
+              <div>
+                <h1 class="heading">Nulla</h1>
+                <p
+                  class="description"
+                >Nulla ac ultrices lectus. Nam lacinia elit sit amet turpis porttitor, in gravida purus consectetur. Praesent viverra nisl nec lobortis facilisis. Nunc nibh mi, tincidunt id tempor vel, aliquam eu urna.</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-content" id="itemB">
+            <div class="text-content-inner">
+              <div>
+                <h1 class="heading">Etiam</h1>
+                <p
+                  class="description"
+                >Sed non eleifend orci. Etiam ut quam vitae ligula sagittis sagittis. Duis ac metus at elit convallis lobortis. In hac habitasse platea dictumst. Praesent vel ligula leo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="image-container">
           <div class="image-offset">
             <div class="portfolio-images">
@@ -24,28 +47,6 @@
                   class="img"
                   alt
                 >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-text-container">
-          <div class="text-content" id="itemA">
-            <div class="text-content-inner">
-              <div>
-                <h1 class="heading">Nulla</h1>
-                <p
-                  class="description"
-                >Nulla ac ultrices lectus. Nam lacinia elit sit amet turpis porttitor, in gravida purus consectetur. Praesent viverra nisl nec lobortis facilisis. Nunc nibh mi, tincidunt id tempor vel, aliquam eu urna.</p>
-              </div>
-            </div>
-          </div>
-          <div class="text-content" id="itemB">
-            <div class="text-content-inner">
-              <div>
-                <h1 class="heading">Etiam</h1>
-                <p
-                  class="description"
-                >Sed non eleifend orci. Etiam ut quam vitae ligula sagittis sagittis. Duis ac metus at elit convallis lobortis. In hac habitasse platea dictumst. Praesent vel ligula leo.</p>
               </div>
             </div>
           </div>
@@ -78,29 +79,7 @@ export default {
 
 .portfolio-container {
   margin: 0 auto;
-  padding-left: 30px;
-  padding-right: 30px;
-  max-width: 1320px;
   position: relative;
-}
-@media (min-width: 420px) {
-  .portfolio-container {
-    max-width: 1350px;
-  }
-}
-@media (min-width: 720px) {
-  .portfolio-container {
-    padding-left: 50px;
-    padding-right: 50px;
-    max-width: 1390px;
-  }
-}
-@media (min-width: 1080px) {
-  .portfolio-container {
-    padding-left: 70px;
-    padding-right: 70px;
-    max-width: 1430px;
-  }
 }
 
 .portfolio-navigation {
@@ -154,40 +133,23 @@ export default {
   flex-wrap: wrap;
   align-items: stretch;
   justify-content: flex-start;
-  margin-left: -15px;
-  margin-right: -15px;
+
   flex-direction: row;
 }
 
 .image-container {
   flex: none;
   align-self: stretch;
-  padding-left: 15px;
-  padding-right: 15px;
-  width: 41.66667%;
+  // padding-left: 15px;
+  // padding-right: 15px;
+  width: calc(5 / 12 * 100%);
 }
 
 .image-offset {
-  margin-left: -30px;
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
-}
-@media (min-width: 720px) {
-  .image-offset {
-    margin-left: -50px;
-  }
-}
-@media (min-width: 1080px) {
-  .image-offset {
-    margin-left: -70px;
-  }
-}
-@media (min-width: 1430px) {
-  .image-offset {
-    margin-left: calc((100vw - 1290px) / -2);
-  }
 }
 
 .portfolio-images {
@@ -227,17 +189,7 @@ export default {
   align-self: stretch;
   padding-left: 15px;
   padding-right: 15px;
-  width: 58.33333%;
-}
-@media (min-width: 720px) {
-  .portfolio-text-container {
-    flex: none;
-    align-self: stretch;
-    padding-left: 15px;
-    padding-right: 15px;
-    width: 50%;
-    margin-left: 8.33333%;
-  }
+  width: calc(7 / 12 * 100%);
 }
 
 .text-content {
@@ -252,6 +204,7 @@ export default {
 .text-content-inner {
   position: absolute;
   bottom: 10vh;
+  text-align: left;
 }
 
 /* For testing */

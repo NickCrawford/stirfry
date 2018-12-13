@@ -25,7 +25,8 @@ export default {
 
 html,
 body {
-  // overflow-y: auto;
+  // overflow-y: scroll;
+  // overflow-x: hidden;
   width: 100%;
   height: auto;
   margin: 0;
