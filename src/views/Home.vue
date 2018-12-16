@@ -60,7 +60,10 @@
               :icon="'./assets/icons/tofu_icon.png'">
               Web Design & Development
             </ingredient-checkbox>
-            <ingredient-checkbox v-model="selectedItems.branding">Branding & Creative Design</ingredient-checkbox>
+            <ingredient-checkbox v-model="selectedItems.branding"
+              :icon="'./assets/icons/pepper_icon.png'">
+              Branding & Creative Design
+            </ingredient-checkbox>
             <ingredient-checkbox v-model="selectedItems.app">iOS or Android Development</ingredient-checkbox>
             <ingredient-checkbox v-model="selectedItems.marketing">Marketing & Social Media</ingredient-checkbox>
           </div>
