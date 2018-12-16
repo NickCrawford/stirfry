@@ -4,7 +4,7 @@
     <input type="checkbox" :checked="value"
           @change="$emit('input', $event.target.checked)"
           class="checkbox-input">
-    <img :src="icon" v-if="icon">
+    <img :src="icon" v-if="icon" :style="{ 'margin-top': (-marginTop - 10) + 'px' }">
     <!--<img src="@/assets/img/icons/tofu_icon.png">-->
     <span class="checkbox-label" :class="{
       'checked-ingredient': value
@@ -17,6 +17,20 @@
 <script>
 export default {
   name: "CheckboxItem",
-  props: ["value", "icon"]
+  props: {
+    value: {
+      type: Boolean,
+      required: true
+    },
+    icon: {
+      type: String,
+      required: false
+    },
+    marginTop: {
+      type: Number,
+      required: false,
+      default: 0
+    }
+  }
 };
 </script>

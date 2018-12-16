@@ -57,7 +57,7 @@
           -->
           <div id="checkbox-container">
             <ingredient-checkbox v-model="selectedItems.web"
-              :icon="'./assets/icons/tofu_icon.png'">
+              :icon="'./assets/icons/tofu_icon.png'" :marginTop="-10">
               Web Design & Development
             </ingredient-checkbox>
             <ingredient-checkbox v-model="selectedItems.branding"
@@ -287,10 +287,16 @@ section * {
   grid-area: finish;
 
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  grid-row-gap: 50px;
-  grid-column-gap: 300px;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr ;
+  grid-row-gap: 20px;
+
+  @media screen and (min-width: $md-bp) {
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 300px;  
+  }
+  
 
   align-self: top;
 }
