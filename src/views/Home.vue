@@ -7,7 +7,9 @@
       </div>
 
       <div id="babylonDebugger"></div>
-      <canvas id="renderCanvas"></canvas>
+      <canvas id="renderCanvas" :class="{
+          'faded-canvas': scrollProgress >= scrollBreakPoint.about &&
+                          scrollProgress <= scrollBreakPoint.selection        }"></canvas>
       
       <!-- Hints users to continue scrolling -->
       <a class="scroll-indicator" href="#selection">
@@ -27,16 +29,19 @@
 
         
         <section id="about" :class="{ 'hidden': scrollProgress <= scrollBreakPoint.about  }">
-          <h1>Cooking up delicious design</h1>
+          <div id="promo-text">
+            <h1>Delicious Design</h1>
 
-          <div class="subheader">
-            <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
-            <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
+            <div class="subheader">
+              <h4>Whether you’re a fresh entrepreneur or an established business, <b>your brand matters.</b> </h4>
+              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
+            </div>
           </div>
+
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
-          <h3 class="heading">Let's get cooking!</h3>
+          <h3 class="heading">Let's Get Cooking!</h3>
           <div class="prompt">
             <h4>What can we help you with?</h4>
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
@@ -50,11 +55,15 @@
           <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
           <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
           -->
-
-          <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
-          <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
-          <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
-          <checkbox-item v-model="selectedItems.marketing">Marketing & Social Media</checkbox-item>
+          <div id="checkbox-container">
+            <ingredient-checkbox v-model="selectedItems.web"
+              :icon="'./assets/icons/tofu_icon.png'">
+              Web Design & Development
+            </ingredient-checkbox>
+            <ingredient-checkbox v-model="selectedItems.branding">Branding & Creative Design</ingredient-checkbox>
+            <ingredient-checkbox v-model="selectedItems.app">iOS or Android Development</ingredient-checkbox>
+            <ingredient-checkbox v-model="selectedItems.marketing">Marketing & Social Media</ingredient-checkbox>
+          </div>
 
 
           <div class="finish-container">
@@ -138,6 +147,12 @@
   width: 100%;
   height: 100%;
   touch-action: none;
+
+  transition-duration: 1s;
+}
+
+.faded-canvas {
+  opacity: .5;
 }
 
 #overlay-view {
@@ -218,6 +233,15 @@ section * {
   }
 }
 
+#promo-text {
+  background: $lid;
+  padding: 50px;
+  color: white;
+  .link-style {
+    color: white;
+  }
+}
+
 //
 // Selection Section
 
@@ -248,12 +272,24 @@ section * {
       "prompt prompt prompt"
       "option1 pan option2"
       "option3 pan option4"
-      "option5 finish option6";
+      "finish finish finish";
     grid-template-rows: auto auto 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr;
 
     align-items: center;
   }
+}
+
+#checkbox-container {
+  grid-area: finish;
+
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-row-gap: 50px;
+  grid-column-gap: 300px;
+
+  align-self: top;
 }
 
 #selection .heading {
@@ -282,7 +318,7 @@ section * {
   .checkbox-item:nth-of-type(#{$i}) {
     grid-area: option + $i;
   }
-}
+} 
 
 #selection {
   * {
@@ -344,7 +380,6 @@ section * {
   }
 }
 
-
 #about h1 {
   margin-bottom: 0;
 }
@@ -386,7 +421,7 @@ import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
-import CheckboxItem from "@/components/shared/CheckboxItem";
+import IngredientCheckbox from "@/components/shared/IngredientCheckbox";
 
 let colors = {
   highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
@@ -423,7 +458,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: { CheckboxItem },
+  components: { IngredientCheckbox },
   data() {
     return {
       canvas: null,
