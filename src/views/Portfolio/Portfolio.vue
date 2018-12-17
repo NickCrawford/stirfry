@@ -1,27 +1,25 @@
 <template>
   <div id="portfolio-page">
     <div class="space">Try to scroll down! :)</div>
-
-    <section class="portfolio-container">
+    <div style="position: fixed; top: 1em; right: 1em;">{{ activeProject }}</div>
+    <section class="portfolio-container" v-if="projects">
       <div class="flex-row">
         <div class="portfolio-text-container">
-          <div class="text-content" id="itemA">
+          <div
+            class="text-content"
+            :id="`project-${index}`"
+            v-for="(project, index) in projects"
+            :key="project.id"
+            v-waypoint="{ active: true, callback: onWaypoint, options: intersectionOptions }"
+          >
             <div class="text-content-inner">
               <div>
-                <h1 class="heading">Nulla</h1>
+                <h1
+                  class="heading"
+                >{{ $prismic.richTextAsPlain(project.data.title) || 'Project Title' + index }}</h1>
                 <p
                   class="description"
-                >Nulla ac ultrices lectus. Nam lacinia elit sit amet turpis porttitor, in gravida purus consectetur. Praesent viverra nisl nec lobortis facilisis. Nunc nibh mi, tincidunt id tempor vel, aliquam eu urna.</p>
-              </div>
-            </div>
-          </div>
-          <div class="text-content" id="itemB">
-            <div class="text-content-inner">
-              <div>
-                <h1 class="heading">Etiam</h1>
-                <p
-                  class="description"
-                >Sed non eleifend orci. Etiam ut quam vitae ligula sagittis sagittis. Duis ac metus at elit convallis lobortis. In hac habitasse platea dictumst. Praesent vel ligula leo.</p>
+                >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</p>
               </div>
             </div>
           </div>
@@ -30,24 +28,28 @@
         <div class="image-container">
           <div class="image-offset">
             <div class="portfolio-images">
-              <div
-                class="portfolio-image-animation"
-                style="transform: translate(0%, -100%) matrix(1, 0, 0, 1, 0, 0);"
-              ></div>
-              <div class="portfolio-image" style="z-index: 1;">
-                <img
-                  src="https://uploads.codesandbox.io/uploads/user/41ceb113-e589-40de-ae64-60f07fc72bcc/1Y95-2.png"
-                  class="img"
-                  alt
+              <transition name="portfolio-image-animation">
+                <div
+                  class="portfolio-image"
+                  v-for="(project, index) in projects"
+                  :key="project.id"
+                  v-if="activeProject == `project-${index}`"
                 >
-              </div>
-              <div class="portfolio-image" style="z-index: 1;">
-                <img
-                  src="https://uploads.codesandbox.io/uploads/user/41ceb113-e589-40de-ae64-60f07fc72bcc/WpSi-3.png"
-                  class="img"
-                  alt
-                >
-              </div>
+                  <div
+                    v-if="project.data.layers"
+                    class="parallax-layer"
+                    v-for="(layer, index) in project.data.layers"
+                    :key="`layer${index}`"
+                    :style="{ transform: `translate(${ (mouse.x - (viewport.width / 2)) * (layer.depth / 100) }px, ${ (mouse.y - (viewport.height / 2)) * (layer.depth / 100 ) }px)`, 'z-index': layer.depth }"
+                  >
+                    <picture>
+                      <!-- <source :srcset="mobileView.url" media="(max-width: 420px)">
+                      <source :srcset="tabletView.url" media="(max-width: 840px)">-->
+                      <img :src="layer.image.url" :alt="layer.image.alt">
+                    </picture>
+                  </div>
+                </div>
+              </transition>
             </div>
           </div>
         </div>
@@ -62,11 +64,122 @@
 export default {
   data() {
     return {
-      projects: [{}, {}, {}, {}]
+      projects: [],
+      activeProject: 0,
+      mouse: {
+        x: 0,
+        y: 0
+      },
+      viewport: {
+        width: 0,
+        height: 0
+      },
+      intersectionOptions: {
+        root: null,
+        rootMargin: "0px 0px 0px 0px",
+        threshold: 0.66
+      } // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
     };
   },
   components: {},
-  methods: {}
+  methods: {
+    getContent() {
+      this.$prismic.client
+        .query(this.$prismic.Predicates.at("document.type", "project"), {
+          // orderings: "[my.project.title desc]"
+        })
+        .then(response => {
+          console.log("response", response);
+          this.projects = response.results;
+          this.projects.push({ data: {} });
+          this.projects.push({ data: {} });
+          this.projects.push({ data: {} });
+          this.projects.push({ data: {} });
+        });
+    },
+
+    handleMouseMove(e) {
+      this.mouse.x = e.x;
+      this.mouse.y = e.y;
+
+      // console.log(
+      //   `translate(${this.mouse.x - this.viewport.width / 2}, ${this.mouse.y -
+      //     this.viewport.height / 2})`
+      // );
+    },
+    handleResize() {
+      this.viewport.width = window.innerWidth;
+      this.viewport.height = window.innerHeight;
+    },
+    handleScroll() {
+      var top = window.pageYOffset || document.documentElement.scrollTop;
+    },
+    onWaypoint({ going, direction, el }) {
+      // going: in, out
+      // direction: top, right, bottom, left
+      if (going === this.$waypointMap.GOING_IN) {
+        this.activeProject = el.id;
+        console.log("waypoint going in!", this.activeProject);
+      }
+
+      if (direction === this.$waypointMap.DIRECTION_TOP) {
+        console.log("waypoint going top!");
+      }
+    },
+    // Positioning the item content
+    positionItem() {
+      const section = this.section.current;
+      const child = section.querySelector(`#${this.state.activeItem}`);
+      const scrollTop = window.pageYOffset || window.scrollY;
+      const { top, bottom } = section.getBoundingClientRect();
+      const childTop = child.getBoundingClientRect().top;
+      const scrollTo = Math.round(childTop + scrollTop);
+      const threshold = window.innerHeight / 3;
+
+      // Not positioning if not active child or is scrolling
+      if (!child || this.isScrolling) {
+        return;
+      }
+
+      // Not positioning first item until scrolled 1/3 of screen height
+      if (top > threshold) {
+        return;
+      }
+
+      // Not positioning when scrolled through last item
+      if (bottom + threshold < window.innerHeight) {
+        return;
+      }
+
+      clearTimeout(this.scrollTimer);
+
+      this.isScrolling = true;
+
+      const t = new TimelineLite();
+
+      // Positioning the item content with gsap scroll to plugin
+      t.to(window, 0.8, {
+        scrollTo: scrollTo,
+        ease: "Power4.easeInOut"
+      }).call(() => {
+        this.isScrolling = false;
+      });
+    }
+  },
+  created() {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("mousemove", this.handleMouseMove);
+    window.addEventListener("scroll", this.handleScroll, { passive: true });
+
+    this.handleResize();
+    this.handleScroll();
+    this.getContent();
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("scroll", this.handleScroll);
+  }
 };
 </script>
 
@@ -141,7 +254,7 @@ export default {
   flex: none;
   align-self: stretch;
   // padding-left: 15px;
-  // padding-right: 15px;
+  padding-right: 15px;
   width: calc(5 / 12 * 100%);
 }
 
@@ -166,10 +279,25 @@ export default {
   height: 100%;
 }
 
-.portfolio-image img {
-  height: 100%;
+.portfolio-image .parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+
   width: 100%;
-  object-fit: cover;
+  height: 100%;
+
+  transform: none;
+  transform-origin: center center;
+}
+
+.portfolio-image {
+  img,
+  picture {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
 }
 
 .portfolio-image-animation {
@@ -187,7 +315,7 @@ export default {
 .portfolio-text-container {
   flex: none;
   align-self: stretch;
-  padding-left: 15px;
+  padding-left: calc(1 / 12 * 100%);
   padding-right: 15px;
   width: calc(7 / 12 * 100%);
 }
