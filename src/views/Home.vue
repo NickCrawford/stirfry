@@ -56,16 +56,27 @@
           <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
           -->
           <div id="checkbox-container">
-            <ingredient-checkbox v-model="selectedItems.web"
-              :icon="'./assets/icons/tofu_icon.png'" :marginTop="-10">
-              Web Design & Development
-            </ingredient-checkbox>
+
             <ingredient-checkbox v-model="selectedItems.branding"
               :icon="'./assets/icons/pepper_icon.png'">
               Branding & Creative Design
             </ingredient-checkbox>
-            <ingredient-checkbox v-model="selectedItems.app">iOS or Android Development</ingredient-checkbox>
-            <ingredient-checkbox v-model="selectedItems.marketing">Marketing & Social Media</ingredient-checkbox>
+
+            <ingredient-checkbox v-model="selectedItems.marketing"
+              :icon="'./assets/icons/brocc_icon.png'" :marginTop="10">
+              Marketing & Social Media
+            </ingredient-checkbox>
+
+
+            <ingredient-checkbox v-model="selectedItems.web"
+              :icon="'./assets/icons/tofu_icon.png'" :marginTop="-10">
+              Web Design & Development
+            </ingredient-checkbox>
+            
+            <ingredient-checkbox v-model="selectedItems.app"
+              :icon="'./assets/icons/carrot_icon.png'" :marginTop="-10">
+            iOS or Android Development
+            </ingredient-checkbox>
           </div>
 
 
