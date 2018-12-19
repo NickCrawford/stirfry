@@ -28,28 +28,34 @@
         <div class="image-container">
           <div class="image-offset">
             <div class="portfolio-images">
-              <transition name="portfolio-image-animation">
+              <!-- <transition name="portfolio-image-animation"> -->
+              <transition-group
+                name="staggered-fade"
+                v-bind:css="false"
+                v-on:before-enter="beforeEnter"
+                v-on:enter="enter"
+                v-on:leave="leave"
+                tag="div"
+                v-for="(project, projectIndex) in projects"
+                :key="project.id"
+                class="portfolio-image"
+              >
                 <div
-                  class="portfolio-image"
-                  v-for="(project, index) in projects"
-                  :key="project.id"
-                  v-if="activeProject == `project-${index}`"
+                  v-if="activeProject == `project-${projectIndex}` && project.data.layers"
+                  v-for="(layer, index) in project.data.layers"
+                  :key="`layer-${index}`"
+                  v-bind:data-depth="layer.depth"
+                  :style="{ transform: `translate(${ parallaxX(layer.depth) }px, ${ parallaxY(layer.depth) }px)`, 'z-index': layer.depth }"
+                  class="parallax-layer"
                 >
-                  <div
-                    v-if="project.data.layers"
-                    class="parallax-layer"
-                    v-for="(layer, index) in project.data.layers"
-                    :key="`layer${index}`"
-                    :style="{ transform: `translate(${ (mouse.x - (viewport.width / 2)) * (layer.depth / 100) }px, ${ (mouse.y - (viewport.height / 2)) * (layer.depth / 100 ) }px)`, 'z-index': layer.depth }"
-                  >
-                    <picture>
-                      <!-- <source :srcset="mobileView.url" media="(max-width: 420px)">
-                      <source :srcset="tabletView.url" media="(max-width: 840px)">-->
-                      <img :src="layer.image.url" :alt="layer.image.alt">
-                    </picture>
-                  </div>
+                  <picture>
+                    <!-- <source :srcset="mobileView.url" media="(max-width: 420px)">
+                    <source :srcset="tabletView.url" media="(max-width: 840px)">-->
+                    <img :src="layer.image.url" :alt="layer.image.alt">
+                  </picture>
                 </div>
-              </transition>
+              </transition-group>
+              <!-- </transition> -->
             </div>
           </div>
         </div>
@@ -61,6 +67,10 @@
 </template>
 
 <script>
+import { TweenMax, Power3 } from "gsap/TweenMax";
+
+const PARALLAX_FADE_DURATION = 1;
+
 export default {
   data() {
     return {
@@ -83,6 +93,40 @@ export default {
   },
   components: {},
   methods: {
+    // Returns the proper amount to translate an image based on it's parallax depth
+    parallaxX(depth) {
+      return (this.mouse.x - this.viewport.width / 2) * (depth / 100);
+    },
+    parallaxY(depth) {
+      return (this.mouse.y - this.viewport.height / 2) * (depth / 100);
+    },
+
+    beforeEnter: function(el) {
+      el.style.opacity = 0;
+      el.style.top = "10%";
+    },
+    enter: function(el, done) {
+      var delay = el.dataset.depth * 50;
+
+      setTimeout(function() {
+        TweenMax.to(el, PARALLAX_FADE_DURATION, {
+          opacity: 1,
+          top: "0px",
+          ease: Power3.easeOut
+        });
+      }, delay);
+    },
+    leave: function(el, done) {
+      var delay = el.dataset.depth * 50;
+      setTimeout(function() {
+        TweenMax.to(el, PARALLAX_FADE_DURATION, {
+          opacity: 0,
+          top: "10%",
+          ease: Power3.easeIn
+        });
+      }, delay);
+    },
+
     getContent() {
       this.$prismic.client
         .query(this.$prismic.Predicates.at("document.type", "project"), {
@@ -254,7 +298,7 @@ export default {
   flex: none;
   align-self: stretch;
   // padding-left: 15px;
-  padding-right: 15px;
+  // padding-right: 15px;
   width: calc(5 / 12 * 100%);
 }
 
@@ -343,4 +387,20 @@ export default {
   text-align: center;
   border-bottom: 1px solid red;
 }
+
+// .parallax-layer {
+//   transition: all 1s;
+//   display: inline-block;
+//   margin-right: 10px;
+
+//   transition-delay: 0.2s;
+// }
+// .list-complete-enter, .list-complete-leave-to
+// /* .list-complete-leave-active below version 2.1.8 */ {
+//   opacity: 0;
+//   transform: translateY(30px);
+// }
+// .list-complete-leave-active {
+//   position: absolute;
+// }
 </style>
