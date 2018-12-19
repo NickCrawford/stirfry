@@ -1,7 +1,6 @@
 <template>
   <div id="portfolio-page">
     <div class="space">Try to scroll down! :)</div>
-    <div style="position: fixed; top: 1em; right: 1em;">{{ activeProject }}</div>
     <section class="portfolio-container" v-if="projects">
       <div class="flex-row">
         <div class="portfolio-text-container">
@@ -73,6 +72,35 @@ import { ScrollToPlugin } from "gsap/all";
 
 const PARALLAX_FADE_DURATION = 1;
 
+var checkScrollSpeed = (function(settings) {
+  settings = settings || {};
+
+  var lastPos,
+    newPos,
+    timer,
+    delta,
+    delay = settings.delay || 50; // in "ms" (higher means lower fidelity )
+
+  function clear() {
+    lastPos = null;
+    delta = 0;
+  }
+
+  clear();
+
+  return function() {
+    newPos = window.scrollY;
+    if (lastPos != null) {
+      // && newPos < maxScroll
+      delta = newPos - lastPos;
+    }
+    lastPos = newPos;
+    clearTimeout(timer);
+    timer = setTimeout(clear, delay);
+    return delta;
+  };
+})();
+
 export default {
   data() {
     return {
@@ -91,7 +119,8 @@ export default {
         rootMargin: "0px 0px 0px 0px",
         threshold: 0.66
       }, // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API,
-      isScrolling: false
+      isScrolling: false,
+      scrollSpeed: 0
     };
   },
   components: {},
@@ -101,7 +130,10 @@ export default {
       return (this.mouse.x - this.viewport.width / 2) * (depth / 100);
     },
     parallaxY(depth) {
-      return (this.mouse.y - this.viewport.height / 2) * (depth / 100);
+      return (
+        (this.mouse.y - this.viewport.height / 2) * (depth / 100) -
+        this.scrollSpeed * depth
+      );
     },
 
     beforeEnter: function(el) {
@@ -109,8 +141,8 @@ export default {
       el.style.top = "10%";
     },
     enter: function(el, done) {
-      var delay = el.dataset.depth * 50;
-
+      var delay = el.dataset.depth * 100 + 300 + 800;
+      console.log("delay", delay);
       setTimeout(function() {
         TweenMax.to(el, PARALLAX_FADE_DURATION, {
           opacity: 1,
@@ -120,7 +152,7 @@ export default {
       }, delay);
     },
     leave: function(el, done) {
-      var delay = el.dataset.depth * 50;
+      var delay = el.dataset.depth * 10;
       setTimeout(function() {
         TweenMax.to(el, PARALLAX_FADE_DURATION, {
           opacity: 0,
@@ -148,24 +180,20 @@ export default {
     handleMouseMove(e) {
       this.mouse.x = e.x;
       this.mouse.y = e.y;
-
-      // console.log(
-      //   `translate(${this.mouse.x - this.viewport.width / 2}, ${this.mouse.y -
-      //     this.viewport.height / 2})`
-      // );
     },
     handleResize() {
       this.viewport.width = window.innerWidth;
       this.viewport.height = window.innerHeight;
     },
-    handleScroll() {
+    handleScroll(e) {
       var top = window.pageYOffset || document.documentElement.scrollTop;
-
+      console.log("eeeee", e);
       clearTimeout(this.scrollTimer);
 
       this.scrollTimer = setTimeout(() => {
         this.positionItem();
-      }, 500);
+      }, 300);
+      this.scrollSpeed = checkScrollSpeed();
     },
     onWaypoint({ going, direction, el }) {
       // going: in, out
@@ -188,7 +216,7 @@ export default {
       const { top, bottom } = child.getBoundingClientRect();
       const childTop = child.getBoundingClientRect().top;
       const scrollTo = Math.round(childTop + scrollTop);
-      const threshold = window.innerHeight / 3;
+      const threshold = window.innerHeight * 0.66;
 
       // Not positioning if not active child or is scrolling
       if (!child || this.isScrolling) {
@@ -343,6 +371,8 @@ export default {
 
   transform: none;
   transform-origin: center center;
+
+  transition: transform 0.3s ease-out;
 }
 
 .portfolio-image {
