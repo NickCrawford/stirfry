@@ -132,7 +132,7 @@ export default {
     parallaxY(depth) {
       return (
         (this.mouse.y - this.viewport.height / 2) * (depth / 100) -
-        this.scrollSpeed * depth
+        Math.max(Math.min(this.scrollSpeed, 5), -5) * depth
       );
     },
 
@@ -169,10 +169,6 @@ export default {
         .then(response => {
           console.log("response", response);
           this.projects = response.results;
-          this.projects.push({ data: {} });
-          this.projects.push({ data: {} });
-          this.projects.push({ data: {} });
-          this.projects.push({ data: {} });
         });
     },
 
@@ -297,7 +293,7 @@ export default {
   flex: none;
   align-self: stretch;
   // padding-left: 15px;
-  // padding-right: 15px;
+  // padding-right: calc(1 / 12 * 100%);
   width: calc(5 / 12 * 100%);
 }
 
@@ -306,6 +302,7 @@ export default {
   top: 0;
   height: 100vh;
   overflow: hidden;
+  padding-right: calc(1 / 12 * 100%);
 }
 
 .portfolio-images {
@@ -368,8 +365,8 @@ export default {
   text-align: left;
 }
 
-.heading {
-  // font-size: 8em;
+.description {
+  margin-top: 0;
 }
 
 // .description {
