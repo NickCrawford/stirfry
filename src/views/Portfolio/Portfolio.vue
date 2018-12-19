@@ -40,7 +40,7 @@
                 class="portfolio-image"
               >
                 <div
-                  v-if="activeProject == `project-${projectIndex}` && project.data.layers"
+                  v-show="activeProject == `project-${projectIndex}`"
                   v-for="(layer, index) in project.data.layers"
                   :key="`layer-${index}`"
                   v-bind:data-depth="layer.depth"
@@ -117,7 +117,7 @@ export default {
       intersectionOptions: {
         root: null,
         rootMargin: "0px 0px 0px 0px",
-        threshold: 0.75
+        threshold: 0.5
       }, // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API,
       isScrolling: false,
       scrollSpeed: 0
@@ -138,27 +138,27 @@ export default {
 
     beforeEnter: function(el) {
       el.style.opacity = 0;
-      el.style.top = `${Math.sign(this.scrollSpeed) * -10}%`;
+      el.style.top = `${Math.sign(this.scrollSpeed) * 10}%`;
     },
     enter: function(el, done) {
-      var delay = el.dataset.depth * 100 + 300 + 800;
-      setTimeout(() => {
-        TweenMax.to(el, PARALLAX_FADE_DURATION, {
-          opacity: 1,
-          top: 0,
-          ease: Power3.easeOut
-        });
-      }, delay);
+      var delay = (el.dataset.depth * 10) / 100 + 0.3 + 0.8;
+      TweenMax.to(el, PARALLAX_FADE_DURATION, {
+        opacity: 1,
+        top: 0,
+        ease: Power3.easeOut,
+        delay: delay
+        // onComplete: done()
+      });
     },
     leave: function(el, done) {
-      var delay = el.dataset.depth * 10;
-      setTimeout(() => {
-        TweenMax.to(el, PARALLAX_FADE_DURATION, {
-          opacity: 0,
-          top: `${Math.sign(this.scrollSpeed) * -10}%`,
-          ease: Power3.easeIn
-        });
-      }, delay);
+      var delay = (el.dataset.depth * 10) / 100;
+
+      TweenMax.to(el, PARALLAX_FADE_DURATION, {
+        opacity: 0,
+        top: `${Math.sign(this.scrollSpeed) * -10}%`,
+        ease: Power3.easeIn,
+        delay: delay
+      });
     },
 
     getContent() {
@@ -193,6 +193,7 @@ export default {
       // direction: top, right, bottom, left
       if (going === this.$waypointMap.GOING_IN) {
         this.activeProject = el.id;
+        TweenMax.killAll(true, true, true, false);
         // console.log("waypoint going in!", this.activeProject);
       }
 
@@ -211,7 +212,7 @@ export default {
       const { top, bottom } = child.getBoundingClientRect();
       const childTop = child.getBoundingClientRect().top;
       const scrollTo = Math.round(childTop + scrollTop);
-      const threshold = window.innerHeight * 0.75;
+      const threshold = window.innerHeight * 0.5;
 
       // Not positioning if not active child or is scrolling
       if (!child || this.isScrolling) {
@@ -267,6 +268,10 @@ export default {
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
 
+#portfolio-page {
+  background-color: $background;
+}
+
 .portfolio-container {
   margin: 0 auto;
   position: relative;
@@ -276,7 +281,7 @@ export default {
   position: absolute;
   top: 150px;
   bottom: 0;
-  right: 70px;
+  left: 70px;
   z-index: 2;
 }
 
@@ -302,7 +307,7 @@ export default {
   top: 0;
   height: 100vh;
   overflow: hidden;
-  padding-right: calc(1 / 12 * 100%);
+  padding-right: calc(1 / 12 * 100vw);
 }
 
 .portfolio-images {
@@ -314,7 +319,7 @@ export default {
 .portfolio-image {
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
 }
@@ -351,8 +356,13 @@ export default {
 }
 
 .text-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
-  min-height: 100vh;
+  min-height: 90vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
 }
 @media (min-width: 720px) {
   .text-content {
@@ -360,8 +370,8 @@ export default {
   }
 }
 .text-content-inner {
-  position: absolute;
-  bottom: 10vh;
+  position: relative;
+  // bottom: 10vh;
   text-align: left;
 }
 
@@ -374,9 +384,9 @@ export default {
 // }
 /* For testing */
 .space {
-  display: none;
+  display: flex;
   flex-direction: column;
-  height: 400px;
+  height: 50vh;
   text-align: center;
   border-bottom: 1px solid red;
 }
