@@ -16,9 +16,9 @@
                 <h1
                   class="heading"
                 >{{ $prismic.richTextAsPlain(project.data.title) || 'Project Title' + index }}</h1>
-                <p
+                <h2
                   class="description"
-                >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</p>
+                >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</h2>
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default {
   data() {
     return {
       projects: [],
-      activeProject: 0,
+      activeProject: null,
       mouse: {
         x: 0,
         y: 0
@@ -117,7 +117,7 @@ export default {
       intersectionOptions: {
         root: null,
         rootMargin: "0px 0px 0px 0px",
-        threshold: 0.66
+        threshold: 0.75
       }, // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API,
       isScrolling: false,
       scrollSpeed: 0
@@ -138,25 +138,24 @@ export default {
 
     beforeEnter: function(el) {
       el.style.opacity = 0;
-      el.style.top = "10%";
+      el.style.top = `${Math.sign(this.scrollSpeed) * -10}%`;
     },
     enter: function(el, done) {
       var delay = el.dataset.depth * 100 + 300 + 800;
-      console.log("delay", delay);
-      setTimeout(function() {
+      setTimeout(() => {
         TweenMax.to(el, PARALLAX_FADE_DURATION, {
           opacity: 1,
-          top: "0px",
+          top: 0,
           ease: Power3.easeOut
         });
       }, delay);
     },
     leave: function(el, done) {
       var delay = el.dataset.depth * 10;
-      setTimeout(function() {
+      setTimeout(() => {
         TweenMax.to(el, PARALLAX_FADE_DURATION, {
           opacity: 0,
-          top: "10%",
+          top: `${Math.sign(this.scrollSpeed) * -10}%`,
           ease: Power3.easeIn
         });
       }, delay);
@@ -186,8 +185,6 @@ export default {
       this.viewport.height = window.innerHeight;
     },
     handleScroll(e) {
-      var top = window.pageYOffset || document.documentElement.scrollTop;
-      console.log("eeeee", e);
       clearTimeout(this.scrollTimer);
 
       this.scrollTimer = setTimeout(() => {
@@ -200,23 +197,25 @@ export default {
       // direction: top, right, bottom, left
       if (going === this.$waypointMap.GOING_IN) {
         this.activeProject = el.id;
-        console.log("waypoint going in!", this.activeProject);
+        // console.log("waypoint going in!", this.activeProject);
       }
 
       if (direction === this.$waypointMap.DIRECTION_TOP) {
-        console.log("waypoint going top!");
+        el.dataset.direction = this.$waypointMap.DIRECTION_TOP;
+        // console.log("waypoint going top!");
       }
     },
     // Positioning the item content
     positionItem() {
+      if (!this.activeProject) return;
+
       const section = this.activeProject;
       const child = document.querySelector(`#${this.activeProject}`);
-      console.log("section", section, "child", child);
       const scrollTop = window.pageYOffset || window.scrollY;
       const { top, bottom } = child.getBoundingClientRect();
       const childTop = child.getBoundingClientRect().top;
       const scrollTo = Math.round(childTop + scrollTop);
-      const threshold = window.innerHeight * 0.66;
+      const threshold = window.innerHeight * 0.75;
 
       // Not positioning if not active child or is scrolling
       if (!child || this.isScrolling) {
@@ -285,44 +284,6 @@ export default {
   z-index: 2;
 }
 
-.navigation-buttons {
-  display: none;
-}
-
-@media (min-width: 720px) {
-  .navigation-buttons {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    flex-direction: column;
-    position: sticky;
-    top: 150px;
-  }
-}
-
-.navigation-button {
-  padding: 0;
-  margin: 0;
-  font-family: inherit;
-  font-style: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  vertical-align: baseline;
-  border: 0;
-  background: transparent;
-  appearance: none;
-  margin-bottom: 30px;
-  cursor: pointer;
-  transition: color 200ms ease-in-out;
-}
-.navigation-button:focus {
-  outline: none;
-}
-.navigation-button.isActive {
-  color: #ab80ff;
-}
-
 .flex-row {
   display: flex;
   flex-wrap: wrap;
@@ -384,18 +345,6 @@ export default {
   }
 }
 
-.portfolio-image-animation {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 3;
-  background-color: #ab80ff;
-  transform: translateY(-100%);
-  will-change: transform;
-}
-
 .portfolio-text-container {
   flex: none;
   align-self: stretch;
@@ -419,28 +368,19 @@ export default {
   text-align: left;
 }
 
+.heading {
+  // font-size: 8em;
+}
+
+// .description {
+//   font-size: 5em;
+// }
 /* For testing */
 .space {
-  display: flex;
+  display: none;
   flex-direction: column;
   height: 400px;
   text-align: center;
   border-bottom: 1px solid red;
 }
-
-// .parallax-layer {
-//   transition: all 1s;
-//   display: inline-block;
-//   margin-right: 10px;
-
-//   transition-delay: 0.2s;
-// }
-// .list-complete-enter, .list-complete-leave-to
-// /* .list-complete-leave-active below version 2.1.8 */ {
-//   opacity: 0;
-//   transform: translateY(30px);
-// }
-// .list-complete-leave-active {
-//   position: absolute;
-// }
 </style>
