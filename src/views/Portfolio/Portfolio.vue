@@ -1,6 +1,9 @@
 <template>
   <div id="portfolio-page">
-    <div class="space">Try to scroll down! :)</div>
+    <div class="space">
+      <h2>This is our heading area (totally optional). We could put some big image here or a bit of heading copy</h2>
+      <p>Try to scroll down! :)</p>
+    </div>
     <section class="portfolio-container" v-if="projects">
       <div class="flex-row">
         <div class="portfolio-text-container">
@@ -61,7 +64,9 @@
       </div>
     </section>
 
-    <div class="space">This is the end of our adventure</div>
+    <div class="space">
+      <h2>Here'e the footer area.</h2>
+    </div>
   </div>
 </template>
 
@@ -132,7 +137,7 @@ export default {
     parallaxY(depth) {
       return (
         (this.mouse.y - this.viewport.height / 2) * (depth / 100) -
-        Math.max(Math.min(this.scrollSpeed, 5), -5) * depth
+        Math.max(Math.min(this.scrollSpeed, 8), -8) * depth
       );
     },
 
@@ -388,6 +393,5 @@ export default {
   flex-direction: column;
   height: 50vh;
   text-align: center;
-  border-bottom: 1px solid red;
 }
 </style>
