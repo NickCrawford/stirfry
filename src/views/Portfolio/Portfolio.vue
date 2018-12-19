@@ -67,7 +67,9 @@
 </template>
 
 <script>
-import { TweenMax, Power3 } from "gsap/TweenMax";
+import { TweenMax, TimelineLite, Power3 } from "gsap/TweenMax";
+import { ScrollToPlugin } from "gsap/all";
+// import { ScrollToPlugin } from "ScrollToPlugin";
 
 const PARALLAX_FADE_DURATION = 1;
 
@@ -88,7 +90,8 @@ export default {
         root: null,
         rootMargin: "0px 0px 0px 0px",
         threshold: 0.66
-      } // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+      }, // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API,
+      isScrolling: false
     };
   },
   components: {},
@@ -157,6 +160,12 @@ export default {
     },
     handleScroll() {
       var top = window.pageYOffset || document.documentElement.scrollTop;
+
+      clearTimeout(this.scrollTimer);
+
+      this.scrollTimer = setTimeout(() => {
+        this.positionItem();
+      }, 500);
     },
     onWaypoint({ going, direction, el }) {
       // going: in, out
@@ -172,10 +181,11 @@ export default {
     },
     // Positioning the item content
     positionItem() {
-      const section = this.section.current;
-      const child = section.querySelector(`#${this.state.activeItem}`);
+      const section = this.activeProject;
+      const child = document.querySelector(`#${this.activeProject}`);
+      console.log("section", section, "child", child);
       const scrollTop = window.pageYOffset || window.scrollY;
-      const { top, bottom } = section.getBoundingClientRect();
+      const { top, bottom } = child.getBoundingClientRect();
       const childTop = child.getBoundingClientRect().top;
       const scrollTo = Math.round(childTop + scrollTop);
       const threshold = window.innerHeight / 3;
@@ -204,7 +214,7 @@ export default {
       // Positioning the item content with gsap scroll to plugin
       t.to(window, 0.8, {
         scrollTo: scrollTo,
-        ease: "Power4.easeInOut"
+        ease: Power3.easeInOut
       }).call(() => {
         this.isScrolling = false;
       });
