@@ -73,7 +73,9 @@
 <script>
 import { TweenMax, TimelineLite, Power3 } from "gsap/TweenMax";
 import { ScrollToPlugin } from "gsap/all";
-// import { ScrollToPlugin } from "ScrollToPlugin";
+
+//without this line, ScrollToPlugin may get dropped by your bundler...
+const plugins = [ScrollToPlugin];
 
 const PARALLAX_FADE_DURATION = 1;
 
