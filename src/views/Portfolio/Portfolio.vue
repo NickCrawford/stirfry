@@ -31,6 +31,14 @@
                 <h3
                   class="description"
                 >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</h3>
+                <div class="service-tag-container">
+                  <span
+                    v-for="tag in project.data.services"
+                    :key="tag.id"
+                    class="service-tag"
+                    v-if="tag.service"
+                  >{{ tag.service }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -440,6 +448,16 @@ export default {
   margin: 0.5em auto 0.25em;
   @media screen and (min-width: $md-bp) {
   }
+}
+
+.service-tag {
+  display: inline-block;
+
+  padding: 0.25em 0.5em;
+  margin-right: 1em;
+
+  background: white;
+  text-transform: capitalize;
 }
 
 /* For testing */
