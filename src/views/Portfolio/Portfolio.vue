@@ -1,8 +1,8 @@
 <template>
   <div id="portfolio-page">
     <div class="space">
-      <h2>This is our heading area (totally optional). We could put some big image here or a bit of heading copy</h2>
-      <p>Try to scroll down! :)</p>
+      <h1>Our Work</h1>
+      <h4>Have a look at some of our recent projects</h4>
     </div>
     <section class="portfolio-container" v-if="projects">
       <div class="flex-row">
@@ -16,7 +16,7 @@
           >
             <div class="text-content-inner">
               <div>
-                <div class="mobile-image-container" v-if="viewport.width < $getConst('MD_BP')">
+                <div class="mobile-image-container" v-if="viewport.width < $breakpoint('MD_BP')">
                   <img
                     :src="layer.image.url"
                     :alt="layer.image.alt"
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="image-container" v-if="viewport.width >= $getConst('MD_BP')">
+        <div class="image-container" v-if="viewport.width >= $breakpoint('MD_BP')">
           <div class="image-offset">
             <div class="portfolio-images">
               <!-- <transition name="portfolio-image-animation"> -->
@@ -73,7 +73,7 @@
       </div>
     </section>
 
-    <div class="space">
+    <div class="space" v-if="false">
       <h2>Here'e the footer area.</h2>
     </div>
   </div>
@@ -223,7 +223,7 @@ export default {
       if (!this.activeProject) return; // We can't scroll to a section if there's no section defined
 
       // Not positioning if we're on a smaller screen. Scroll snapping is annoying on mobile :O
-      if (this.viewport.width < this.$getConst("MD_BP")) return;
+      if (this.viewport.width < this.$breakpoint("MD_BP")) return;
 
       const section = this.activeProject;
       const child = document.querySelector(`#${this.activeProject}`);
@@ -446,9 +446,14 @@ export default {
 .space {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   height: 50vh;
   text-align: center;
   background-color: $black;
   color: white;
+
+  h1 {
+    text-transform: lowercase;
+  }
 }
 </style>

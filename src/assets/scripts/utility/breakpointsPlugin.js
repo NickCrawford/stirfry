@@ -6,7 +6,7 @@ const BREAKPOINTS = {
 let Breakpoints = {};
 
 Breakpoints.install = function(Vue, options) {
-  Vue.prototype.$getConst = key => {
+  Vue.prototype.$breakpoint = key => {
     return BREAKPOINTS[key];
   };
 };
