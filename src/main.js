@@ -4,6 +4,10 @@ import router from "./router";
 import PrismicVue from "prismic-vue";
 import VueWaypoint from "vue-waypoint";
 
+import Breakpoints from "./assets/scripts/utility/breakpointsPlugin.js";
+
+Vue.use(Breakpoints);
+
 Vue.config.productionTip = false;
 
 Vue.use(PrismicVue, {

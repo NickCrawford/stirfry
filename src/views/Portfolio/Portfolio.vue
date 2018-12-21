@@ -16,18 +16,27 @@
           >
             <div class="text-content-inner">
               <div>
-                <h1
-                  class="heading"
-                >{{ $prismic.richTextAsPlain(project.data.title) || 'Project Title' + index }}</h1>
+                <div class="mobile-image-container" v-if="viewport.width < $getConst('MD_BP')">
+                  <img
+                    :src="layer.image.url"
+                    :alt="layer.image.alt"
+                    v-for="(layer, index) in project.data.layers"
+                    :key="`layer-${index}`"
+                    class="portfolio-image"
+                  >
+                </div>
                 <h2
+                  class="heading"
+                >{{ $prismic.richTextAsPlain(project.data.title) || 'Project Title' + index }}</h2>
+                <h3
                   class="description"
-                >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</h2>
+                >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</h3>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="image-container">
+        <div class="image-container" v-if="viewport.width >= $getConst('MD_BP')">
           <div class="image-offset">
             <div class="portfolio-images">
               <!-- <transition name="portfolio-image-animation"> -->
@@ -211,7 +220,10 @@ export default {
     },
     // Positioning the item content
     positionItem() {
-      if (!this.activeProject) return;
+      if (!this.activeProject) return; // We can't scroll to a section if there's no section defined
+
+      // Not positioning if we're on a smaller screen. Scroll snapping is annoying on mobile :O
+      if (this.viewport.width < this.$getConst("MD_BP")) return;
 
       const section = this.activeProject;
       const child = document.querySelector(`#${this.activeProject}`);
@@ -310,11 +322,17 @@ export default {
 }
 
 .image-offset {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  padding-right: calc(1 / 12 * 100vw);
+  position: relative;
+  width: 100%;
+  height: auto;
+
+  @media screen and (min-width: $md-bp) {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    padding: 0 calc(1 / 12 / 2 * 100vw);
+  }
 }
 
 .portfolio-images {
@@ -323,12 +341,32 @@ export default {
   height: 100%;
 }
 
+.mobile-image-container {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  overflow: hidden;
+}
+
 .portfolio-image {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
+  // transform: translate(-50%, -50%);
+
   width: 100%;
   height: 100%;
+
+  object-fit: contain;
+  object-position: center bottom;
+
+  @media screen and (min-width: $md-bp) {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    height: 100%;
+  }
 }
 
 .portfolio-image .parallax-layer {
@@ -357,9 +395,16 @@ export default {
 .portfolio-text-container {
   flex: none;
   align-self: stretch;
-  padding-left: calc(1 / 12 * 100%);
-  padding-right: 15px;
-  width: calc(7 / 12 * 100%);
+  padding-left: 1em;
+  padding-right: 1em;
+  width: 100%;
+
+  background-color: $skin;
+
+  @media screen and (min-width: $md-bp) {
+    padding-left: calc(1 / 12 * 100%);
+    width: calc(7 / 12 * 100%);
+  }
 }
 
 .text-content {
@@ -368,32 +413,42 @@ export default {
   justify-content: center;
   position: relative;
   min-height: 90vh;
-  margin-top: 5vh;
-  margin-bottom: 5vh;
-}
-@media (min-width: 720px) {
-  .text-content {
+
+  @media (min-width: $md-bp) {
+    margin-top: 5vh;
+    margin-bottom: 5vh;
     height: 100vh;
   }
 }
+
 .text-content-inner {
   position: relative;
   // bottom: 10vh;
-  text-align: left;
+
+  text-align: center;
+
+  @media screen and (min-width: $md-bp) {
+    text-align: left;
+  }
 }
 
 .description {
   margin-top: 0;
 }
 
-// .description {
-//   font-size: 5em;
-// }
+.heading {
+  margin: 0.5em auto 0.25em;
+  @media screen and (min-width: $md-bp) {
+  }
+}
+
 /* For testing */
 .space {
   display: flex;
   flex-direction: column;
   height: 50vh;
   text-align: center;
+  background-color: $black;
+  color: white;
 }
 </style>
