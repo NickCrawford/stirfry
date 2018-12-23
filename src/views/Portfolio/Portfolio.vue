@@ -47,6 +47,11 @@
         <div class="image-container" v-if="viewport.width >= $breakpoint('MD_BP')">
           <div class="image-offset">
             <div class="portfolio-images">
+              <div
+                v-if="activeProject"
+                class="animation-background"
+                :style="{'background-color':  projects[activeProject.split('-')[1]].data['background_color'] || '#545454'}"
+              ></div>
               <!-- <transition name="portfolio-image-animation"> -->
               <transition-group
                 name="staggered-fade"
@@ -162,7 +167,11 @@ export default {
 
     beforeEnter: function(el) {
       el.style.opacity = 0;
-      el.style.top = `${Math.sign(this.scrollSpeed) * 10}%`;
+
+      let top = 0;
+      if (el.dataset.depth > 0) top = `${Math.sign(this.scrollSpeed) * -10}%`;
+
+      el.style.top = top;
     },
     enter: function(el, done) {
       var delay = (el.dataset.depth * 10) / 100 + 0.3 + 0.8;
@@ -177,9 +186,13 @@ export default {
     leave: function(el, done) {
       var delay = (el.dataset.depth * 10) / 100;
 
+      // Don't parallax the background (aka layer 0)
+      let top = 0;
+      if (el.dataset.depth > 0) top = `${Math.sign(this.scrollSpeed) * -10}%`;
+
       TweenMax.to(el, PARALLAX_FADE_DURATION, {
         opacity: 0,
-        top: `${Math.sign(this.scrollSpeed) * -10}%`,
+        top: top,
         ease: Power3.easeIn,
         delay: delay
       });
@@ -400,6 +413,32 @@ export default {
   }
 }
 
+.parallax-layer[data-depth="0"] {
+  img,
+  picture {
+    position: absolute;
+    top: 0;
+    left: calc(-1 / 24 * 100vw);
+    right: calc(-1 / 24 * 100vw);
+    height: 100%;
+    width: calc(1 / 12 * 100vw + 100%);
+    object-fit: cover;
+  }
+}
+
+.animation-background {
+  position: absolute;
+  top: 0;
+  left: calc(-1 / 24 * 100vw);
+  right: calc(-1 / 24 * 100vw);
+  height: 100%;
+  width: calc(1 / 12 * 100vw + 100%);
+  bottom: 0;
+  z-index: 0;
+
+  transition: background-color 0.5s ease-in-out;
+}
+
 .portfolio-text-container {
   flex: none;
   align-self: stretch;
@@ -408,6 +447,7 @@ export default {
   width: 100%;
 
   background-color: $skin;
+  box-shadow: $box-shading;
 
   @media screen and (min-width: $md-bp) {
     padding-left: calc(1 / 12 * 100%);
