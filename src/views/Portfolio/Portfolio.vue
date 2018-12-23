@@ -223,6 +223,16 @@ export default {
       this.mouse.x = e.x;
       this.mouse.y = e.y;
     },
+    handleMouseLeave(e) {
+      if (
+        e.clientY <= 0 ||
+        e.clientX <= 0 ||
+        (e.clientX >= window.innerWidth || e.clientY >= window.innerHeight)
+      ) {
+        this.mouse.x = window.innerWidth / 2;
+        this.mouse.y = window.innerHeight / 2;
+      }
+    },
     handleResize() {
       this.viewport.width = window.innerWidth;
       this.viewport.height = window.innerHeight;
@@ -298,6 +308,7 @@ export default {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("mousemove", this.handleMouseMove);
     window.addEventListener("scroll", this.handleScroll, { passive: true });
+    document.addEventListener("mouseleave", this.handleMouseLeave);
 
     this.handleResize();
     this.handleScroll();
@@ -307,6 +318,7 @@ export default {
     window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("scroll", this.handleScroll);
+    document.removeEventListener("mouseleave", this.handleMouseLeave);
   }
 };
 </script>
