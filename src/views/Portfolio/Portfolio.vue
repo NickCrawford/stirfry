@@ -23,6 +23,8 @@
                     v-for="(layer, index) in project.data.layers"
                     :key="`layer-${index}`"
                     class="portfolio-image"
+                    v-bind:data-depth="layer.depth"
+                    :style="{'z-index': layer.depth}"
                   >
                 </div>
                 <h2
@@ -48,9 +50,8 @@
           <div class="image-offset">
             <div class="portfolio-images">
               <div
-                v-if="activeProject"
                 class="animation-background"
-                :style="{'background-color':  projects[activeProject.split('-')[1]].data['background_color'] || '#545454'}"
+                :style="{'background-color':  projectBackgroundColor(activeProject)}"
               ></div>
               <!-- <transition name="portfolio-image-animation"> -->
               <transition-group
@@ -163,6 +164,15 @@ export default {
         (this.mouse.y - this.viewport.height / 2) * (depth / 100) -
         Math.max(Math.min(this.scrollSpeed, 8), -8) * depth
       );
+    },
+    projectBackgroundColor(projectId) {
+      if (!projectId) return "#545454";
+
+      try {
+        return projects[activeProject.split("-")[1]].data["background_color"];
+      } catch (err) {
+        return "#545454";
+      }
     },
 
     beforeEnter: function(el) {
@@ -413,17 +423,16 @@ export default {
   }
 }
 
-.parallax-layer[data-depth="0"] {
-  img,
-  picture {
-    position: absolute;
-    top: 0;
-    left: calc(-1 / 24 * 100vw);
-    right: calc(-1 / 24 * 100vw);
-    height: 100%;
-    width: calc(1 / 12 * 100vw + 100%);
-    object-fit: cover;
-  }
+.parallax-layer[data-depth="0"] img,
+.portfolio-image[data-depth="0"] {
+  position: absolute;
+  top: 0;
+  left: calc(-1 / 24 * 100vw);
+  right: calc(-1 / 24 * 100vw);
+  height: 100%;
+  width: calc(1 / 12 * 100vw + 100%);
+  object-fit: cover;
+  z-index: 0;
 }
 
 .animation-background {
@@ -461,6 +470,7 @@ export default {
   justify-content: center;
   position: relative;
   min-height: 90vh;
+  margin-bottom: 2rem;
 
   @media (min-width: $md-bp) {
     margin-top: 5vh;
@@ -498,6 +508,10 @@ export default {
 
   background: white;
   text-transform: capitalize;
+
+  &:last-of-type {
+    margin-right: 0;
+  }
 }
 
 /* For testing */
