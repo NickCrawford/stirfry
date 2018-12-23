@@ -521,6 +521,7 @@ export default {
   margin-right: 1em;
 
   background: white;
+  box-shadow: $box-shading;
   text-transform: capitalize;
 
   &:last-of-type {
