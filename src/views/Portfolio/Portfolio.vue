@@ -100,7 +100,7 @@ import { ScrollToPlugin } from "gsap/all";
 //without this line, ScrollToPlugin may get dropped by your bundler...
 const plugins = [ScrollToPlugin];
 
-const PARALLAX_FADE_DURATION = 1;
+const PARALLAX_FADE_DURATION = 0.75;
 
 var checkScrollSpeed = (function(settings) {
   settings = settings || {};
@@ -162,14 +162,16 @@ export default {
     parallaxY(depth) {
       return (
         (this.mouse.y - this.viewport.height / 2) * (depth / 100) -
-        Math.max(Math.min(this.scrollSpeed, 8), -8) * depth
+        (Math.max(Math.min(this.scrollSpeed, 16), -16) * depth) / 10
       );
     },
     projectBackgroundColor(projectId) {
       if (!projectId) return "#545454";
 
       try {
-        return projects[activeProject.split("-")[1]].data["background_color"];
+        return this.projects[this.activeProject.split("-")[1]].data[
+          "background_color"
+        ];
       } catch (err) {
         return "#545454";
       }
@@ -184,7 +186,7 @@ export default {
       el.style.top = top;
     },
     enter: function(el, done) {
-      var delay = (el.dataset.depth * 10) / 100 + 0.3 + 0.8;
+      var delay = (el.dataset.depth * 10) / 100 + 0.3 + PARALLAX_FADE_DURATION;
       TweenMax.to(el, PARALLAX_FADE_DURATION, {
         opacity: 1,
         top: 0,
@@ -457,7 +459,7 @@ export default {
   bottom: 0;
   z-index: 0;
 
-  transition: background-color 0.5s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .portfolio-text-container {
