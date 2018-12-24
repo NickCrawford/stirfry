@@ -7,7 +7,9 @@
       </div>
 
       <div id="babylonDebugger"></div>
-      <canvas id="renderCanvas"></canvas>
+      <canvas id="renderCanvas" :class="{
+          'faded-canvas': scrollProgress >= scrollBreakPoint.about &&
+                          scrollProgress <= scrollBreakPoint.selection        }"></canvas>
       
       <!-- Hints users to continue scrolling -->
       <a class="scroll-indicator" href="#selection">
@@ -27,27 +29,56 @@
 
         
         <section id="about" :class="{ 'hidden': scrollProgress <= scrollBreakPoint.about  }">
-            <h1>Cooking up delicious design</h1>
+          <div id="promo-text">
+            <h1>Delicious Design</h1>
 
             <div class="subheader">
-              <h4>Whether you’re a fresh entrepreneur or an established business, your brand matters. We help you along every step of the way — from marketing campaigns, to app design and development.</h4>
+              <h4>Whether you’re a fresh entrepreneur or an established business, <b>your brand matters.</b> </h4>
               <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
             </div>
+          </div>
+
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
-          <h3 class="heading">Let's get cooking!</h3>
+          <h3 class="heading">Let's Get Cooking!</h3>
           <div class="prompt">
             <h4>What can we help you with?</h4>
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
           </div>
 
+          <!--
           <checkbox-item v-model="selectedItems.web">Web Design & Development</checkbox-item>
           <checkbox-item v-model="selectedItems.branding">Branding & Creative Design</checkbox-item>
           <checkbox-item v-model="selectedItems.app">iOS or Android Development</checkbox-item>
           <checkbox-item v-model="selectedItems.marketing">Marketing Strategy</checkbox-item>
           <checkbox-item v-model="selectedItems.social">Social Media Marketing</checkbox-item>
           <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
+          -->
+          <div id="checkbox-container">
+
+            <ingredient-checkbox v-model="selectedItems.branding"
+              :icon="'./assets/icons/pepper_icon.png'">
+              Branding & Creative Design
+            </ingredient-checkbox>
+
+            <ingredient-checkbox v-model="selectedItems.marketing"
+              :icon="'./assets/icons/brocc_icon.png'" :marginTop="10">
+              Marketing & Social Media
+            </ingredient-checkbox>
+
+
+            <ingredient-checkbox v-model="selectedItems.web"
+              :icon="'./assets/icons/tofu_icon.png'" :marginTop="-10">
+              Web Design & Development
+            </ingredient-checkbox>
+            
+            <ingredient-checkbox v-model="selectedItems.app"
+              :icon="'./assets/icons/carrot_icon.png'" :marginTop="-10">
+            iOS or Android Development
+            </ingredient-checkbox>
+          </div>
+
 
           <div class="finish-container">
             <transition name="fade" duration="800">
@@ -130,6 +161,12 @@
   width: 100%;
   height: 100%;
   touch-action: none;
+
+  transition-duration: 1s;
+}
+
+.faded-canvas {
+  opacity: .5;
 }
 
 #overlay-view {
@@ -210,6 +247,15 @@ section * {
   }
 }
 
+#promo-text {
+  background: $lid;
+  padding: 50px;
+  color: white;
+  .link-style {
+    color: white;
+  }
+}
+
 //
 // Selection Section
 
@@ -240,12 +286,30 @@ section * {
       "prompt prompt prompt"
       "option1 pan option2"
       "option3 pan option4"
-      "option5 finish option6";
+      "finish finish finish";
     grid-template-rows: auto auto 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr;
 
     align-items: center;
   }
+}
+
+#checkbox-container {
+  grid-area: finish;
+
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr ;
+  grid-row-gap: 20px;
+
+  @media screen and (min-width: $md-bp) {
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 300px;  
+  }
+  
+
+  align-self: top;
 }
 
 #selection .heading {
@@ -274,7 +338,7 @@ section * {
   .checkbox-item:nth-of-type(#{$i}) {
     grid-area: option + $i;
   }
-}
+} 
 
 #selection {
   * {
@@ -377,7 +441,7 @@ import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 
-import CheckboxItem from "@/components/shared/CheckboxItem";
+import IngredientCheckbox from "@/components/shared/IngredientCheckbox";
 
 let colors = {
   highlightColor: BABYLON.Color3.FromHexString("#FFFFFF"),
@@ -414,7 +478,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: { CheckboxItem },
+  components: { IngredientCheckbox },
   data() {
     return {
       canvas: null,
@@ -471,7 +535,7 @@ export default {
       scrollBreakPoint: {
         headline: 0.05,
         about: 0.2,
-        selection: 0.75
+        selection: 0.90
       }
     };
   },
@@ -510,7 +574,6 @@ export default {
     
     // this.initAssetsManager();
     // this.initPan();
-    // this.initObjects();
     //this.initIngredients(); // TODO: Uncomment when we readd ingredients
     
     // this.initPointerEvents(); // Done in initScene() now
@@ -673,12 +736,25 @@ export default {
 
         // Let's add physics properties to all our objects!
 
-        const ingredientIds = ['redPepper', 'greenPepper', 'tofu1', 'tofu2', 'tofu3', 'tofu4']
+        const ingredientIds = [
+          'redPepper', 
+          'greenPepper', 
+          'tofu1', 
+          'tofu2', 
+          'tofu3', 
+          'tofu4',
+        ];
 
         for (var id in ingredientIds) {
           vm.addIngredientPhysics(ingredientIds[id]);
         }
 
+        const staticObjectIds = [
+          'table', 
+          'backWall', 
+          'pan', 
+          'cuttingBoard',
+        ];
         vm.addStaticPhysics('table');
         vm.addStaticPhysics('backWall');
         vm.addStaticPhysics('pan');
@@ -688,12 +764,10 @@ export default {
         vm.initPointerEvents();
 
 
-        console.log("um are we getting here?");
         scene.debugLayer.show({
           overlay:false, 
           globalRoot:document.getElementById('#babylonDebugger')
         });
-        console.log(vm.scene.debugLayer);
 
 
         // setting up scroll handler
@@ -914,7 +988,7 @@ export default {
       );
       if (pickInfo.hit) {
         this.currentMesh = pickInfo.pickedMesh;
-        console.warn(this.currentMesh);
+        console.log(this.currentMesh);
         this.hl.addMesh(this.currentMesh, colors.highlightColor);
       }
 
@@ -948,7 +1022,13 @@ export default {
           this.scene.pointerX,
           this.scene.pointerY,
           mesh => {
-            return mesh == this.veggies.pepper; // Only let veggies be selected
+          // Only lets us select from our ingredients
+          for (var index in this.ingredients) {
+            if (mesh == this.ingredients[index]) {
+              return true;
+            }
+          }
+          return false; 
           }
         );
         if (pickInfo.hit && pickInfo.pickedMesh) {
@@ -1148,14 +1228,6 @@ export default {
       };
     },
 
-    initObjects() {
-      BABYLON.SceneLoader.Append("./assets/models/donut/", 
-      "donut.babylon", 
-      this.scene, 
-      function (scene) {
-        // do something with the scene
-      });
-    },
 
     initPhysicsGravityField() {
       // Gravity field for ingredients in the pan
