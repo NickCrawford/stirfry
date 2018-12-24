@@ -23,7 +23,7 @@
 
       <div id="overlay-view">
         <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
-          <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
+          <h1><img src="@/assets/images/logos/logo-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
           <h2>A creative agency &mdash; with taste.</h2>
         </section>
 
