@@ -524,6 +524,7 @@ export default {
         social: false,
         other: false
       },
+      itemsLoaded: false, // Keeps track of whether we've added items yet
 
       //Logo position
       logoPosition: {
@@ -630,6 +631,11 @@ export default {
         scrollTop / (window.innerHeight - scrollContainer.clientHeight)
       ); // (Decimal) the progress at which we've scrolled through the overlay-view
 
+      // Loading in items, if relevant:
+      if (this.scrollProgress >= 0.90 && !this.itemsLoaded) {
+        this.initItems();
+      }
+
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
       if (targetScrollFrame >= totalAnimationFrames) {
@@ -689,6 +695,9 @@ export default {
       // Get the canvas DOM element
       this.canvas = document.getElementById("renderCanvas");
 
+      //
+      this.assetsManager = new BABYLON.AssetsManager(this.scene);
+
       // Load the 3d engine
       this.engine = new BABYLON.Engine(this.canvas, true, {
         preserveDrawingBuffer: true,
@@ -736,29 +745,31 @@ export default {
 
         // Let's add physics properties to all our objects!
 
-        const ingredientIds = [
-          'redPepper', 
-          'greenPepper', 
-          'tofu1', 
-          'tofu2', 
-          'tofu3', 
-          'tofu4',
-        ];
 
-        for (var id in ingredientIds) {
-          vm.addIngredientPhysics(ingredientIds[id]);
-        }
 
-        const staticObjectIds = [
-          'table', 
-          'backWall', 
-          'pan', 
-          'cuttingBoard',
-        ];
-        vm.addStaticPhysics('table');
-        vm.addStaticPhysics('backWall');
-        vm.addStaticPhysics('pan');
-        vm.addStaticPhysics('cuttingBoard');
+        // const ingredientIds = [
+        //   'redPepper', 
+        //   'greenPepper', 
+        //   'tofu1', 
+        //   'tofu2', 
+        //   'tofu3', 
+        //   'tofu4',
+        // ];
+
+        // for (var id in ingredientIds) {
+        //   vm.addIngredientPhysics(ingredientIds[id]);
+        // }
+
+        // const staticObjectIds = [
+        //   'table', 
+        //   'backWall', 
+        //   'pan', 
+        //   'cuttingBoard',
+        // ];
+        // vm.addStaticPhysics('table');
+        // vm.addStaticPhysics('backWall');
+        // vm.addStaticPhysics('pan');
+        // vm.addStaticPhysics('cuttingBoard');
 
         // Adding ability to select things
         vm.initPointerEvents();
@@ -920,6 +931,23 @@ export default {
       );
 
       return scene;
+    },
+
+    initItems() {
+      this.itemsLoaded = true;
+
+      this.assetsManager.useDefaultLoadingScreen = false;
+      this.engine.hideLoadingUI();
+
+      console.log("err here?")
+      var vm = this;
+      setTimeout(() => {
+        BABYLON.SceneLoader.Append("./assets/models/pan_scene/", "pan_scene_items.babylon", this.scene, function (scene) {
+          console.log("here?")
+          vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);  // Makes our flat colors appear brightly
+
+        });
+      }, 300);
     },
 
     // Adds physics to an ingredient. This will allow the user to select the ingredient
