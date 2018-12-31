@@ -1,9 +1,9 @@
 <template>
-  <header>
+  <header :class="colorPalette">
     <nav>
       <ul>
         <router-link :to="{ name: 'home' }" tag="li" id="home-logo">
-          <img src="@/assets/images/logos/logo-pan.svg" alt="home">
+          <img src="@/assets/images/logos/logo-pan.svg" alt="home" :class="colorPalette">
         </router-link>
         <router-link :to="{ name: 'portfolio' }" tag="li">Our work</router-link>
         <router-link to="/#selection" tag="li">Services</router-link>
@@ -16,12 +16,21 @@
 
 <script>
 export default {
-  name: "HeaderBar"
+  name: "HeaderBar",
+  props: {
+    colorPalette: { // Options: 'transparent', 'gray', 
+      type: String,
+      default: 'transparent',
+      required: false
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
+
+$transition-duration: .5s;
 
 header {
   position: fixed;
@@ -30,8 +39,13 @@ header {
   right: 0;
 
   width: 100%;
+  transition-duration: $transition-duration;
 
   z-index: 99;
+  &.gray {
+    background: $black;
+    color: $skin;
+  }
 }
 
 nav ul {
@@ -45,8 +59,11 @@ nav li {
   display: inline-block;
   padding: 0.5em 1em;
   font-size: 1.25em;
-
+  transition-duration: .2s;
   cursor: pointer;
+  &:hover {
+    padding: 0.3em 1em 0.7em;
+  }
 }
 
 @for $i from 1 through 5 {
@@ -61,7 +78,11 @@ nav li {
 }
 
 #home-logo img {
-  height: 3rem;
+  height: 2rem;
   width: auto;
+  transition-duration: $transition-duration;
+  &.gray {
+    filter: brightness(250%);
+  }
 }
 </style>

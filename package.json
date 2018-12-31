@@ -11,6 +11,7 @@
     "babylonjs": "^3.3.0",
     "babylonjs-loaders": "^3.3.0",
     "cannon": "^0.6.2",
+    "vivus": "^0.4.4",
     "vue": "^2.5.16",
     "vue-flickity": "^1.1.2",
     "vue-router": "^3.0.1"
