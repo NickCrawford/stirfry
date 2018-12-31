@@ -41,6 +41,11 @@
                     v-if="tag.service"
                   >{{ tag.service }}</span>
                 </div>
+                <router-link
+                  :to="`/portfolio/${project.uid}`"
+                  tag="button"
+                  class="stirfry-button"
+                >View more</router-link>
               </div>
             </div>
           </div>
@@ -521,7 +526,7 @@ export default {
   margin-right: 1em;
 
   background: white;
-  box-shadow: $box-shading;
+  border-radius: 3px;
   text-transform: capitalize;
 
   &:last-of-type {
