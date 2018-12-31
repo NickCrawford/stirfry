@@ -5,14 +5,15 @@ import PrismicVue from "prismic-vue";
 import VueWaypoint from "vue-waypoint";
 
 import Breakpoints from "./assets/scripts/utility/breakpointsPlugin.js";
+import linkResolver from "./assets/scripts/utility/linkResolver.js";
 
 Vue.use(Breakpoints);
 
 Vue.config.productionTip = false;
 
 Vue.use(PrismicVue, {
-  endpoint: window.prismic.endpoint
-  // linkResolver: linkResolver
+  endpoint: window.prismic.endpoint,
+  linkResolver: linkResolver
 });
 
 // Waypoint plugin

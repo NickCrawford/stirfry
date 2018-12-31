@@ -2,6 +2,7 @@ const path = require("path");
 const PrerenderSPAPlugin = require("prerender-spa-plugin");
 
 module.exports = {
+  runtimeCompiler: true,
   configureWebpack: () => {
     if (process.env.NODE_ENV !== "production") return;
     return {

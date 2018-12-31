@@ -7,6 +7,7 @@ import SubmissionSuccess from "./views/SubmissionSuccess";
 import FourOhFour from "./views/FourOhFour.vue";
 
 import Portfolio from "./views/Portfolio/Portfolio.vue";
+import ProjectPage from "./views/Portfolio/ProjectPage.vue";
 
 Vue.use(Router);
 
@@ -36,6 +37,11 @@ export default new Router({
       // ]
     },
     {
+      path: "/portfolio/:uid",
+      name: "projectPage",
+      component: ProjectPage
+    },
+    {
       path: "/",
       name: "home",
       component: Home
@@ -60,19 +66,3 @@ export default new Router({
     { path: "*", redirect: "/404" }
   ]
 });
-
-// For Prismic
-// function linkResolver (doc) {
-//   // Return the path depending on Prismic Document's type
-//   // If it is a Single Custom Type with the API ID of "home"
-//   if (doc.type === 'home') {
-//     return '/';
-//   }
-//   // If it is a Single Custom Type with the API ID of "example"
-//   if (doc.type === 'example') {
-//     return '/example';
-//   }
-
-//   // Default to the root
-//   return '/';
-// }
