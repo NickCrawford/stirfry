@@ -19,7 +19,7 @@
 ,"indices":[0,1,2,0,3,1]
 ,"subMeshes":[{"materialIndex":0,"verticesStart":0,"verticesCount":4,"indexStart":0,"indexCount":6}]
 ,"instances":[]}
-,{"name":"table","id":"table","materialId":"pan_scene.Skin Table","billboardMode":0,"position":[0,0,5.7187],"rotation":[-0.0014,-0.0024,-0.0037],"scaling":[3.9087,1.8262,1.3858],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
+,{"name":"table","id":"table","materialId":"pan_scene.Skin Table","billboardMode":0,"position":[0,0,5.7187],"rotation":[0,0,0],"scaling":[3.9087,1.8262,1.3858],"isVisible":true,"freezeWorldMatrix":false,"isEnabled":true,"checkCollisions":false,"receiveShadows":false,"pickable":true,"tags":""
 ,"positions":[10,0,-10,-10,0,10,-10,0,-10,10,0,10]
 ,"normals":[0,1,0,0,1,0,0,1,0,0,1,0]
 ,"indices":[0,1,2,0,3,1]

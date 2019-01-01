@@ -36,21 +36,33 @@
 
             <div class="subheader">
               <h4>Whether you’re a fresh entrepreneur or an established business, <b>your brand matters.</b> </h4>
-              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
+              <h4 style="max-width:65%;">
+               Our team will design with <b>your style,</b> whether it's a new look for your website, app, or promotional material. 
+              </h4>
+              <router-link :to="{ name: 'portfolio' }" class="link-style">Check out our work here »</router-link>
             </div>
 
-            <img src="/assets/home_assets/pepper_filled.svg" id="pepper-filled">
+            <img src="/assets/home_assets/pepper_filled.svg" id="pepper-filled"
+              :style="{
+                  bottom: (scrollProgress * 100) - 80 + 'px'
+                }">
           </div>
 
           <div id="nerd-text">
             <h1>Nerd Stuff</h1>
 
             <div class="subheader">
-              <h4>Whether you’re a fresh entrepreneur or an established business, <b>your brand matters.</b> </h4>
-              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
+              <h4>Don't worry, we're <b>big nerds.</b> </h4>
+              <h4>
+                We have plenty of experience coding <b>iOS and Android apps,</b> developing <b>responsive websites</b>, and more.
+              </h4>
+              <!--<router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>-->
             </div>
 
-            <img src="/assets/home_assets/pepper_filled.svg" id="pepper-filled">
+            <img src="/assets/home_assets/carrots.svg" id="carrot"
+              :style="{
+                  bottom: (scrollProgress * 100) - 80 + 'px'
+                }">
           </div>
 
         </section>
@@ -263,6 +275,7 @@ section * {
 }
 
 #promo-text {
+  max-width: 700px;
   background: $lid;
   padding: 50px;
   grid-row: 1/2;
@@ -276,6 +289,8 @@ section * {
 }
 
 #nerd-text {
+  width: 100% ;
+  max-width: 700px;
   background: $green;
   padding: 50px;
   color: white;
@@ -412,7 +427,7 @@ section * {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: 1fr;
-  grid-row-gap: 50px;
+  grid-row-gap: 150px;
   justify-items: start;
   align-content: start;
 
@@ -470,7 +485,11 @@ section * {
   width: 30%;
   position: absolute;
   right: 20px;
-  bottom: -30px;
+}
+#carrot {
+  width: 30%;
+  position: absolute;
+  right: 20px;
 }
 
 @keyframes wipein {
