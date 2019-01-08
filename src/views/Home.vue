@@ -70,7 +70,7 @@
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
           <h3 class="heading">Let's Get Cooking!</h3>
           <div class="prompt">
-            <h4>What can we help you with?</h4>
+            <h3>What can we help you with?</h3>
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
           </div>
 
@@ -250,6 +250,10 @@ section * {
   font-size: 3rem;
 
   grid-row-start: 2;
+  background: $black;
+  color: $skin;
+  margin: 0px 30vw;
+  width: 40vw;
 }
 
 // Animations
