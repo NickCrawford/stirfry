@@ -41,11 +41,7 @@
                     v-if="tag.service"
                   >{{ tag.service }}</span>
                 </div>
-                <router-link
-                  :to="`/portfolio/${project.uid}`"
-                  tag="button"
-                  class="stirfry-button"
-                >View more</router-link>
+                <router-link :to="`/portfolio/${project.uid}`" class="link-style">View more</router-link>
               </div>
             </div>
           </div>

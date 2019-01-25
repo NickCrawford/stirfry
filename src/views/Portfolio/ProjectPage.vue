@@ -5,7 +5,15 @@
       <h2 class="subtitle">{{ $prismic.richTextAsPlain(project.subtitle) }}</h2>
     </div>
 
-    <div class="hero-image-container"></div>
+    <div class="hero-image-container">
+      <prismic-image
+        :field="layer.image"
+        v-for="(layer, index) in project.layers"
+        :key="`layer-${index}`"
+        :style="{ 'z-index': layer.depth}"
+        class="hero-image"
+      />
+    </div>
 
     <section v-for="(slice, index) in project.body" :key="'slice-' + index">
       <template v-if="slice.slice_type === 'client_needs'">
@@ -72,7 +80,22 @@ export default {
 }
 
 .hero-image-container {
+  position: relative;
   min-height: 80vh;
   background-color: $black;
+}
+
+.hero-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hero-image:first-of-type {
+  object-fit: cover;
 }
 </style>
