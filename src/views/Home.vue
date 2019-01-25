@@ -1,5 +1,6 @@
 <template>
   <div class="home" :class="{ 'show-cursor': showCursor }">
+    <header-bar :colorPalette="headerColorPalette"></header-bar>
     <div id="scroll-container">
       <div class="debug-container" v-if="false">
         <p>{{ selectedItems }}</p>
@@ -22,8 +23,9 @@
       </a>
 
       <div id="overlay-view">
+
         <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
-          <h1><img src="@/assets/img/stirfry-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
+          <h1><img src="@/assets/images/logos/logo-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
           <h2>A creative agency &mdash; with taste.</h2>
         </section>
 
@@ -34,8 +36,33 @@
 
             <div class="subheader">
               <h4>Whether you’re a fresh entrepreneur or an established business, <b>your brand matters.</b> </h4>
-              <router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>
+              <h4 style="max-width:65%;">
+               Our team will design with <b>your style,</b> whether it's a new look for your website, app, or promotional material. 
+              </h4>
+              <router-link :to="{ name: 'portfolio' }" class="link-style">Check out our work here »</router-link>
             </div>
+
+            <img src="/assets/home_assets/pepper_filled.svg" id="pepper-filled"
+              :style="{
+                  bottom: (scrollProgress * 100) - 80 + 'px'
+                }">
+          </div>
+
+          <div id="nerd-text">
+            <h1>Nerd Stuff</h1>
+
+            <div class="subheader">
+              <h4>Don't worry, we're <b>big nerds.</b> </h4>
+              <h4>
+                We have plenty of experience coding <b>iOS and Android apps,</b> developing <b>responsive websites</b>, and more.
+              </h4>
+              <!--<router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>-->
+            </div>
+
+            <img src="/assets/home_assets/carrots.svg" id="carrot"
+              :style="{
+                  bottom: (scrollProgress * 100) - 80 + 'px'
+                }">
           </div>
 
         </section>
@@ -43,7 +70,7 @@
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
           <h3 class="heading">Let's Get Cooking!</h3>
           <div class="prompt">
-            <h4>What can we help you with?</h4>
+            <h3>What can we help you with?</h3>
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
           </div>
 
@@ -223,6 +250,10 @@ section * {
   font-size: 3rem;
 
   grid-row-start: 2;
+  background: $black;
+  color: $skin;
+  margin: 0px 30vw;
+  width: 40vw;
 }
 
 // Animations
@@ -248,11 +279,32 @@ section * {
 }
 
 #promo-text {
+  max-width: 700px;
   background: $lid;
   padding: 50px;
+  grid-row: 1/2;
   color: white;
   .link-style {
     color: white;
+  }
+  @media screen and (min-width: $md-bp) {
+    grid-column: 1/4;
+  }
+}
+
+#nerd-text {
+  width: 100% ;
+  max-width: 700px;
+  background: $green;
+  padding: 50px;
+  color: white;
+  grid-row: 2/3;
+  
+  .link-style {
+    color: white;
+  }
+  @media screen and (min-width: $md-bp) {
+    grid-column: 3/6;
   }
 }
 
@@ -377,14 +429,13 @@ section * {
 // About Section
 #about {
   display: grid;
-  grid-template-rows: auto;
+  grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: 1fr;
+  grid-row-gap: 150px;
   justify-items: start;
   align-content: start;
 
-  // background: $green;
-
-  min-height: 50vh;
+  min-height: 200vh;
 
   text-align: left;
   color: $text-color;
@@ -394,7 +445,7 @@ section * {
   font-size: 0.75em;
 
   @media screen and (min-width: $md-bp) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 
     font-size: unset;
   }
@@ -433,6 +484,23 @@ section * {
   color: white;
   z-index: 999;
 }
+
+#pepper-filled {
+  width: 30%;
+  position: absolute;
+  right: 20px;
+}
+#carrot {
+  width: 30%;
+  position: absolute;
+  right: 20px;
+}
+
+@keyframes wipein {
+  from {
+    min-height: 0px;
+  }
+}
 </style>
 
 <script>
@@ -440,6 +508,8 @@ section * {
 import "cannon";
 import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
+import HeaderBar from "@/components/HeaderBar";
+
 
 import IngredientCheckbox from "@/components/shared/IngredientCheckbox";
 
@@ -478,7 +548,7 @@ let cameraRotation1 = new BABYLON.Vector3(
 
 export default {
   name: "home",
-  components: { IngredientCheckbox },
+  components: { IngredientCheckbox, HeaderBar },
   data() {
     return {
       canvas: null,
@@ -524,6 +594,7 @@ export default {
         social: false,
         other: false
       },
+      itemsLoaded: false, // Keeps track of whether we've added items yet
 
       //Logo position
       logoPosition: {
@@ -536,7 +607,9 @@ export default {
         headline: 0.05,
         about: 0.2,
         selection: 0.90
-      }
+      },
+
+      headerColorPalette: 'transparent'
     };
   },
 
@@ -555,6 +628,7 @@ export default {
   },
 
   mounted() {
+
     if (window.navigator.userAgent.includes("Headless")) {
       return;
     }
@@ -630,6 +704,18 @@ export default {
         scrollTop / (window.innerHeight - scrollContainer.clientHeight)
       ); // (Decimal) the progress at which we've scrolled through the overlay-view
 
+      // Changes header color palette depending on where we are on the page
+      if (this.scrollProgress <= 0.2) { 
+        this.headerColorPalette = 'transparent';
+      } else if (this.scrollProgress > 0.20) {
+        this.headerColorPalette = 'gray';
+      } 
+
+      // Loading in items, if relevant:
+      if (this.scrollProgress >= 0.90 && !this.itemsLoaded) {
+        // this.initItems(); // Uncomment this to load items!
+      }
+
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
       if (targetScrollFrame >= totalAnimationFrames) {
@@ -689,6 +775,9 @@ export default {
       // Get the canvas DOM element
       this.canvas = document.getElementById("renderCanvas");
 
+      //
+      this.assetsManager = new BABYLON.AssetsManager(this.scene);
+
       // Load the 3d engine
       this.engine = new BABYLON.Engine(this.canvas, true, {
         preserveDrawingBuffer: true,
@@ -736,29 +825,31 @@ export default {
 
         // Let's add physics properties to all our objects!
 
-        const ingredientIds = [
-          'redPepper', 
-          'greenPepper', 
-          'tofu1', 
-          'tofu2', 
-          'tofu3', 
-          'tofu4',
-        ];
 
-        for (var id in ingredientIds) {
-          vm.addIngredientPhysics(ingredientIds[id]);
-        }
 
-        const staticObjectIds = [
-          'table', 
-          'backWall', 
-          'pan', 
-          'cuttingBoard',
-        ];
-        vm.addStaticPhysics('table');
-        vm.addStaticPhysics('backWall');
-        vm.addStaticPhysics('pan');
-        vm.addStaticPhysics('cuttingBoard');
+        // const ingredientIds = [
+        //   'redPepper', 
+        //   'greenPepper', 
+        //   'tofu1', 
+        //   'tofu2', 
+        //   'tofu3', 
+        //   'tofu4',
+        // ];
+
+        // for (var id in ingredientIds) {
+        //   vm.addIngredientPhysics(ingredientIds[id]);
+        // }
+
+        // const staticObjectIds = [
+        //   'table', 
+        //   'backWall', 
+        //   'pan', 
+        //   'cuttingBoard',
+        // ];
+        // vm.addStaticPhysics('table');
+        // vm.addStaticPhysics('backWall');
+        // vm.addStaticPhysics('pan');
+        // vm.addStaticPhysics('cuttingBoard');
 
         // Adding ability to select things
         vm.initPointerEvents();
@@ -920,6 +1011,23 @@ export default {
       );
 
       return scene;
+    },
+
+    initItems() {
+      this.itemsLoaded = true;
+
+      this.assetsManager.useDefaultLoadingScreen = false;
+      this.engine.hideLoadingUI();
+
+      console.log("err here?")
+      var vm = this;
+      setTimeout(() => {
+        BABYLON.SceneLoader.Append("./assets/models/pan_scene/", "pan_scene_items.babylon", this.scene, function (scene) {
+          console.log("here?")
+          vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);  // Makes our flat colors appear brightly
+
+        });
+      }, 300);
     },
 
     // Adds physics to an ingredient. This will allow the user to select the ingredient
