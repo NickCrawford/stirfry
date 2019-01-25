@@ -64,5 +64,13 @@ export default new Router({
     },
     { path: "/404", component: FourOhFour },
     { path: "*", redirect: "/404" }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    // return desired position
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 };
+    }
+  }
 });

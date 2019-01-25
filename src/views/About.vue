@@ -1,10 +1,13 @@
 <template>
   <div class="about">
+    <header-bar/>
     <section>
       <h1>About us</h1>
       <h2>2018</h2>
       <h3>Spring - Officially open for business</h3>
-      <p>Startup Stirfry LLC was officially founded by Nick Crawford and Ben Holland. Their first task: establish themselves as professional web designers. Together they started on their very first agency project, <a href="http://www.sellout.at">Sellout</a></p>
+      <p>Startup Stirfry LLC was officially founded by Nick Crawford and Ben Holland. Their first task: establish themselves as professional web designers. Together they started on their very first agency project,
+        <a href="http://www.sellout.at">Sellout</a>
+      </p>
     </section>
     <section>
       <h3>Summer - Heating up...</h3>
@@ -16,6 +19,14 @@
     </section>
   </div>
 </template>
+
+<script>
+import HeaderBar from "@/components/HeaderBar.vue";
+export default {
+  components: { HeaderBar }
+};
+</script>
+
 
 <style scoped>
 .about {

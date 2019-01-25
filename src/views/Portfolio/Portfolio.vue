@@ -1,5 +1,6 @@
 <template>
   <div id="portfolio-page">
+    <header-bar colorPalette="gray"></header-bar>
     <div class="space">
       <h1>Our Work</h1>
       <h4>Have a look at some of our recent projects</h4>
@@ -95,6 +96,8 @@
 </template>
 
 <script>
+import HeaderBar from "@/components/HeaderBar.vue";
+
 import { TweenMax, TimelineLite, Power3 } from "gsap/TweenMax";
 import { ScrollToPlugin } from "gsap/all";
 
@@ -154,7 +157,7 @@ export default {
       scrollSpeed: 0
     };
   },
-  components: {},
+  components: { HeaderBar },
   methods: {
     // Returns the proper amount to translate an image based on it's parallax depth
     parallaxX(depth) {
