@@ -18,9 +18,10 @@
 export default {
   name: "HeaderBar",
   props: {
-    colorPalette: { // Options: 'transparent', 'gray', 
+    colorPalette: {
+      // Options: 'transparent', 'gray',
       type: String,
-      default: 'transparent',
+      default: "transparent",
       required: false
     }
   }
@@ -30,7 +31,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
 
-$transition-duration: .5s;
+$transition-duration: 0.5s;
 
 header {
   position: fixed;
@@ -59,7 +60,7 @@ nav li {
   display: inline-block;
   padding: 0.5em 1em;
   font-size: 1.25em;
-  transition-duration: .2s;
+  transition-duration: 0.2s;
   cursor: pointer;
   &:hover {
     padding: 0.3em 1em 0.7em;

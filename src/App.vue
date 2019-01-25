@@ -71,7 +71,7 @@ $animation-timing-function: cubic-bezier(0.33, 1, 0.5, 1);
     right: 0;
     bottom: 0;
     z-index: 999999;
-    background: $skin;
+    background: $background;
 
     transition: transform 0.5s $animation-timing-function;
   }
