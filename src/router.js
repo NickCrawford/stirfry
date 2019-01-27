@@ -67,6 +67,14 @@ export default new Router({
   ],
   scrollBehavior(to, from, savedPosition) {
     // return desired position
+
+    if (to.hash) {
+      return {
+        selector: to.hash,
+        offset: { x: 0, y: 0 }
+      };
+    }
+
     if (savedPosition) {
       return savedPosition;
     } else {

@@ -2,7 +2,7 @@
   <header :class="colorPalette">
     <nav>
       <ul>
-        <router-link :to="{ name: 'home' }" tag="li" id="home-logo">
+        <router-link :to="{ name: 'home', hash: '#headline' }" tag="li" id="home-logo">
           <img src="@/assets/images/logos/logo-pan.svg" alt="home" :class="colorPalette">
         </router-link>
         <router-link :to="{ name: 'portfolio' }" tag="li">Our work</router-link>

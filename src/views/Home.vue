@@ -8,14 +8,19 @@
       </div>
 
       <div id="babylonDebugger"></div>
-      <canvas id="renderCanvas" :class="{
+      <canvas
+        id="renderCanvas"
+        :class="{
           'faded-canvas': scrollProgress >= scrollBreakPoint.about &&
-                          scrollProgress <= scrollBreakPoint.selection        }"></canvas>
-      
+                          scrollProgress <= scrollBreakPoint.selection        }"
+      ></canvas>
+
       <!-- Hints users to continue scrolling -->
       <a class="scroll-indicator" href="#selection">
         <transition name="fade">
-          <p v-if="scrollProgress >= scrollBreakPoint.headline && scrollProgress <= scrollBreakPoint.selection">Keep scrolling</p>
+          <p
+            v-if="scrollProgress >= scrollBreakPoint.headline && scrollProgress <= scrollBreakPoint.selection"
+          >Keep scrolling</p>
         </transition>
         <transition name="fade">
           <div class="scroll-arrow" v-if="scrollProgress <= scrollBreakPoint.selection"></div>
@@ -23,48 +28,67 @@
       </a>
 
       <div id="overlay-view">
-
         <section id="headline" :class="{ 'hidden': scrollProgress >= scrollBreakPoint.headline }">
-          <h1><img src="@/assets/images/logos/logo-wordmark.svg" alt="Startup Stirfry" class="logo" :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"/></h1>
+          <h1>
+            <img
+              src="@/assets/images/logos/logo-wordmark.svg"
+              alt="Startup Stirfry"
+              class="logo"
+              :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"
+            >
+          </h1>
           <h2>A creative agency &mdash; with taste.</h2>
         </section>
 
-        
         <section id="about" :class="{ 'hidden': scrollProgress <= scrollBreakPoint.about  }">
           <div id="promo-text">
             <h1>Delicious Design</h1>
 
             <div class="subheader">
-              <h4>Whether you’re a fresh entrepreneur or an established business, <b>your brand matters.</b> </h4>
+              <h4>
+                Whether you’re a fresh entrepreneur or an established business,
+                <b>your brand matters.</b>
+              </h4>
               <h4 style="max-width:65%;">
-               Our team will design with <b>your style,</b> whether it's a new look for your website, app, or promotional material. 
+                Our team will design with
+                <b>your style,</b> whether it's a new look for your website, app, or promotional material.
               </h4>
               <router-link :to="{ name: 'portfolio' }" class="link-style">Check out our work here »</router-link>
             </div>
 
-            <img src="/assets/home_assets/pepper_filled.svg" id="pepper-filled"
+            <img
+              src="/assets/home_assets/pepper_filled.svg"
+              id="pepper-filled"
               :style="{
                   bottom: (scrollProgress * 100) - 80 + 'px'
-                }">
+                }"
+            >
           </div>
 
           <div id="nerd-text">
             <h1>Nerd Stuff</h1>
 
             <div class="subheader">
-              <h4>Don't worry, we're <b>big nerds.</b> </h4>
               <h4>
-                We have plenty of experience coding <b>iOS and Android apps,</b> developing <b>responsive websites</b>, and more.
+                Don't worry, we're
+                <b>big nerds.</b>
+              </h4>
+              <h4>
+                We have plenty of experience coding
+                <b>iOS and Android apps,</b> developing
+                <b>responsive websites</b>, and more.
               </h4>
               <!--<router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>-->
             </div>
 
-            <img src="/assets/home_assets/carrots.svg" id="carrot"
+            <img
+              src="/assets/home_assets/carrots.svg"
+              id="carrot"
               :style="{
                   bottom: (scrollProgress * 100) - 80 + 'px'
-                }">
+                }"
+            >
           </div>
-
         </section>
 
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
@@ -83,33 +107,38 @@
           <checkbox-item v-model="selectedItems.other">Something Else...</checkbox-item>
           -->
           <div id="checkbox-container">
+            <ingredient-checkbox
+              v-model="selectedItems.branding"
+              :icon="'./assets/icons/pepper_icon.png'"
+            >Branding & Creative Design</ingredient-checkbox>
 
-            <ingredient-checkbox v-model="selectedItems.branding"
-              :icon="'./assets/icons/pepper_icon.png'">
-              Branding & Creative Design
-            </ingredient-checkbox>
+            <ingredient-checkbox
+              v-model="selectedItems.marketing"
+              :icon="'./assets/icons/brocc_icon.png'"
+              :marginTop="10"
+            >Marketing & Social Media</ingredient-checkbox>
 
-            <ingredient-checkbox v-model="selectedItems.marketing"
-              :icon="'./assets/icons/brocc_icon.png'" :marginTop="10">
-              Marketing & Social Media
-            </ingredient-checkbox>
+            <ingredient-checkbox
+              v-model="selectedItems.web"
+              :icon="'./assets/icons/tofu_icon.png'"
+              :marginTop="-10"
+            >Web Design & Development</ingredient-checkbox>
 
-
-            <ingredient-checkbox v-model="selectedItems.web"
-              :icon="'./assets/icons/tofu_icon.png'" :marginTop="-10">
-              Web Design & Development
-            </ingredient-checkbox>
-            
-            <ingredient-checkbox v-model="selectedItems.app"
-              :icon="'./assets/icons/carrot_icon.png'" :marginTop="-10">
-            iOS or Android Development
-            </ingredient-checkbox>
+            <ingredient-checkbox
+              v-model="selectedItems.app"
+              :icon="'./assets/icons/carrot_icon.png'"
+              :marginTop="-10"
+            >iOS or Android Development</ingredient-checkbox>
           </div>
-
 
           <div class="finish-container">
             <transition name="fade" duration="800">
-              <router-link :to="{ name: 'contact', params: { selectedItems: selectedItems }}" tag="button" class="stirfry-button" v-if="isItemSelected">contact us »</router-link>
+              <router-link
+                :to="{ name: 'contact', params: { selectedItems: selectedItems }}"
+                tag="button"
+                class="stirfry-button"
+                v-if="isItemSelected"
+              >contact us »</router-link>
             </transition>
           </div>
         </section>
@@ -193,7 +222,7 @@
 }
 
 .faded-canvas {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 #overlay-view {
@@ -293,13 +322,13 @@ section * {
 }
 
 #nerd-text {
-  width: 100% ;
+  width: 100%;
   max-width: 700px;
   background: $green;
   padding: 50px;
   color: white;
   grid-row: 2/3;
-  
+
   .link-style {
     color: white;
   }
@@ -351,15 +380,14 @@ section * {
 
   display: grid;
   grid-template-rows: 1fr 1fr 1fr 1fr;
-  grid-template-columns: 1fr ;
+  grid-template-columns: 1fr;
   grid-row-gap: 20px;
 
   @media screen and (min-width: $md-bp) {
     grid-template-rows: 1fr 1fr;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 300px;  
+    grid-column-gap: 300px;
   }
-  
 
   align-self: top;
 }
@@ -390,7 +418,7 @@ section * {
   .checkbox-item:nth-of-type(#{$i}) {
     grid-area: option + $i;
   }
-} 
+}
 
 #selection {
   * {
@@ -510,7 +538,6 @@ import * as BABYLON from "babylonjs";
 import "babylonjs-loaders";
 import HeaderBar from "@/components/HeaderBar";
 
-
 import IngredientCheckbox from "@/components/shared/IngredientCheckbox";
 
 let colors = {
@@ -540,7 +567,7 @@ let cameraPosition1 = new BABYLON.Vector3(0, 20, 0),
 
 // Define the rotations
 let cameraRotation1 = new BABYLON.Vector3(
-     Math.PI / 2 - 0.00001,
+    Math.PI / 2 - 0.00001,
     (-Math.PI * 3) / 8,
     0
   ),
@@ -576,13 +603,13 @@ export default {
         tofu1: null,
         tofu2: null,
         tofu3: null,
-        tofu4: null,
+        tofu4: null
       },
 
       // Immobile objects
       staticObjects: {
         table: null,
-        backWall: null,
+        backWall: null
       },
 
       //// The selected items/services a user has clicked on
@@ -606,10 +633,10 @@ export default {
       scrollBreakPoint: {
         headline: 0.05,
         about: 0.2,
-        selection: 0.90
+        selection: 0.9
       },
 
-      headerColorPalette: 'transparent'
+      headerColorPalette: "transparent"
     };
   },
 
@@ -628,14 +655,13 @@ export default {
   },
 
   mounted() {
-
     if (window.navigator.userAgent.includes("Headless")) {
       return;
     }
-    
-    // 
-    this.initEngine();    // Loads canvas & render engine 
-    this.initScene();     // Loads assets, calls other functions on completion
+
+    //
+    this.initEngine(); // Loads canvas & render engine
+    this.initScene(); // Loads assets, calls other functions on completion
 
     // Loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
@@ -645,14 +671,13 @@ export default {
       this.handleMobileCameraView(e.target.innerWidth);
     });
 
-    
     // this.initAssetsManager();
     // this.initPan();
     //this.initIngredients(); // TODO: Uncomment when we readd ingredients
-    
+
     // this.initPointerEvents(); // Done in initScene() now
     // this.handleMobileCameraView(window.innerWidth);
-/*
+    /*
     // Just call load to initiate the loading sequence
     this.assetsManager.load();
 
@@ -671,7 +696,6 @@ export default {
     this.assetsManager.onTaskError = function(task) {
       console.log("error while loading " + task.name);
     };*/
-
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
@@ -705,14 +729,14 @@ export default {
       ); // (Decimal) the progress at which we've scrolled through the overlay-view
 
       // Changes header color palette depending on where we are on the page
-      if (this.scrollProgress <= 0.2) { 
-        this.headerColorPalette = 'transparent';
-      } else if (this.scrollProgress > 0.20) {
-        this.headerColorPalette = 'gray';
-      } 
+      if (this.scrollProgress <= 0.2) {
+        this.headerColorPalette = "transparent";
+      } else if (this.scrollProgress > 0.2) {
+        this.headerColorPalette = "gray";
+      }
 
       // Loading in items, if relevant:
-      if (this.scrollProgress >= 0.90 && !this.itemsLoaded) {
+      if (this.scrollProgress >= 0.9 && !this.itemsLoaded) {
         // this.initItems(); // Uncomment this to load items!
       }
 
@@ -786,90 +810,84 @@ export default {
     },
 
     initScene() {
+      var vm = this; // This is important! Using `this` in the following callback function won't work,
+      // use `vm` instead.
 
-      var vm = this;  // This is important! Using `this` in the following callback function won't work,
-                      // use `vm` instead.
+      // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
+      BABYLON.SceneLoader.Load(
+        "./assets/models/pan_scene/",
+        "pan_scene.babylon",
+        this.engine,
+        function(scene) {
+          vm.scene = scene;
 
-        // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
-      BABYLON.SceneLoader.Load("./assets/models/pan_scene/", "pan_scene.babylon", this.engine, function (scene) {
+          var camera = scene.activeCamera; // Fetching camera from our blender file
 
-        vm.scene = scene; 
+          //camera.attachControl(vm.canvas, false); // Allows user to move camera with mouse
 
-        var camera = scene.activeCamera; // Fetching camera from our blender file
+          vm.scene.clearColor = colors.skin; // Scene bg color
+          vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
 
-        //camera.attachControl(vm.canvas, false); // Allows user to move camera with mouse
-
-        vm.scene.clearColor = colors.skin;    // Scene bg color
-        vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);  // Makes our flat colors appear brightly
-
-        vm.engine.runRenderLoop(function() {
+          vm.engine.runRenderLoop(function() {
             scene.render();
             vm.setLogoPosition();
-        });
+          });
 
-        window.addEventListener("resize", function () {
+          window.addEventListener("resize", function() {
             vm.engine.resize();
-        });
+          });
 
-        // Highlight layer for selecting items
-        let hl = new BABYLON.HighlightLayer("hl", vm.scene);
-        hl.innerGlow = false;
-        hl.blurHorizontalSize = 2;
-        hl.blurVerticalSize = 2;
-        vm.hl = hl;
+          // Highlight layer for selecting items
+          let hl = new BABYLON.HighlightLayer("hl", vm.scene);
+          hl.innerGlow = false;
+          hl.blurHorizontalSize = 2;
+          hl.blurVerticalSize = 2;
+          vm.hl = hl;
 
-        // Physics
-        vm.scene.enablePhysics();
-        
+          // Physics
+          vm.scene.enablePhysics();
 
+          // Let's add physics properties to all our objects!
 
-        // Let's add physics properties to all our objects!
+          // const ingredientIds = [
+          //   'redPepper',
+          //   'greenPepper',
+          //   'tofu1',
+          //   'tofu2',
+          //   'tofu3',
+          //   'tofu4',
+          // ];
 
+          // for (var id in ingredientIds) {
+          //   vm.addIngredientPhysics(ingredientIds[id]);
+          // }
 
+          // const staticObjectIds = [
+          //   'table',
+          //   'backWall',
+          //   'pan',
+          //   'cuttingBoard',
+          // ];
+          // vm.addStaticPhysics('table');
+          // vm.addStaticPhysics('backWall');
+          // vm.addStaticPhysics('pan');
+          // vm.addStaticPhysics('cuttingBoard');
 
-        // const ingredientIds = [
-        //   'redPepper', 
-        //   'greenPepper', 
-        //   'tofu1', 
-        //   'tofu2', 
-        //   'tofu3', 
-        //   'tofu4',
-        // ];
+          // Adding ability to select things
+          vm.initPointerEvents();
 
-        // for (var id in ingredientIds) {
-        //   vm.addIngredientPhysics(ingredientIds[id]);
-        // }
+          scene.debugLayer.show({
+            overlay: false,
+            globalRoot: document.getElementById("#babylonDebugger")
+          });
 
-        // const staticObjectIds = [
-        //   'table', 
-        //   'backWall', 
-        //   'pan', 
-        //   'cuttingBoard',
-        // ];
-        // vm.addStaticPhysics('table');
-        // vm.addStaticPhysics('backWall');
-        // vm.addStaticPhysics('pan');
-        // vm.addStaticPhysics('cuttingBoard');
+          // setting up scroll handler
+          vm.handleScroll(0);
+          window.addEventListener("scroll", vm.handleScroll);
+        }
+      );
 
-        // Adding ability to select things
-        vm.initPointerEvents();
-
-
-        scene.debugLayer.show({
-          overlay:false, 
-          globalRoot:document.getElementById('#babylonDebugger')
-        });
-
-
-        // setting up scroll handler
-        vm.handleScroll(0);
-        window.addEventListener("scroll", vm.handleScroll);
-      });
-
-      
-    
       return;
-
 
       // let scene = new BABYLON.Scene(this.engine);
 
@@ -886,8 +904,6 @@ export default {
       // camera.lockedTarget = new BABYLON.Vector3(0, 0, 0);
       // camera.rotation.x = cameraRotation1.x;
       // camera.rotation.y = cameraRotation1.y;
-
-      
 
       // Light direction is up and left
       // var light = new BABYLON.HemisphericLight(
@@ -1019,14 +1035,18 @@ export default {
       this.assetsManager.useDefaultLoadingScreen = false;
       this.engine.hideLoadingUI();
 
-      console.log("err here?")
+      console.log("err here?");
       var vm = this;
       setTimeout(() => {
-        BABYLON.SceneLoader.Append("./assets/models/pan_scene/", "pan_scene_items.babylon", this.scene, function (scene) {
-          console.log("here?")
-          vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1);  // Makes our flat colors appear brightly
-
-        });
+        BABYLON.SceneLoader.Append(
+          "./assets/models/pan_scene/",
+          "pan_scene_items.babylon",
+          this.scene,
+          function(scene) {
+            console.log("here?");
+            vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
+          }
+        );
       }, 300);
     },
 
@@ -1130,13 +1150,13 @@ export default {
           this.scene.pointerX,
           this.scene.pointerY,
           mesh => {
-          // Only lets us select from our ingredients
-          for (var index in this.ingredients) {
-            if (mesh == this.ingredients[index]) {
-              return true;
+            // Only lets us select from our ingredients
+            for (var index in this.ingredients) {
+              if (mesh == this.ingredients[index]) {
+                return true;
+              }
             }
-          }
-          return false; 
+            return false;
           }
         );
         if (pickInfo.hit && pickInfo.pickedMesh) {
@@ -1335,7 +1355,6 @@ export default {
         // pepper.material = materials.green;
       };
     },
-
 
     initPhysicsGravityField() {
       // Gravity field for ingredients in the pan
