@@ -28,7 +28,7 @@ export default {
 .client-needs {
   display: grid;
   grid-template-columns: 1fr;
-  grid-column-gap: 8rem;
+  grid-column-gap: 4rem;
   align-items: center;
   align-content: center;
 

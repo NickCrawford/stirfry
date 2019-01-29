@@ -42,11 +42,15 @@
           </client-needs>
         </template>
 
-        <template v-else-if="slice.slice_type === 'two_column_sticky'">
-          <prismic-rich-text :field="slice.primary.title"/>
-          <template v-for="(item, index) in slice.items">
-            <prismic-image :field="item.image" :key="'photo-item-' + index"/>
-          </template>
+        <template v-else-if="slice.slice_type === 'two-column-sticky'">
+          <two-column-sticky>
+            <template slot="description">
+              <prismic-rich-text :field="slice.primary.description"/>
+            </template>
+            <template v-for="(item, index) in slice.items">
+              <prismic-image :field="item.image" :key="'photo-item-' + index"/>
+            </template>
+          </two-column-sticky>
         </template>
       </section>
     </div>
@@ -57,10 +61,11 @@
 import HeaderBar from "@/components/HeaderBar.vue";
 
 import ClientNeeds from "@/components/portfolio/slices/ClientNeeds.vue";
+import TwoColumnSticky from "@/components/portfolio/slices/TwoColumnSticky.vue";
 
 export default {
   name: "ProjectPage",
-  components: { HeaderBar, ClientNeeds },
+  components: { HeaderBar, ClientNeeds, TwoColumnSticky },
   data() {
     return {
       project: null
@@ -153,6 +158,10 @@ header {
 
 .subtitle {
   margin-top: 0;
+}
+
+.link-style {
+  color: inherit;
 }
 
 .hero-image-container {
