@@ -4,6 +4,11 @@
   </div>
 </template>
 
+<script>
+export default {};
+</script>
+
+
 <style lang="scss">
 @import "@/GlobalVars.scss";
 
@@ -11,10 +16,14 @@
   display: flex;
   position: relative;
   width: 100%;
-  padding: 0 2rem;
+  max-width: 100rem;
 
   height: 100%;
-  max-height: 90vh;
+  max-height: calc(100vh - 8rem);
+
+  padding: 0 2rem;
+  margin: 0 auto;
+
   overflow: hidden;
 
   @media screen and (min-width: $md-bp) {
