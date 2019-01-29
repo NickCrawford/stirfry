@@ -26,32 +26,36 @@
 
     <div v-if="project">
       <section v-for="(slice, index) in project.body" :key="'slice-' + index">
-        <template v-if="slice.slice_type === 'client_needs'">
-          <client-needs :services="project.services" :link="slice.primary.link_to">
-            <template>
-              <prismic-rich-text :field="slice.primary.client_needs"/>
-            </template>
-            <template slot="link_to" v-if="slice.primary.link_to">
-              <p>
-                <a
-                  :href="slice.primary.link_to.url"
-                  class="link-style"
-                >{{ $prismic.richTextAsPlain(slice.primary.link_cta) || 'View the project live' }}</a>
-              </p>
-            </template>
-          </client-needs>
-        </template>
+        <client-needs
+          v-if="slice.slice_type === 'client_needs'"
+          :services="project.services"
+          :link="slice.primary.link_to"
+        >
+          <template>
+            <prismic-rich-text :field="slice.primary.client_needs"/>
+          </template>
+          <template slot="link_to" v-if="slice.primary.link_to">
+            <p>
+              <a
+                :href="slice.primary.link_to.url"
+                class="link-style"
+              >{{ $prismic.richTextAsPlain(slice.primary.link_cta) || 'View the project live' }}</a>
+            </p>
+          </template>
+        </client-needs>
 
-        <template v-else-if="slice.slice_type === 'two-column-sticky'">
-          <two-column-sticky>
-            <template slot="description">
-              <prismic-rich-text :field="slice.primary.description"/>
-            </template>
-            <template v-for="(item, index) in slice.items">
-              <prismic-image :field="item.image" :key="'photo-item-' + index"/>
-            </template>
-          </two-column-sticky>
-        </template>
+        <two-column-sticky v-else-if="slice.slice_type === 'two-column-sticky'">
+          <template slot="description">
+            <prismic-rich-text :field="slice.primary.description"/>
+          </template>
+          <template v-for="(item, index) in slice.items">
+            <prismic-image :field="item.image" :key="'photo-item-' + index"/>
+          </template>
+        </two-column-sticky>
+
+        <large-media v-else-if="slice.slice_type === 'large_media'">
+          <prismic-image :field="slice.primary.image"/>
+        </large-media>
       </section>
     </div>
   </div>
@@ -62,10 +66,11 @@ import HeaderBar from "@/components/HeaderBar.vue";
 
 import ClientNeeds from "@/components/portfolio/slices/ClientNeeds.vue";
 import TwoColumnSticky from "@/components/portfolio/slices/TwoColumnSticky.vue";
+import LargeMedia from "@/components/portfolio/slices/LargeMedia.vue";
 
 export default {
   name: "ProjectPage",
-  components: { HeaderBar, ClientNeeds, TwoColumnSticky },
+  components: { HeaderBar, ClientNeeds, TwoColumnSticky, LargeMedia },
   data() {
     return {
       project: null
@@ -185,5 +190,14 @@ header {
   top: 0;
   height: 100%;
   object-fit: cover;
+}
+
+section {
+  width: 100%;
+  margin-bottom: 4rem;
+}
+
+section:last-child {
+  margin-bottom: 0;
 }
 </style>
