@@ -542,9 +542,5 @@ export default {
   text-align: center;
   background-color: $black;
   color: white;
-
-  h1 {
-    text-transform: lowercase;
-  }
 }
 </style>

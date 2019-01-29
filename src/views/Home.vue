@@ -94,7 +94,7 @@
         <section id="selection" :class="{ hidden: scrollProgress <= scrollBreakPoint.selection }">
           <h3 class="heading">Let's Get Cooking!</h3>
           <div class="prompt">
-            <h3>What can we help you with?</h3>
+            <h4>What can we help you with?</h4>
             <!-- <p>(Add items to the pan by clicking on them)</p> -->
           </div>
 
@@ -359,7 +359,7 @@ section * {
   align-items: start;
 
   min-height: 100vh;
-  padding: 0 5vw 5vh;
+  padding: 4rem 5vw 5vh;
 
   @media screen and (min-width: $md-bp) {
     grid-template-areas:
@@ -392,9 +392,8 @@ section * {
   align-self: top;
 }
 
-#selection .heading {
+#selection h3 {
   grid-area: heading;
-  font-weight: 800;
 }
 
 #selection .prompt {

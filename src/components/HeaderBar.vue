@@ -1,5 +1,5 @@
 <template>
-  <header :class="colorPalette">
+  <header :class="[colorPalette, {'fixed' : fixed }]">
     <nav>
       <ul>
         <router-link :to="{ name: 'home', hash: '#headline' }" tag="li" id="home-logo">
@@ -23,6 +23,11 @@ export default {
       type: String,
       default: "transparent",
       required: false
+    },
+    fixed: {
+      type: Boolean,
+      default: true,
+      required: false
     }
   }
 };
@@ -34,19 +39,28 @@ export default {
 $transition-duration: 0.5s;
 
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
 
   width: 100%;
   transition-duration: $transition-duration;
 
   z-index: 99;
+
   &.gray {
     background: $black;
     color: $skin;
   }
+
+  &.light {
+    color: $light-background;
+  }
+}
+
+header.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 nav ul {

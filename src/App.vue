@@ -28,9 +28,6 @@ export default {
   margin: 0;
   padding: 0;
 }
-:root {
-  --heading-height: 2rem;
-}
 
 html,
 body {
