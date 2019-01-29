@@ -43,7 +43,7 @@ export default {};
 }
 
 .project-page-footer h3 {
-  margin-top: 0;
+  margin-top: 0.25em;
   text-align: right;
   grid-area: contact-heading;
 }
