@@ -6,12 +6,7 @@
     <div class="services">
       <h5>What we worked on:</h5>
       <p>
-        <span
-          v-for="tag in services"
-          :key="tag.id"
-          class="service-tag"
-          v-if="tag.service"
-        >{{ tag.service }}</span>
+        <span v-for="tag in services" :key="tag.id" class="service-tag">{{ tag.service || '' }}</span>
       </p>
       <p>
         <slot name="link_to"></slot>
@@ -49,11 +44,15 @@ export default {
 
 .client-needs .summary {
   grid-column: 1 / span 1;
-  color: white;
 }
 
-.client-needs .service-tag {
+.client-needs span.service-tag {
+  display: inline-block;
   margin-right: 1ch;
   text-transform: capitalize;
+
+  &:not(:last-child):after {
+    content: ",";
+  }
 }
 </style>

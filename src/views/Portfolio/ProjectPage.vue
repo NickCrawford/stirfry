@@ -68,13 +68,24 @@ export default {
   },
   computed: {
     textColor() {
-      // if (!this.project || !this.project.background_color)
-      return "#FFFFFF";
+      let lightColor = "#FFFFFF",
+        darkColor = "#000000";
+      if (!this.project || !this.project.background_color) return lightColor;
 
-      // let color = this.project.background_color.split("#")[1];
-      // console.log("color", color);
+      let hex = this.project.background_color;
 
-      // if (this.project && this.project.background_color)
+      let red = hexToDec(hex.substr(1, 2)),
+        green = hexToDec(hex.substr(3, 2)),
+        blue = hexToDec(hex.substr(5, 2));
+
+      var contrast = Math.sqrt(
+        red * red * 0.241 + green * green * 0.691 + blue * blue * 0.068
+      );
+
+      if (contrast > 130) {
+        return darkColor;
+      }
+      return lightColor;
     }
   },
   methods: {
@@ -92,6 +103,11 @@ export default {
     next();
   }
 };
+
+var hexToDec = function(hexString) {
+  var decString = hexString.replace(/[^a-f0-9]/gi, "");
+  return parseInt(decString, 16);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -100,7 +116,7 @@ export default {
 .project-page {
   position: relative;
   min-height: 100vh;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   background-color: $light-background;
 }
 
