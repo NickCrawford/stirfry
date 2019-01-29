@@ -57,12 +57,14 @@
           <prismic-image :field="slice.primary.image"/>
         </large-media>
       </section>
+      <project-page-footer></project-page-footer>
     </div>
   </div>
 </template>
 
 <script>
 import HeaderBar from "@/components/HeaderBar.vue";
+import ProjectPageFooter from "@/components/portfolio/ProjectPageFooter.vue";
 
 import ClientNeeds from "@/components/portfolio/slices/ClientNeeds.vue";
 import TwoColumnSticky from "@/components/portfolio/slices/TwoColumnSticky.vue";
@@ -70,7 +72,13 @@ import LargeMedia from "@/components/portfolio/slices/LargeMedia.vue";
 
 export default {
   name: "ProjectPage",
-  components: { HeaderBar, ClientNeeds, TwoColumnSticky, LargeMedia },
+  components: {
+    HeaderBar,
+    ProjectPageFooter,
+    ClientNeeds,
+    TwoColumnSticky,
+    LargeMedia
+  },
   data() {
     return {
       project: null
