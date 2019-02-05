@@ -1,16 +1,17 @@
 <template>
   <div id="portfolio-page">
-    <header-bar colorPalette="gray"></header-bar>
+    <header-bar colorPalette="gray" :fixed="false"></header-bar>
     <div class="space">
       <h1>Our Work</h1>
       <h4>Have a look at some of our recent projects</h4>
     </div>
-    <section class="portfolio-container" v-if="projects">
+    <section
+      class="portfolio-container"
+      :style="{ 'background-color':  projectBackgroundColor(activeProject),'color': textColor}"
+      v-if="projects"
+    >
       <div class="flex-row">
-        <div
-          class="portfolio-text-container"
-          :style="{'background-color':  projectBackgroundColor(activeProject), 'color': textColor}"
-        >
+        <div class="portfolio-text-container">
           <div
             class="text-content"
             :id="`project-${index}`"
@@ -373,6 +374,8 @@ var hexToDec = function(hexString) {
 .portfolio-container {
   margin: 0 auto;
   position: relative;
+
+  transition: background-color 0.3s ease, color 0.5s ease 0.3s;
 }
 
 .portfolio-navigation {
@@ -397,7 +400,7 @@ var hexToDec = function(hexString) {
   align-self: stretch;
   // padding-left: 15px;
   // padding-right: calc(1 / 12 * 100%);
-  width: calc(5 / 12 * 100%);
+  width: calc(6 / 12 * 100%);
 }
 
 .image-offset {
@@ -409,7 +412,7 @@ var hexToDec = function(hexString) {
     position: sticky;
     top: 0;
     height: 100vh;
-    overflow: hidden;
+    // overflow: hidden;
     padding: 0 calc(1 / 12 / 2 * 100vw);
   }
 }
@@ -475,12 +478,14 @@ var hexToDec = function(hexString) {
 .portfolio-image[data-depth="0"] {
   position: absolute;
   top: 0;
-  left: calc(-1 / 24 * 100vw);
-  right: calc(-1 / 24 * 100vw);
+  left: calc(-13 / 24 * 100vw);
+  // right: calc(0 / 24 * 100vw);
   height: 100%;
-  width: calc(1 / 12 * 100vw + 100%);
-  object-fit: cover;
+  width: 100vw; //calc(1 / 12 * 100vw + 100%);
   z-index: 0;
+
+  object-fit: cover;
+  object-position: right bottom;
 }
 
 .animation-background {
@@ -503,14 +508,14 @@ var hexToDec = function(hexString) {
   padding-right: 1em;
   width: 100%;
 
-  transition: background-color 0.3s ease;
-
-  background-color: $skin;
-  box-shadow: $box-shading;
+  /* 'background-color':  projectBackgroundColor(activeProject), */
+  // background-color: $skin;
+  // box-shadow: $box-shading;
+  z-index: 10;
 
   @media screen and (min-width: $md-bp) {
     padding-left: calc(1 / 12 * 100%);
-    width: calc(7 / 12 * 100%);
+    width: calc(6 / 12 * 100%);
   }
 }
 
