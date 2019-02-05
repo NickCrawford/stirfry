@@ -474,8 +474,7 @@ var hexToDec = function(hexString) {
   }
 }
 
-.parallax-layer[data-depth="0"] img,
-.portfolio-image[data-depth="0"] {
+.parallax-layer[data-depth="0"] img {
   position: absolute;
   top: 0;
   left: calc(-13 / 24 * 100vw);
@@ -486,6 +485,19 @@ var hexToDec = function(hexString) {
 
   object-fit: cover;
   object-position: right bottom;
+}
+
+.portfolio-image[data-depth="0"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100vw; //calc(1 / 12 * 100vw + 100%);
+  z-index: 0;
+
+  object-fit: cover;
+  object-position: center;
 }
 
 .animation-background {
@@ -557,7 +569,7 @@ var hexToDec = function(hexString) {
 
 .link-style {
   color: inherit;
-  margin: 1rem 0;
+  margin: 3rem 0 1rem;
 }
 
 .service-tag {
