@@ -7,7 +7,10 @@
     </div>
     <section class="portfolio-container" v-if="projects">
       <div class="flex-row">
-        <div class="portfolio-text-container">
+        <div
+          class="portfolio-text-container"
+          :style="{'background-color':  projectBackgroundColor(activeProject), 'color': textColor}"
+        >
           <div
             class="text-content"
             :id="`project-${index}`"
@@ -42,7 +45,7 @@
                     v-if="tag.service"
                   >{{ tag.service }}</span>
                 </div>
-                <router-link :to="`/portfolio/${project.uid}`" class="link-style">View more</router-link>
+                <router-link :to="`/portfolio/${project.uid}`" class="link-style">View more »</router-link>
               </div>
             </div>
           </div>
@@ -156,6 +159,28 @@ export default {
       isScrolling: false,
       scrollSpeed: 0
     };
+  },
+  computed: {
+    textColor() {
+      let hex = this.projectBackgroundColor(this.activeProject);
+
+      let lightColor = "#FFFFFF",
+        darkColor = "#000000";
+      if (!hex) return darkColor;
+
+      let red = hexToDec(hex.substr(1, 2)),
+        green = hexToDec(hex.substr(3, 2)),
+        blue = hexToDec(hex.substr(5, 2));
+
+      var contrast = Math.sqrt(
+        red * red * 0.241 + green * green * 0.691 + blue * blue * 0.068
+      );
+
+      if (contrast > 130) {
+        return darkColor;
+      }
+      return lightColor;
+    }
   },
   components: { HeaderBar },
   methods: {
@@ -327,6 +352,11 @@ export default {
     document.removeEventListener("mouseleave", this.handleMouseLeave);
   }
 };
+
+var hexToDec = function(hexString) {
+  var decString = hexString.replace(/[^a-f0-9]/gi, "");
+  return parseInt(decString, 16);
+};
 </script>
 
 <style lang="scss">
@@ -473,6 +503,8 @@ export default {
   padding-right: 1em;
   width: 100%;
 
+  transition: background-color 0.3s ease;
+
   background-color: $skin;
   box-shadow: $box-shading;
 
@@ -518,13 +550,18 @@ export default {
   }
 }
 
+.link-style {
+  color: inherit;
+  margin: 1rem 0;
+}
+
 .service-tag {
   display: inline-block;
 
-  padding: 0.25em 0.5em;
+  // padding: 0.25em 0.5em;
   margin-right: 1em;
 
-  background: white;
+  // background: white;
   border-radius: 3px;
   text-transform: capitalize;
 
