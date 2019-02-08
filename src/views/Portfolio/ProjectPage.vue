@@ -34,7 +34,7 @@
           <template>
             <prismic-rich-text :field="slice.primary.client_needs"/>
           </template>
-          <template slot="link_to" v-if="slice.primary.link_to">
+          <template slot="link_to" v-if="slice.primary.link_to.url">
             <p>
               <a
                 :href="slice.primary.link_to.url"
@@ -44,7 +44,10 @@
           </template>
         </client-needs>
 
-        <two-column-sticky v-else-if="slice.slice_type === 'two-column-sticky'">
+        <two-column-sticky
+          v-else-if="slice.slice_type === 'two-column-sticky'"
+          :class="{ 'right-align': slice.primary.text_alignment == 'right' }"
+        >
           <template slot="description">
             <prismic-rich-text :field="slice.primary.description"/>
           </template>

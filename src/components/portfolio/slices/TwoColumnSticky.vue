@@ -16,15 +16,26 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
+  grid-template-areas:
+    "text"
+    "image";
 
   align-items: start;
 
   @media screen and (min-width: $md-bp) {
     grid-template-columns: 1fr 2fr;
+    grid-template-areas: "text image";
+    grid-column-gap: 2rem;
+
+    &.right-align {
+      grid-template-columns: 2fr 1fr;
+      grid-template-areas: "image text";
+    }
   }
 }
 
 .two-column-sticky .description-container {
+  grid-area: text;
   text-align: left;
 
   @media screen and (min-width: $md-bp) {
@@ -36,6 +47,8 @@
 }
 
 .two-column-sticky .image-container {
+  grid-area: image;
+
   width: 100%;
 
   img {

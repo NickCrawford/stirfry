@@ -34,6 +34,8 @@ export default {
 
   min-height: 33vh;
   font-size: 1.25em;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 
   text-align: left;
 
