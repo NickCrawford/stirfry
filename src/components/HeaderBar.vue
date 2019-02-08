@@ -19,7 +19,7 @@ export default {
   name: "HeaderBar",
   props: {
     colorPalette: {
-      // Options: 'transparent', 'gray',
+      // Options: 'transparent', 'gray', 'light'
       type: String,
       default: "transparent",
       required: false

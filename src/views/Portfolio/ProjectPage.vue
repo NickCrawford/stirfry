@@ -3,7 +3,7 @@
     class="project-page"
     :style="{ 'background-color': project ? project.background_color : '#f5d6ba', 'color': textColor }"
   >
-    <header-bar :fixed="false" colorPalette="light"></header-bar>
+    <header-bar :fixed="false" :colorPalette="headerColorPalette"></header-bar>
     <div class="hero-container">
       <div v-if="project">
         <div class="heading-container container">
@@ -84,7 +84,8 @@ export default {
   },
   data() {
     return {
-      project: null
+      project: null,
+      headerColorPalette: "light"
     };
   },
   computed: {
@@ -104,6 +105,7 @@ export default {
       );
 
       if (contrast > 130) {
+        this.headerColorPalette = "gray";
         return darkColor;
       }
       return lightColor;
