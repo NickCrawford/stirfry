@@ -374,7 +374,6 @@ var hexToDec = function(hexString) {
 .portfolio-container {
   margin: 0 auto;
   position: relative;
-
   transition: background-color 0.3s ease, color 0.5s ease 0.3s;
 }
 
@@ -412,7 +411,6 @@ var hexToDec = function(hexString) {
     position: sticky;
     top: 0;
     height: 100vh;
-    // overflow: hidden;
     padding: 0 calc(1 / 12 / 2 * 100vw);
   }
 }
@@ -474,19 +472,21 @@ var hexToDec = function(hexString) {
   }
 }
 
+/* used on desktop */
 .parallax-layer[data-depth="0"] img {
   position: absolute;
   top: 0;
   left: calc(-13 / 24 * 100vw);
   // right: calc(0 / 24 * 100vw);
   height: 100%;
-  width: 100vw; //calc(1 / 12 * 100vw + 100%);
+  width: calc(100vw - 14px); //calc(1 / 12 * 100vw + 100%);
   z-index: 0;
 
   object-fit: cover;
   object-position: right bottom;
 }
 
+/* Used on mobile */
 .portfolio-image[data-depth="0"] {
   position: absolute;
   top: 0;
