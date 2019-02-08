@@ -1,0 +1,10 @@
+.container {
+  max-width: 82rem;
+  padding: 1rem 2rem;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media screen and (min-width: $md-bp) {
+    padding: 2rem 4rem;
+  }
+}

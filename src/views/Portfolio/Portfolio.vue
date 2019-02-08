@@ -1,296 +1,600 @@
 <template>
-  <div id="portfolio-and-studies">
-    <div id="portfolio">
-      <div id="portfolio-top"
-        :class="[ $route.name + '-top']">
-        <!-- Loads in a logo and brief description of the project -->
-        <router-view name="top"></router-view>
-      </div>
-      
-      <div id="portfolio-showcase">
-        <div class="project-label"
-          :class="[ $route.name + '-label']">
-          <span>Website Design</span>
-        </div>
-        <flickity ref="showcase-flickity" :options="flickityOptions" id="flickity-container"
-          v-on:init="doSomething()">
-          <div class="portfolio-image-container">
-            <img src="@/assets/images/sellout/sellout_phone.svg" class="phone-image">
-            <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
-          </div>
-          <div class="portfolio-image-container">
-            <img src="@/assets/images/theron/theron_phone.svg" class="phone-image">
-            <img src="@/assets/images/phone_shadow.svg" class="phone-shadow">
-          </div>
-        </flickity>
-      </div>
+  <div id="portfolio-page">
+    <header-bar colorPalette="gray" :fixed="false"></header-bar>
+    <div class="space">
+      <h1>Our Work</h1>
+      <h4>Have a look at some of our recent projects</h4>
     </div>
-    <router-link name="case-study"></router-link>
+    <section
+      class="portfolio-container"
+      :style="{ 'background-color':  projectBackgroundColor(activeProject),'color': textColor}"
+      v-if="projects"
+    >
+      <div class="flex-row">
+        <div class="portfolio-text-container">
+          <div
+            class="text-content"
+            :id="`project-${index}`"
+            v-for="(project, index) in projects"
+            :key="project.id"
+            v-waypoint="{ active: true, callback: onWaypoint, options: intersectionOptions }"
+          >
+            <div class="text-content-inner">
+              <div>
+                <div class="mobile-image-container" v-if="viewport.width < $breakpoint('MD_BP')">
+                  <img
+                    :src="layer.image.url"
+                    :alt="layer.image.alt"
+                    v-for="(layer, index) in project.data.layers"
+                    :key="`layer-${index}`"
+                    class="portfolio-image"
+                    v-bind:data-depth="layer.depth"
+                    :style="{'z-index': layer.depth}"
+                  >
+                </div>
+                <h2
+                  class="heading"
+                >{{ $prismic.richTextAsPlain(project.data.title) || 'Project Title' + index }}</h2>
+                <h3
+                  class="description"
+                >{{ $prismic.richTextAsPlain(project.data.subtitle) || 'Project Subtitle'}}</h3>
+                <div class="service-tag-container">
+                  <span
+                    v-for="tag in project.data.services"
+                    :key="tag.id"
+                    class="service-tag"
+                    v-if="tag.service"
+                  >{{ tag.service }}</span>
+                </div>
+                <router-link :to="`/portfolio/${project.uid}`" class="link-style">View more »</router-link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="image-container" v-if="viewport.width >= $breakpoint('MD_BP')">
+          <div class="image-offset">
+            <div class="portfolio-images">
+              <div
+                class="animation-background"
+                :style="{'background-color':  projectBackgroundColor(activeProject)}"
+              ></div>
+              <!-- <transition name="portfolio-image-animation"> -->
+              <transition-group
+                name="staggered-fade"
+                v-bind:css="false"
+                v-on:before-enter="beforeEnter"
+                v-on:enter="enter"
+                v-on:leave="leave"
+                tag="div"
+                v-for="(project, projectIndex) in projects"
+                :key="project.id"
+                class="portfolio-image"
+              >
+                <div
+                  v-show="activeProject == `project-${projectIndex}`"
+                  v-for="(layer, index) in project.data.layers"
+                  :key="`layer-${index}`"
+                  v-bind:data-depth="layer.depth"
+                  :style="{ transform: `translate(${ parallaxX(layer.depth) }px, ${ parallaxY(layer.depth) }px)`, 'z-index': layer.depth }"
+                  class="parallax-layer"
+                >
+                  <picture>
+                    <!-- <source :srcset="mobileView.url" media="(max-width: 420px)">
+                    <source :srcset="tabletView.url" media="(max-width: 840px)">-->
+                    <img :src="layer.image.url" :alt="layer.image.alt">
+                  </picture>
+                </div>
+              </transition-group>
+              <!-- </transition> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="space" v-if="false">
+      <h2>Here'e the footer area.</h2>
+    </div>
   </div>
 </template>
 
 <script>
-import Flickity from 'vue-flickity';
+import HeaderBar from "@/components/HeaderBar.vue";
+
+import { TweenMax, TimelineLite, Power3 } from "gsap/TweenMax";
+import { ScrollToPlugin } from "gsap/all";
+
+//without this line, ScrollToPlugin may get dropped by your bundler...
+const plugins = [ScrollToPlugin];
+
+const PARALLAX_FADE_DURATION = 0.75;
+
+var checkScrollSpeed = (function(settings) {
+  settings = settings || {};
+
+  var lastPos,
+    newPos,
+    timer,
+    delta,
+    delay = settings.delay || 50; // in "ms" (higher means lower fidelity )
+
+  function clear() {
+    lastPos = null;
+    delta = 0;
+  }
+
+  clear();
+
+  return function() {
+    newPos = window.scrollY;
+    if (lastPos != null) {
+      // && newPos < maxScroll
+      delta = newPos - lastPos;
+    }
+    lastPos = newPos;
+    clearTimeout(timer);
+    timer = setTimeout(clear, delay);
+    return delta;
+  };
+})();
 
 export default {
   data() {
     return {
-      flickityOptions: {
-        initialIndex: 3,
-        prevNextButtons: true,
-        pageDots: false,
-        wrapAround: true,
-        
-        // any options from Flickity can be used
+      projects: [],
+      activeProject: null,
+      mouse: {
+        x: 0,
+        y: 0
       },
+      viewport: {
+        width: 0,
+        height: 0
+      },
+      intersectionOptions: {
+        root: null,
+        rootMargin: "0px 0px 0px 0px",
+        threshold: 0.5
+      }, // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API,
+      isScrolling: false,
+      scrollSpeed: 0
+    };
+  },
+  computed: {
+    textColor() {
+      let hex = this.projectBackgroundColor(this.activeProject);
 
-      showcaseRoutes: [
-        'sellout',
-        'theron'
-      ]
+      let lightColor = "#FFFFFF",
+        darkColor = "#000000";
+      if (!hex) return darkColor;
+
+      let red = hexToDec(hex.substr(1, 2)),
+        green = hexToDec(hex.substr(3, 2)),
+        blue = hexToDec(hex.substr(5, 2));
+
+      var contrast = Math.sqrt(
+        red * red * 0.241 + green * green * 0.691 + blue * blue * 0.068
+      );
+
+      if (contrast > 130) {
+        return darkColor;
+      }
+      return lightColor;
     }
   },
-  components: {
-    Flickity
-  },
+  components: { HeaderBar },
   methods: {
-    next() {
-      this.$refs['showcase-flickity'].next();
+    // Returns the proper amount to translate an image based on it's parallax depth
+    parallaxX(depth) {
+      return (this.mouse.x - this.viewport.width / 2) * (depth / 100);
     },
-    
-    previous() {
-      this.$refs['showcase-flickity'].previous();
+    parallaxY(depth) {
+      return (
+        (this.mouse.y - this.viewport.height / 2) * (depth / 100) -
+        (Math.max(Math.min(this.scrollSpeed, 16), -16) * depth) / 10
+      );
     },
-    doSomething() {
-      console.log("Initiated listener!!");
-      
-      var vm = this;
+    projectBackgroundColor(projectId) {
+      if (!projectId) return "#545454";
 
-      this.$refs['showcase-flickity'].select( this.showcaseRoutes.indexOf(this.$route.name) );
+      try {
+        return this.projects[this.activeProject.split("-")[1]].data[
+          "background_color"
+        ];
+      } catch (err) {
+        return "#545454";
+      }
+    },
 
-      this.$refs['showcase-flickity'].on( 'select', function( index ) {
-        vm.$router.push({ name: vm.showcaseRoutes[index] });
+    beforeEnter: function(el) {
+      el.style.opacity = 0;
+
+      let top = 0;
+      if (el.dataset.depth > 0) top = `${Math.sign(this.scrollSpeed) * -10}%`;
+
+      el.style.top = top;
+    },
+    enter: function(el, done) {
+      var delay = (el.dataset.depth * 10) / 100 + 0.3 + PARALLAX_FADE_DURATION;
+      TweenMax.to(el, PARALLAX_FADE_DURATION, {
+        opacity: 1,
+        top: 0,
+        ease: Power3.easeOut,
+        delay: delay
+        // onComplete: done()
+      });
+    },
+    leave: function(el, done) {
+      var delay = (el.dataset.depth * 10) / 100;
+
+      // Don't parallax the background (aka layer 0)
+      let top = 0;
+      if (el.dataset.depth > 0) top = `${Math.sign(this.scrollSpeed) * -10}%`;
+
+      TweenMax.to(el, PARALLAX_FADE_DURATION, {
+        opacity: 0,
+        top: top,
+        ease: Power3.easeIn,
+        delay: delay
+      });
+    },
+
+    getContent() {
+      this.$prismic.client
+        .query(this.$prismic.Predicates.at("document.type", "project"), {
+          // orderings: "[my.project.title desc]"
+        })
+        .then(response => {
+          console.log("response", response);
+          this.projects = response.results;
+        });
+    },
+
+    handleMouseMove(e) {
+      this.mouse.x = e.x;
+      this.mouse.y = e.y;
+    },
+    handleMouseLeave(e) {
+      if (
+        e.clientY <= 0 ||
+        e.clientX <= 0 ||
+        (e.clientX >= window.innerWidth || e.clientY >= window.innerHeight)
+      ) {
+        this.mouse.x = window.innerWidth / 2;
+        this.mouse.y = window.innerHeight / 2;
+      }
+    },
+    handleResize() {
+      this.viewport.width = window.innerWidth;
+      this.viewport.height = window.innerHeight;
+    },
+    handleScroll(e) {
+      clearTimeout(this.scrollTimer);
+
+      this.scrollTimer = setTimeout(() => {
+        this.positionItem();
+      }, 300);
+      this.scrollSpeed = checkScrollSpeed();
+    },
+    onWaypoint({ going, direction, el }) {
+      // going: in, out
+      // direction: top, right, bottom, left
+      if (going === this.$waypointMap.GOING_IN) {
+        this.activeProject = el.id;
+        TweenMax.killAll(true, true, true, false);
+        // console.log("waypoint going in!", this.activeProject);
+      }
+
+      if (direction === this.$waypointMap.DIRECTION_TOP) {
+        el.dataset.direction = this.$waypointMap.DIRECTION_TOP;
+        // console.log("waypoint going top!");
+      }
+    },
+    // Positioning the item content
+    positionItem() {
+      if (!this.activeProject) return; // We can't scroll to a section if there's no section defined
+
+      // Not positioning if we're on a smaller screen. Scroll snapping is annoying on mobile :O
+      if (this.viewport.width < this.$breakpoint("MD_BP")) return;
+
+      const section = this.activeProject;
+      const child = document.querySelector(`#${this.activeProject}`);
+      const scrollTop = window.pageYOffset || window.scrollY;
+      const { top, bottom } = child.getBoundingClientRect();
+      const childTop = child.getBoundingClientRect().top;
+      const scrollTo = Math.round(childTop + scrollTop);
+      const threshold = window.innerHeight * 0.5;
+
+      // Not positioning if not active child or is scrolling
+      if (!child || this.isScrolling) {
+        return;
+      }
+
+      // Not positioning first item until scrolled 1/3 of screen height
+      if (top > threshold) {
+        return;
+      }
+
+      // Not positioning when scrolled through last item
+      if (bottom + threshold < window.innerHeight) {
+        return;
+      }
+
+      clearTimeout(this.scrollTimer);
+
+      this.isScrolling = true;
+
+      const t = new TimelineLite();
+
+      // Positioning the item content with gsap scroll to plugin
+      t.to(window, 0.8, {
+        scrollTo: scrollTo,
+        ease: Power3.easeInOut
+      }).call(() => {
+        this.isScrolling = false;
       });
     }
+  },
+  created() {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("mousemove", this.handleMouseMove);
+    window.addEventListener("scroll", this.handleScroll, { passive: true });
+    document.addEventListener("mouseleave", this.handleMouseLeave);
+
+    this.handleResize();
+    this.handleScroll();
+    this.getContent();
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("scroll", this.handleScroll);
+    document.removeEventListener("mouseleave", this.handleMouseLeave);
   }
-}
+};
+
+var hexToDec = function(hexString) {
+  var decString = hexString.replace(/[^a-f0-9]/gi, "");
+  return parseInt(decString, 16);
+};
 </script>
+
+<style lang="scss">
+</style>
+
 
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
 
-/* The entire page, setting up grid: */
-#portfolio {
-  background: $background;
-  height: 100vh;
+#portfolio-page {
+  background-color: $background;
+}
+
+.portfolio-container {
+  margin: 0 auto;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.5s ease 0.3s;
+}
+
+.portfolio-navigation {
+  position: absolute;
+  top: 150px;
+  bottom: 0;
+  left: 70px;
+  z-index: 2;
+}
+
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+
+  flex-direction: row;
+}
+
+.image-container {
+  flex: none;
+  align-self: stretch;
+  // padding-left: 15px;
+  // padding-right: calc(1 / 12 * 100%);
+  width: calc(6 / 12 * 100%);
+}
+
+.image-offset {
+  position: relative;
   width: 100%;
-  display: grid;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: 40% 60%;
+  height: auto;
+
+  @media screen and (min-width: $md-bp) {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 0 calc(1 / 12 / 2 * 100vw);
+  }
+}
+
+.portfolio-images {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mobile-image-container {
+  position: relative;
+  width: 100%;
+  height: 40vh;
   overflow: hidden;
 }
 
-/* Text styling for this page: */
-h1 {
-  font-weight: normal;
-  font-size: 3em;
-  margin-top: 30px;
-  position: relative; 
-  z-index: 10;
-}
-p {
-  opacity: 0.5;
-  z-index: 10;
-  position: relative;
-}
-
-/* Portfolio descriptions, on the top on mobile/left on desktop: */
-
-.sellout-top::after {
-  background: $sellout-navy;
-}
-
-.theron-top::after {
-  background-color: $theron-gray;
-}
-#portfolio-top {
-  color: white;
-  grid-column: 1/3;
-  position: relative;
-  z-index: 1;
-  transition-duration: 1s;
-}
-#portfolio-top::after {
-  content: "";
+.portfolio-image {
   position: absolute;
-  left: -10%;
-  bottom: -15%;
-  width: 140%;
-  height: 500px;
-  transform: rotate(12deg);
-  box-shadow: $box-shading-heavy;
-  z-index: 0;
-  transition-duration: 1s;
-}
+  top: 0;
+  left: 0;
+  // transform: translate(-50%, -50%);
 
-/* Flickity container for portfolio: */
-#portfolio-showcase {
-  position: relative;
-  grid-column: 1/3;
-  grid-row: 2 /3;
-}
-
-.project-label {
-  padding: 10px 200px 10px 25px;
-  color: white;
-  transition-duration: .5s;
-  position: absolute;
-  font-weight: bold;
-  left: 5%;
-  top: 40px;
-  box-shadow: $box-shading;
-  transform: skewx(-20deg);
-  
-  display: none;
-  animation: label-pop-in .5s linear;
-}
-span {
-  display: block;
-  transform: skewx(200deg);
-}
-.sellout-label {
-  background: $blue;
-}
-.theron-label {
-  background: $red;
-}
-
-/* Flickity container, obviously: */
-#flickity-container {
-
-  position: relative;
+  width: 100%;
   height: 100%;
-  width: 90%;
-  margin: 0 auto;
 
-  grid-column: 2/3;
-  grid-row: 1/3;
-}
+  object-fit: contain;
+  object-position: center bottom;
 
-
-/* Image containers themselves, inside flickity: */
-.portfolio-image-container {
-  position: relative;
-  min-width: 200px;
-  min-height: 200px;
-  width: 50%;
-  height: 100%;
-  animation: floatin .5s linear;
-  margin: 0px 200px;
-
-  img {
-    transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
-  }
-}
-
-/* Images: */
-.phone-image {
-  position: absolute;
-  width: 60%;
-  max-width: 230px;
-  z-index: 11;
-  left: 52%;
-  top: 55%;
-  margin-top: -10px;
-  margin-left: -10px;
-  /*animation: phonefloat 10s  infinite;*/
-  opacity: 1;
-}
-.phone-shadow {
-  position: absolute;
-  width: 67%;
-  max-width: 250px;
-  left: 54%;
-  top: 55%;
-}
-
-@media only screen and (min-width: 600px) {
-  #portfolio-top {
-    grid-column: 1/2;
-    grid-row: 1/3;
-    background: none;
-  }
-  #portfolio-top::after {
-    content: "";
+  @media screen and (min-width: $md-bp) {
     position: absolute;
-    left: auto;
-    right: 0px;
-    height: 140vh;
-    top: -20vh;
-    width: 1000px;
-    transform: rotate(12deg);
-    z-index: 0;
-  }
-  .project-label {
-    padding: 10px 25px 10px 100px;
-    display: block;
-  }
+    top: 0;
+    right: 0;
 
-  #portfolio-showcase {
-    grid-column: 2/3;
-    grid-row: 1 /3;
+    height: 100%;
   }
+}
 
-  .portfolio-image-container {
+.portfolio-image .parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  transform: none;
+  transform-origin: center center;
+
+  transition: transform 0.3s ease-out;
+}
+
+.portfolio-image {
+  img,
+  picture {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
+/* used on desktop */
+.parallax-layer[data-depth="0"] img {
+  position: absolute;
+  top: 0;
+  left: calc(-13 / 24 * 100vw);
+  // right: calc(0 / 24 * 100vw);
+  height: 100%;
+  width: calc(100vw - 14px); //calc(1 / 12 * 100vw + 100%);
+  z-index: 0;
+
+  object-fit: cover;
+  object-position: right bottom;
+}
+
+/* Used on mobile */
+.portfolio-image[data-depth="0"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100vw; //calc(1 / 12 * 100vw + 100%);
+  z-index: 0;
+
+  object-fit: cover;
+  object-position: center;
+}
+
+.animation-background {
+  position: absolute;
+  top: 0;
+  left: calc(-1 / 24 * 100vw);
+  right: calc(-1 / 24 * 100vw);
+  height: 100%;
+  width: calc(1 / 12 * 100vw + 100%);
+  bottom: 0;
+  z-index: 0;
+
+  transition: background-color 0.3s ease-in-out;
+}
+
+.portfolio-text-container {
+  flex: none;
+  align-self: stretch;
+  padding-left: 1em;
+  padding-right: 1em;
+  width: 100%;
+
+  /* 'background-color':  projectBackgroundColor(activeProject), */
+  // background-color: $skin;
+  // box-shadow: $box-shading;
+  z-index: 10;
+
+  @media screen and (min-width: $md-bp) {
+    padding-left: calc(1 / 12 * 100%);
+    width: calc(6 / 12 * 100%);
+  }
+}
+
+.text-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  min-height: 90vh;
+  margin-bottom: 2rem;
+
+  @media (min-width: $md-bp) {
+    margin-top: 5vh;
+    margin-bottom: 5vh;
     height: 100vh;
-  } 
-
-  .phone-image {
-    width: 80%;
-  }
-  .phone-shadow {
-    width: 87%;
-  }
-  
-
-  .portfolio-images {
-    
-    padding-top: 100px;
-    position: relative;
-
-    img {
-      
-      transform: translatex(-50%) translatey(-50%) rotatez(3deg) skew(-4deg);
-    }
   }
 }
 
-@keyframes phonefloat {
-  0% {
-    margin-top: -10px;
-    margin-left: -10px;
-  } 50% {
-    margin-top: -20px;
-    margin-left: -20px;
-  } 100% {
-    margin-top: -10px;
-    margin-left: -10px;
+.text-content-inner {
+  position: relative;
+  // bottom: 10vh;
+
+  text-align: center;
+
+  @media screen and (min-width: $md-bp) {
+    text-align: left;
   }
 }
 
-@keyframes label-pop-in {
-  0% {
-    left: -200px;
-  } 75% {
-    left: 20px;
-  } 100% {
-    left: 0px;
+.description {
+  margin-top: 0;
+}
+
+.heading {
+  margin: 0.5em auto 0.25em;
+  @media screen and (min-width: $md-bp) {
   }
 }
-</style>
 
-<style>
-.flickity-viewport {
-    overflow: visible;
+.link-style {
+  color: inherit;
+  margin: 3rem 0 1rem;
+}
+
+.service-tag {
+  display: inline-block;
+
+  // padding: 0.25em 0.5em;
+  margin-right: 1em;
+
+  // background: white;
+  border-radius: 3px;
+  text-transform: capitalize;
+
+  &:last-of-type {
+    margin-right: 0;
   }
+}
+
+/* For testing */
+.space {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+  background-color: $black;
+  color: white;
+}
 </style>

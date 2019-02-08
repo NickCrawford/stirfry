@@ -1,8 +1,8 @@
 <template>
-  <header :class="colorPalette">
+  <header :class="[colorPalette, {'fixed' : fixed }]">
     <nav>
       <ul>
-        <router-link :to="{ name: 'home' }" tag="li" id="home-logo">
+        <router-link :to="{ name: 'home', hash: '#headline' }" tag="li" id="home-logo">
           <img src="@/assets/images/logos/logo-pan.svg" alt="home" :class="colorPalette">
         </router-link>
         <router-link :to="{ name: 'portfolio' }" tag="li">Our work</router-link>
@@ -18,9 +18,15 @@
 export default {
   name: "HeaderBar",
   props: {
-    colorPalette: { // Options: 'transparent', 'gray', 
+    colorPalette: {
+      // Options: 'transparent', 'gray', 'light'
       type: String,
-      default: 'transparent',
+      default: "transparent",
+      required: false
+    },
+    fixed: {
+      type: Boolean,
+      default: true,
       required: false
     }
   }
@@ -30,22 +36,31 @@ export default {
 <style lang="scss" scoped>
 @import "@/GlobalVars.scss";
 
-$transition-duration: .5s;
+$transition-duration: 0.5s;
 
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
 
   width: 100%;
   transition-duration: $transition-duration;
 
   z-index: 99;
+
   &.gray {
     background: $black;
     color: $skin;
   }
+
+  &.light {
+    color: $light-background;
+  }
+}
+
+header.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 nav ul {
@@ -59,7 +74,7 @@ nav li {
   display: inline-block;
   padding: 0.5em 1em;
   font-size: 1.25em;
-  transition-duration: .2s;
+  transition-duration: 0.2s;
   cursor: pointer;
   &:hover {
     padding: 0.3em 1em 0.7em;

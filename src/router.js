@@ -7,8 +7,7 @@ import SubmissionSuccess from "./views/SubmissionSuccess";
 import FourOhFour from "./views/FourOhFour.vue";
 
 import Portfolio from "./views/Portfolio/Portfolio.vue";
-import SelloutTop from "./views/Portfolio/Sellout/SelloutTop.vue";
-import TheronTop from "./views/Portfolio/Theron/TheronTop.vue";
+import ProjectPage from "./views/Portfolio/ProjectPage.vue";
 
 Vue.use(Router);
 
@@ -18,24 +17,29 @@ export default new Router({
     {
       path: "/portfolio",
       name: "portfolio",
-      component: Portfolio,
-      redirect: "/portfolio/sellout",
-      children: [
-        {
-          path: "sellout",
-          name: "sellout",
-          components: {
-            top: SelloutTop
-          }
-        },
-        {
-          path: "theron",
-          name: "theron",
-          components: {
-            top: TheronTop
-          }
-        }
-      ]
+      component: Portfolio
+      // redirect: "/portfolio/sellout"
+      // children: [
+      //   {
+      //     path: "sellout",
+      //     name: "sellout",
+      //     components: {
+      //       top: SelloutTop
+      //     }
+      //   },
+      //   {
+      //     path: "theron",
+      //     name: "theron",
+      //     components: {
+      //       top: TheronTop
+      //     }
+      //   }
+      // ]
+    },
+    {
+      path: "/portfolio/:uid",
+      name: "projectPage",
+      component: ProjectPage
     },
     {
       path: "/",
@@ -60,5 +64,21 @@ export default new Router({
     },
     { path: "/404", component: FourOhFour },
     { path: "*", redirect: "/404" }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    // return desired position
+
+    if (to.hash) {
+      return {
+        selector: to.hash,
+        offset: { x: 0, y: 0 }
+      };
+    }
+
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { x: 0, y: 0 };
+    }
+  }
 });

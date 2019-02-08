@@ -11,9 +11,10 @@
     "babylonjs": "^3.3.0",
     "babylonjs-loaders": "^3.3.0",
     "cannon": "^0.6.2",
+    "gsap": "^2.0.2",
+    "prismic-vue": "^1.3.0",
     "vivus": "^0.4.4",
     "vue": "^2.5.16",
-    "vue-flickity": "^1.1.2",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
@@ -24,7 +25,8 @@
     "node-sass": "^4.9.0",
     "prerender-spa-plugin": "^3.0.0-beta.2",
     "sass-loader": "^7.0.1",
-    "vue-template-compiler": "^2.5.16"
+    "vue-template-compiler": "^2.5.16",
+    "vue-waypoint": "^3.2.2"
   },
   "eslintConfig": {
     "root": true,
