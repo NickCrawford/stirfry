@@ -46,6 +46,7 @@ export default {};
   margin-top: 0.25em;
   text-align: right;
   grid-area: contact-heading;
+  color: white;
 }
 
 .project-page-footer button.stirfry-button {

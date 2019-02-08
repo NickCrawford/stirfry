@@ -22,7 +22,7 @@ export default {};
   max-height: calc(100vh - 8rem);
 
   padding: 0 2rem;
-  margin: 0 auto;
+  margin: 8rem auto;
 
   overflow: hidden;
 
