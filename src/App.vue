@@ -69,7 +69,7 @@ $animation-timing-function: cubic-bezier(0.33, 1, 0.5, 1);
     bottom: 0;
     z-index: 999999;
     background: #f5e8da;
-
+    will-change: transform;
     transition: transform 0.5s $animation-timing-function;
   }
 }

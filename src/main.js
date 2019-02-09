@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import PrismicVue from "prismic-vue";
 import VueWaypoint from "vue-waypoint";
+import VueAnalytics from "vue-analytics";
 
 import Breakpoints from "./assets/scripts/utility/breakpointsPlugin.js";
 import linkResolver from "./assets/scripts/utility/linkResolver.js";
@@ -18,6 +19,11 @@ Vue.use(PrismicVue, {
   endpoint: window.prismic.endpoint,
   linkResolver: linkResolver,
   apiOptions: { accessToken }
+});
+
+Vue.use(VueAnalytics, {
+  id: "UA-134138182-1",
+  router
 });
 
 // Waypoint plugin

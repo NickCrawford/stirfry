@@ -2,12 +2,6 @@
   <div class="home" :class="{ 'show-cursor': showCursor }">
     <header-bar :colorPalette="headerColorPalette"></header-bar>
     <div id="scroll-container">
-      <div class="debug-container" v-if="false">
-        <p>{{ selectedItems }}</p>
-        <p>{{ scrollProgress }}</p>
-      </div>
-
-      <div id="babylonDebugger"></div>
       <canvas
         id="renderCanvas"
         :class="{
@@ -281,8 +275,12 @@ section * {
   grid-row-start: 2;
   background: $black;
   color: $skin;
-  margin: 0px 30vw;
-  width: 40vw;
+  margin: 0px 1rem;
+
+  @media screen and (min-width: $md-bp) {
+    margin: 0px 30vw;
+    width: 40vw;
+  }
 }
 
 // Animations
@@ -456,13 +454,13 @@ section * {
 // About Section
 #about {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr;
-  grid-row-gap: 150px;
+  grid-row-gap: 8rem;
   justify-items: start;
   align-content: start;
 
-  min-height: 200vh;
+  min-height: 100vh;
 
   text-align: left;
   color: $text-color;
@@ -659,16 +657,24 @@ export default {
     }
 
     //
+    let windowWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.clientWidth;
+
+    // if (windowWidth > 768) {
     this.initEngine(); // Loads canvas & render engine
     this.initScene(); // Loads assets, calls other functions on completion
 
     // Loading background color:
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
+    this.engine.hideLoadingUI();
 
     window.addEventListener("resize", e => {
       this.engine.resize();
       this.handleMobileCameraView(e.target.innerWidth);
     });
+    // }
 
     // this.initAssetsManager();
     // this.initPan();
