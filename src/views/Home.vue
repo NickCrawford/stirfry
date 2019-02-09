@@ -848,7 +848,7 @@ export default {
           vm.hl = hl;
 
           // Physics
-          vm.scene.enablePhysics();
+          // vm.scene.enablePhysics();
 
           // Let's add physics properties to all our objects!
 
@@ -877,12 +877,12 @@ export default {
           // vm.addStaticPhysics('cuttingBoard');
 
           // Adding ability to select things
-          vm.initPointerEvents();
+          // vm.initPointerEvents();
 
-          scene.debugLayer.show({
-            overlay: false,
-            globalRoot: document.getElementById("#babylonDebugger")
-          });
+          // scene.debugLayer.show({
+          //   overlay: false,
+          //   globalRoot: document.getElementById("#babylonDebugger")
+          // });
 
           // setting up scroll handler
           vm.handleScroll(0);
