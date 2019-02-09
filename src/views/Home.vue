@@ -60,18 +60,16 @@
           </div>
 
           <div id="nerd-text">
-            <h1>Nerd Stuff</h1>
+            <h1>Tasty Tech</h1>
 
             <div class="subheader">
               <h4>
-                Don't worry, we're
-                <b>big nerds.</b>
-              </h4>
-              <h4>
-                We have plenty of experience coding
+                Our team has plenty of experience coding
                 <b>iOS and Android apps,</b> developing
-                <b>responsive websites</b>, and more.
+                <b>responsive websites,</b> and more.
               </h4>
+
+              <h4>Already using a specific tech stack? We'll learn it!</h4>
               <!--<router-link :to="{ name: 'about' }" class="link-style">Learn more about us »</router-link>-->
             </div>
 

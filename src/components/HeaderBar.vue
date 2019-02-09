@@ -5,7 +5,7 @@
         <router-link :to="{ name: 'home', hash: '#headline' }" tag="li" id="home-logo">
           <img src="@/assets/images/logos/logo-pan.svg" alt="home" :class="colorPalette">
         </router-link>
-        <router-link :to="{ name: 'portfolio' }" tag="li">Our work</router-link>
+        <router-link :to="{ name: 'portfolio' }" tag="li">Our Work</router-link>
         <router-link to="/#selection" tag="li">Services</router-link>
         <router-link :to="{ name: 'about' }" tag="li">About</router-link>
         <router-link :to="{ name: 'contact' }" tag="li">Contact Us</router-link>
