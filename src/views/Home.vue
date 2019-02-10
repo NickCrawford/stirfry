@@ -655,29 +655,21 @@ export default {
       return;
     }
 
-    //
-    let windowWidth =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      document.clientWidth;
-
-    // if (windowWidth > 768) {
     this.initEngine(); // Loads canvas & render engine
     this.initScene(); // Loads assets, calls other functions on completion
 
-    // Loading background color:
+    // Loading background color: Disabled for now
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
     this.engine.hideLoadingUI();
 
+    // Add event listeners for determining scroll position and logo positioning
     window.addEventListener("resize", e => {
       this.engine.resize();
       this.handleMobileCameraView(window.innerWidth);
     });
-
     this.handleMobileCameraView(window.innerWidth);
 
     window.addEventListener("scroll", this.handleScroll);
-    // }
 
     // this.initAssetsManager();
     // this.initPan();
@@ -748,6 +740,8 @@ export default {
         // this.initItems(); // Uncomment this to load items!
       }
 
+      if (!this.scene) return; // If the camera hasn't loaded yet, we dont need to worry about the stuff below.
+
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
       if (targetScrollFrame >= totalAnimationFrames) {
@@ -804,6 +798,8 @@ export default {
     },
 
     initEngine() {
+      const startTime = performance.now();
+
       // Get the canvas DOM element
       this.canvas = document.getElementById("renderCanvas");
 
@@ -815,13 +811,21 @@ export default {
         preserveDrawingBuffer: true,
         stencil: true
       });
+
+      const duration = performance.now() - startTime;
+      console.log(`initEngine took ${duration}ms`);
     },
 
     initScene() {
+      const startTime = performance.now();
       var vm = this; // This is important! Using `this` in the following callback function won't work,
       // use `vm` instead.
-
+      //   <link
+      //   rel="prefetch"
+      //   href="<%= BASE_URL %>assets/models/pan_scene/pan_scene.babylon"
+      // />
       // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
+      // BABYLON.SceneLoader.loggingLevel = BABYLON.SceneLoader.detailed_logging;
       BABYLON.SceneLoader.Load(
         "./assets/models/pan_scene/",
         "pan_scene.babylon",
@@ -835,22 +839,19 @@ export default {
 
           vm.scene.clearColor = colors.skin; // Scene bg color
           vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
+          vm.scene.autoClear = false; // Color buffer
 
           vm.engine.runRenderLoop(function() {
             scene.render();
             vm.setLogoPosition();
           });
 
-          window.addEventListener("resize", function() {
-            vm.engine.resize();
-          });
-
           // Highlight layer for selecting items
-          let hl = new BABYLON.HighlightLayer("hl", vm.scene);
-          hl.innerGlow = false;
-          hl.blurHorizontalSize = 2;
-          hl.blurVerticalSize = 2;
-          vm.hl = hl;
+          // let hl = new BABYLON.HighlightLayer("hl", vm.scene);
+          // hl.innerGlow = false;
+          // hl.blurHorizontalSize = 2;
+          // hl.blurVerticalSize = 2;
+          // vm.hl = hl;
 
           // Physics
           // vm.scene.enablePhysics();
@@ -890,9 +891,13 @@ export default {
           // });
 
           // setting up scroll handler
-          vm.handleScroll(0);
-        }
+          // vm.handleScroll(0);
+        },
+        vm.updateSceneProgress
       );
+
+      const duration = performance.now() - startTime;
+      console.log(`initScene took ${duration}ms`);
 
       return;
 
@@ -1034,6 +1039,13 @@ export default {
       );
 
       return scene;
+    },
+
+    updateSceneProgress(progress) {
+      console.log("progress", progress);
+      document.querySelector(
+        "#stirfry-loading-indicator .progress"
+      ).style.width = `${(progress.loaded / progress.total) * 100}%`;
     },
 
     initItems() {
