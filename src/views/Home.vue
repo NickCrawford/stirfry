@@ -241,7 +241,7 @@ section * {
   min-height: 100vh;
 
   display: grid;
-  grid-template-rows: 3fr 1fr;
+  grid-template-rows: 3fr auto;
   grid-template-columns: 1fr;
 
   align-items: center;
@@ -257,7 +257,7 @@ section * {
   transform: translate(-55%, -130%);
 
   width: auto;
-  height: 4.65vh;
+  height: 4.45vh;
   margin: 0;
 
   @media screen and (min-width: $md-bp) {
@@ -268,15 +268,16 @@ section * {
 #headline h2 {
   position: relative;
   margin-top: 0;
-  font-size: 3rem;
+  font-size: 2rem;
 
   grid-row-start: 2;
   background: $black;
   color: $skin;
-  margin: 0px 1rem;
+  margin: 0px 1rem 2rem;
 
   @media screen and (min-width: $md-bp) {
-    margin: 0px 30vw;
+    font-size: 3rem;
+    margin: 0px 30vw 2rem;
     width: 40vw;
   }
 }
@@ -672,6 +673,10 @@ export default {
       this.engine.resize();
       this.handleMobileCameraView(e.target.innerWidth);
     });
+
+    this.handleMobileCameraView(window.innerWidth);
+
+    window.addEventListener("scroll", this.handleScroll);
     // }
 
     // this.initAssetsManager();
@@ -702,7 +707,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
-    console.log("scrolling Destroyed");
+    window.removeEventListener("resize", () => {});
   },
 
   watch: {},
@@ -886,7 +891,6 @@ export default {
 
           // setting up scroll handler
           vm.handleScroll(0);
-          window.addEventListener("scroll", vm.handleScroll);
         }
       );
 
