@@ -1045,7 +1045,7 @@ export default {
       console.log("progress", progress);
       document.querySelector(
         "#stirfry-loading-indicator .progress"
-      ).style.width = `${(progress.loaded / progress.total) * 100}%`;
+      ).style.width = `${(progress.loaded / 21256177) * 100}%`;
     },
 
     initItems() {
