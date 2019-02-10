@@ -257,11 +257,11 @@ section * {
   transform: translate(-55%, -130%);
 
   width: auto;
-  height: 4.45vh;
+  height: 4.4vh;
   margin: 0;
 
   @media screen and (min-width: $md-bp) {
-    height: 7vh;
+    height: 6.8vh;
   }
 }
 
@@ -671,7 +671,7 @@ export default {
 
     window.addEventListener("resize", e => {
       this.engine.resize();
-      this.handleMobileCameraView(e.target.innerWidth);
+      this.handleMobileCameraView(window.innerWidth);
     });
 
     this.handleMobileCameraView(window.innerWidth);
