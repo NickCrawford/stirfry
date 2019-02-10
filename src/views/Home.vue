@@ -139,7 +139,6 @@
   </div>
 </template>
 
-
 <style lang="scss" scoped>
 @import "~@/GlobalVars.scss";
 
@@ -825,7 +824,7 @@ export default {
       //   href="<%= BASE_URL %>assets/models/pan_scene/pan_scene.babylon"
       // />
       // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
-      // BABYLON.SceneLoader.loggingLevel = BABYLON.SceneLoader.detailed_logging;
+      BABYLON.SceneLoader.loggingLevel = BABYLON.SceneLoader.detailed_logging;
       BABYLON.SceneLoader.Load(
         "./assets/models/pan_scene/",
         "pan_scene.babylon",
@@ -1043,9 +1042,6 @@ export default {
 
     updateSceneProgress(progress) {
       console.log("progress", progress);
-      document.querySelector(
-        "#stirfry-loading-indicator .progress"
-      ).style.width = `${(progress.loaded / 21256177) * 100}%`;
     },
 
     initItems() {
