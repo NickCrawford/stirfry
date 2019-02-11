@@ -1,14 +1,18 @@
 <template>
   <header :class="[colorPalette, {'fixed' : fixed }]">
     <nav>
-      <ul>
+      <ul :class="{ expanded: expanded }">
         <router-link :to="{ name: 'home', hash: '#headline' }" tag="li" id="home-logo">
           <img src="@/assets/images/logos/logo-pan.svg" alt="home" :class="colorPalette">
         </router-link>
+        <div class="menu-title" @click=" expanded = !expanded">Menu</div>
         <router-link :to="{ name: 'portfolio' }" tag="li">Our Work</router-link>
         <router-link to="/#selection" tag="li">Services</router-link>
         <router-link :to="{ name: 'about' }" tag="li">About</router-link>
         <router-link :to="{ name: 'contact' }" tag="li">Contact Us</router-link>
+
+        <li class="close-option" @click=" expanded = !expanded">Close</li>
+
       </ul>
     </nav>
   </header>
@@ -17,6 +21,11 @@
 <script>
 export default {
   name: "HeaderBar",
+  data() {
+    return {
+      expanded: false,
+    }
+  },
   props: {
     colorPalette: {
       // Options: 'transparent', 'gray', 'light'
@@ -63,11 +72,48 @@ header.fixed {
   right: 0;
 }
 
+.close-option {
+  font-weight: bold;
+  text-decoration: underline;
+  order: 7;
+  display: none;
+}
+.menu-title {
+  display: none;
+  order: 3;
+  font-weight:bold;
+  text-decoration: underline;
+}
+
 nav ul {
   display: flex;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
+  @media screen and (max-width: 900px) {
+    justify-content: space-between;
+    padding-right: 20px;
+    &.expanded {
+      background: $black;
+      color: $skin;
+      flex-direction: column;
+      img {
+        filter: brightness(250%);
+      }
+      .close-option {
+        display: block;
+      }
+    }
+    &:not(.expanded) {
+      .menu-title {
+        
+        display: block;
+      }
+      li {
+        display: none;
+      }
+    }
+  }
 }
 
 nav li {
@@ -90,6 +136,13 @@ nav li {
 #home-logo {
   order: 4;
   margin: 0.5em 0 0;
+  @media screen and (max-width: 900px) {
+    display: block;
+    order: 1;
+  }
+}
+.menu-title {
+  order: 2;
 }
 
 #home-logo img {

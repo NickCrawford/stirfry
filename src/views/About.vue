@@ -106,8 +106,6 @@ section {
 /* Ensures the right frame will go first on a mobile browser */
 .reverse-order {
   @media screen and (max-width: 900px) {
-    // flex-direction: column-reverse;
-    // min-width: 400px;
     .image-holder {
       order: 3;
     }
