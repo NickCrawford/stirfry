@@ -1,5 +1,6 @@
 <template>
   <div class="contact">
+    <Header-bar colorPalette="gray"></Header-bar>
     <div class="contact-form">
       <h1>Let's get in touch</h1>
       <h3>We're really excited to work with you. We just need a few more details...</h3>
@@ -53,8 +54,14 @@
 </template>
 
 <script>
+import HeaderBar from "@/components/HeaderBar";
+
 export default {
   name: "Contact",
+
+  components: {
+    HeaderBar
+  },
 
   props: {
     selectedItems: {
@@ -145,7 +152,7 @@ export default {
   grid-template-columns: 1fr;
   align-items: start;
 
-  padding: 2rem 5vw;
+  padding: 12rem 5vw;
   min-height: 100vh;
 
   background: $skin;

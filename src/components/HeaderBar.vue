@@ -26,6 +26,12 @@ export default {
       expanded: false,
     }
   },
+  watch:{
+    // Un-expands the menu bar, even when you stay on the same page
+    $route (to, from){
+        this.expanded = false;
+    }
+  },
   props: {
     colorPalette: {
       // Options: 'transparent', 'gray', 'light'
