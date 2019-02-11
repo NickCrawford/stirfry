@@ -96,7 +96,8 @@ nav ul {
   margin: 0 auto;
   justify-content: center;
   align-items: center;
-  @media screen and (max-width: 900px) {
+  /* Dealing with mobile menu bar. */
+  @media screen and (max-width: $md-bp) {
     justify-content: space-between;
     padding-right: 20px;
     &.expanded {
@@ -142,7 +143,7 @@ nav li {
 #home-logo {
   order: 4;
   margin: 0.5em 0 0;
-  @media screen and (max-width: 900px) {
+  @media screen and (max-width: $md-bp) {
     display: block;
     order: 1;
   }
