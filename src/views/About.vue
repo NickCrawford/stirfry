@@ -24,16 +24,16 @@
       <div class="image-holder">
         <img src="@/assets/images/about_page/nick_profile.png">
         <div class="image-caption">
-          Nick Crawford, pictured above, has always had a passion for design.  Favorite activities include coming up with creative, ambitious ideas, and following through with them.
+          Nick Crawford has always had a passion for design.  Favorite activities include coming up with creative, ambitious ideas, and following through with them.
         </div>
       </div>
     </section> 
 
-    <section class="bio-section">
+    <section class="bio-section reverse-order">
       <div class="image-holder">
         <img src="@/assets/images/about_page/ben_profile.png">
         <div class="image-caption">
-          Ben Holland, pictured to the left, plays drums and is obsessed with numbers and patterns. Oh, and Super Mario 64. Best game ever. 
+          Ben Holland plays drums and is obsessed with numbers and patterns. Oh, and Super Mario 64. Best game ever. 
         </div>
       </div>
       <div >
@@ -90,7 +90,7 @@ section {
   justify-content:space-around;
   div {
     width: 48%;
-    min-width: 400px;
+    min-width: 350px;
     p {
       padding: 0px 5%;
       font-size: 20px;
@@ -100,6 +100,16 @@ section {
       max-width: 300px;
       display: block;
       
+    }
+  }
+}
+/* Ensures the right frame will go first on a mobile browser */
+.reverse-order {
+  @media screen and (max-width: 900px) {
+    // flex-direction: column-reverse;
+    // min-width: 400px;
+    .image-holder {
+      order: 3;
     }
   }
 }
