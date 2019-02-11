@@ -84,22 +84,22 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.018
 		processing begun of Standard material:  Material.017
 		processing begun of multimaterial:  just_veggies.Multimaterial#1
-		num positions      :  13058
-		num normals        :  13058
+		num positions      :  1064
+		num normals        :  1064
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  75264
+		num indices        :  5664
 	processing begun of mesh:  pepperShaker
 		processing begun of Standard material:  pepper shaker  base.001
 		processing begun of Standard material:  shaker cap.003
 		processing begun of multimaterial:  just_veggies.Multimaterial#2
-		num positions      :  118892
-		num normals        :  118892
+		num positions      :  30598
+		num normals        :  30598
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  710976
+		num indices        :  181212
 	processing begun of mesh:  plate.001
 		processing begun of Standard material:  plate light.001
 		processing begun of Standard material:  plate darker.001
@@ -117,12 +117,12 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 		processing begun of Standard material:  Material.015
 		processing begun of Standard material:  Material.014
 		processing begun of multimaterial:  just_veggies.Multimaterial#4
-		num positions      :  13058
-		num normals        :  13058
+		num positions      :  1064
+		num normals        :  1064
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  75264
+		num indices        :  5664
 	processing begun of mesh:  saltShaker
 		processing begun of Standard material:  salt shaker base.001
 		processing begun of Standard material:  shaker cap.002
@@ -176,4 +176,4 @@ Exporter version: 5.6.4, Blender version: 2.79 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 23.2254 secs
+elapsed time:  0 min, 12.9156 secs
