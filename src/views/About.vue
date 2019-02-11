@@ -1,6 +1,8 @@
 <template>
   <div class="about">
+
     <header-bar colorPalette="gray"/>
+
     <section id="about-header">
       <h2 style="font-weight:bold;">About</h2>
       <h1>Stirfry Design</h1>
@@ -8,6 +10,7 @@
         Who are we? And why do we like stirfry so much?
       </p>
     </section>
+
     <section class="bio-section">
       <div>
         <h2 class="outlined-header">Origin Story</h2>
@@ -18,10 +21,32 @@
           For the next 4 years, they worked together leading Hacksu, Kent State's programming club, and organizing KSU's hackathon.
         </p>
       </div>
-      <div>
-      
+      <div class="image-holder">
+        <img src="@/assets/images/about_page/nick_profile.png">
+        <div class="image-caption">
+          Nick Crawford, pictured above, has always had a passion for design.  Favorite activities include coming up with creative, ambitious ideas, and following through with them.
+        </div>
       </div>
     </section> 
+
+    <section class="bio-section">
+      <div class="image-holder">
+        <img src="@/assets/images/about_page/ben_profile.png">
+        <div class="image-caption">
+          Ben Holland, pictured to the left, plays drums and is obsessed with numbers and patterns. Oh, and Super Mario 64. Best game ever. 
+        </div>
+      </div>
+      <div >
+        <p>
+          After several successful projects, they finally realized how powerful they would be if they teamed up.
+        </p>
+
+        <p>
+          In 2018, they decided to go freelance, helping companies in their community with design, marketing, and development. So they founded Startup Stirfry. 
+        </p>
+      </div>
+    </section>
+
   </div>
 </template>
 
@@ -43,6 +68,7 @@ export default {
 #about-header {
   background: $black;
   margin-top: 30px;
+  margin-bottom: 100px;
   padding: 2rem 5vw;
   color: white;
   text-align: center;
@@ -60,12 +86,20 @@ section {
   padding: 2rem 5vw;
   max-width: 1040px;
   display: flex;
+  flex-flow: row wrap;
   justify-content:space-around;
   div {
     width: 48%;
+    min-width: 400px;
     p {
       padding: 0px 5%;
       font-size: 20px;
+    }
+    img {
+      width: 100%;
+      max-width: 300px;
+      display: block;
+      
     }
   }
 }
@@ -77,7 +111,20 @@ section {
   font-size: 3rem;
   display: block;
   padding: 0rem 2rem;
+  margin-top: 0px;
 
+}
+
+.image-holder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  div {
+    background: $black;
+    margin-top: 30px;
+    padding: 1rem;
+    color: $skin;
+  }
 }
 </style>
 
