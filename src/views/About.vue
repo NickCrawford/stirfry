@@ -1,22 +1,27 @@
 <template>
   <div class="about">
-    <header-bar/>
-    <section>
-      <h1>About us</h1>
-      <h2>2018</h2>
-      <h3>Spring - Officially open for business</h3>
-      <p>Startup Stirfry LLC was officially founded by Nick Crawford and Ben Holland. Their first task: establish themselves as professional web designers. Together they started on their very first agency project,
-        <a href="http://www.sellout.at">Sellout</a>
+    <header-bar colorPalette="gray"/>
+    <section id="about-header">
+      <h2 style="font-weight:bold;">About</h2>
+      <h1>Stirfry Design</h1>
+      <p style="opacity:.5;font-style:italic;margin-top:-20px;margin-bottom:100px;">
+        Who are we? And why do we like stirfry so much?
       </p>
     </section>
-    <section>
-      <h3>Summer - Heating up...</h3>
-      <p>During the summer, Nick and Ben found themselves personally taking on various freelance projects. As these projects began to stack up, both their depth and breadth of work expanded. They learned new skills, technologies, and best-practices. It was about time to put these new skills to the test. It was time to launch an official agency.</p>
-    </section>
-    <section>
-      <h3>Winter - Gettin' creative</h3>
-      <p>With several major projects under their belts, Startup Stirfry is now an established creative agency dedicated to helping businesses find their visual identity. We even launched a new portfolio website to celebrate!</p>
-    </section>
+    <section class="bio-section">
+      <div>
+        <h2 class="outlined-header">Origin Story</h2>
+        <p>
+          Ben and Nick met at a hackathon at Kent State, and quickly became vicious rivals, competing ruthlessly to be better than the other at design & programming. 
+        </p>
+        <p>
+          For the next 4 years, they worked together leading Hacksu, Kent State's programming club, and organizing KSU's hackathon.
+        </p>
+      </div>
+      <div>
+      
+      </div>
+    </section> 
   </div>
 </template>
 
@@ -28,16 +33,51 @@ export default {
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/GlobalVars.scss";
+
 .about {
+  padding-bottom: 300px;
+}
+
+#about-header {
+  background: $black;
+  margin-top: 30px;
   padding: 2rem 5vw;
+  color: white;
+  text-align: center;
+
 }
 
 section {
   width: 100%;
-  max-width: 1040px;
   margin: 0 auto;
   text-align: left;
+}
+
+.bio-section {
+  width: 100%;
+  padding: 2rem 5vw;
+  max-width: 1040px;
+  display: flex;
+  justify-content:space-around;
+  div {
+    width: 48%;
+    p {
+      padding: 0px 5%;
+      font-size: 20px;
+    }
+  }
+}
+
+.outlined-header {
+  background: $black;
+  font-weight: bold;
+  color: #f5d6ba;
+  font-size: 3rem;
+  display: block;
+  padding: 0rem 2rem;
+
 }
 </style>
 
