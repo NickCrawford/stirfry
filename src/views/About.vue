@@ -68,7 +68,6 @@ export default {
 #about-header {
   background: $black;
   margin-top: 30px;
-  margin-bottom: 100px;
   padding: 2rem 5vw;
   color: white;
   text-align: center;
@@ -83,6 +82,7 @@ section {
 
 .bio-section {
   width: 100%;
+  margin-top: 100px;
   padding: 2rem 5vw;
   max-width: 1040px;
   display: flex;

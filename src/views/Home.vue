@@ -819,7 +819,7 @@ export default {
       // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
       BABYLON.SceneLoader.Load(
         "./assets/models/pan_scene/",
-        "pan_scene.babylon",
+        "just_a_pan.babylon",
         this.engine,
         function(scene) {
           vm.scene = scene;
@@ -887,6 +887,15 @@ export default {
           // setting up scroll handler
           vm.handleScroll(0);
           window.addEventListener("scroll", vm.handleScroll);
+
+          setTimeout(() => {
+            BABYLON.SceneLoader.AppendAsync(
+            "./assets/models/pan_scene/",
+            "just_veggies.babylon",
+            vm.scene).then(function(scene) {
+              vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
+            });
+          }, 10);
         }
       );
 
