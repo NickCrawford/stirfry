@@ -29,6 +29,13 @@
               alt="Startup Stirfry"
               class="logo"
               :style="{ left: `${logoPosition.x}px`, top: `${logoPosition.y}px` }"
+              v-if="!isMobile"
+            >
+            <img
+              src="@/assets/images/logos/logo-full-color.svg"
+              alt="Startup Stirfry"
+              class="logo is-mobile"
+              v-else
             >
           </h1>
           <h2>A creative agency &mdash; with taste.</h2>
@@ -261,6 +268,14 @@ section * {
 
   @media screen and (min-width: $md-bp) {
     height: 6.8vh;
+  }
+
+  &.is-mobile {
+    width: calc(100% - 4rem);
+    height: auto;
+    transform: translate(-50%, -75%);
+    margin: 2rem auto;
+    max-width: 600px;
   }
 }
 
@@ -624,6 +639,9 @@ export default {
         y: 0
       },
 
+      // Is Mobile Device?
+      isMobile: false,
+
       // Scrolling breakpoints used in HTML Template
       scrollBreakPoint: {
         headline: 0.05,
@@ -653,20 +671,25 @@ export default {
     if (window.navigator.userAgent.includes("Headless")) {
       return;
     }
+    this.isMobile =
+      typeof window.orientation !== "undefined" ||
+      navigator.userAgent.indexOf("IEMobile") !== -1;
 
-    this.initEngine(); // Loads canvas & render engine
-    this.initScene(); // Loads assets, calls other functions on completion
+    if (!this.isMobile) {
+      this.initEngine(); // Loads canvas & render engine
+      this.initScene(); // Loads assets, calls other functions on completion
 
-    // Loading background color: Disabled for now
-    this.engine.loadingUIBackgroundColor = "#F5D6BA";
-    this.engine.hideLoadingUI();
+      // Loading background color: Disabled for now
+      this.engine.loadingUIBackgroundColor = "#F5D6BA";
+      this.engine.hideLoadingUI();
 
-    // Add event listeners for determining scroll position and logo positioning
-    window.addEventListener("resize", e => {
-      this.engine.resize();
+      // Add event listeners for determining scroll position and logo positioning
+      window.addEventListener("resize", e => {
+        this.engine.resize();
+        this.handleMobileCameraView(window.innerWidth);
+      });
       this.handleMobileCameraView(window.innerWidth);
-    });
-    this.handleMobileCameraView(window.innerWidth);
+    }
 
     window.addEventListener("scroll", this.handleScroll);
 
@@ -895,14 +918,15 @@ export default {
 
           setTimeout(() => {
             BABYLON.SceneLoader.AppendAsync(
-            "./assets/models/pan_scene/",
-            "just_veggies.babylon",
-            vm.scene).then(function(scene) {
+              "./assets/models/pan_scene/",
+              "just_veggies.babylon",
+              vm.scene
+            ).then(function(scene) {
               vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
             });
           }, 10);
         }
-          // vm.handleScroll(0);
+        // vm.handleScroll(0);
       );
 
       const duration = performance.now() - startTime;
