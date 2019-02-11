@@ -63,6 +63,7 @@
 }
 
 .ingredient-checkbox {
+  
   .checkbox-input {
     display: none;
   }
@@ -71,6 +72,7 @@
   .checkbox-label {
     display: inline-block;
     position: relative;
+    
     padding: 0.5em 1em 0.5em 65px;
 
     text-align: center;
@@ -102,12 +104,24 @@
     border: solid 2px black;
   }
 
+  
+
   img {
     position: absolute;
     z-index: 20;
     max-width: 80px;
     max-height: 80px;
     margin-left: -20px;
+  }
+
+  /* Moving labels up on mobile, to not have them collide with action button */
+  @media screen and (max-width: $md-bp) {
+    .checkbox-label {
+      top: -50px;
+    }
+    img {
+      top: -50px;
+    }
   }
   
 

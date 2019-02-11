@@ -128,7 +128,7 @@
               <router-link
                 :to="{ name: 'contact', params: { selectedItems: selectedItems }}"
                 tag="button"
-                class="stirfry-button"
+                class="stirfry-button contact-us-button"
                 v-if="isItemSelected"
               >contact us »</router-link>
             </transition>
@@ -375,7 +375,7 @@ section * {
   grid-area: finish;
 
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: 1fr;
   grid-row-gap: 20px;
 
@@ -399,8 +399,7 @@ section * {
 #selection .finish-container {
   grid-area: finish;
   align-self: end;
-
-  animation: hover-vertical 1.8s ease-in-out infinite;
+  // animation: hover-vertical 1.8s ease-in-out infinite;
 }
 
 #selection h4 {
