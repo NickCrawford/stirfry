@@ -139,7 +139,6 @@
   </div>
 </template>
 
-
 <style lang="scss" scoped>
 @import "~@/GlobalVars.scss";
 
@@ -241,7 +240,7 @@ section * {
   min-height: 100vh;
 
   display: grid;
-  grid-template-rows: 3fr 1fr;
+  grid-template-rows: 3fr auto;
   grid-template-columns: 1fr;
 
   align-items: center;
@@ -257,26 +256,27 @@ section * {
   transform: translate(-55%, -130%);
 
   width: auto;
-  height: 4.65vh;
+  height: 4.4vh;
   margin: 0;
 
   @media screen and (min-width: $md-bp) {
-    height: 7vh;
+    height: 6.8vh;
   }
 }
 
 #headline h2 {
   position: relative;
   margin-top: 0;
-  font-size: 3rem;
+  font-size: 2rem;
 
   grid-row-start: 2;
   background: $black;
   color: $skin;
-  margin: 0px 1rem;
+  margin: 0px 1rem 2rem;
 
   @media screen and (min-width: $md-bp) {
-    margin: 0px 30vw;
+    font-size: 3rem;
+    margin: 0px 30vw 2rem;
     width: 40vw;
   }
 }
@@ -654,25 +654,21 @@ export default {
       return;
     }
 
-    //
-    let windowWidth =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      document.clientWidth;
-
-    // if (windowWidth > 768) {
     this.initEngine(); // Loads canvas & render engine
     this.initScene(); // Loads assets, calls other functions on completion
 
-    // Loading background color:
+    // Loading background color: Disabled for now
     this.engine.loadingUIBackgroundColor = "#F5D6BA";
     this.engine.hideLoadingUI();
 
+    // Add event listeners for determining scroll position and logo positioning
     window.addEventListener("resize", e => {
       this.engine.resize();
-      this.handleMobileCameraView(e.target.innerWidth);
+      this.handleMobileCameraView(window.innerWidth);
     });
-    // }
+    this.handleMobileCameraView(window.innerWidth);
+
+    window.addEventListener("scroll", this.handleScroll);
 
     // this.initAssetsManager();
     // this.initPan();
@@ -702,7 +698,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("scroll", this.handleScroll);
-    console.log("scrolling Destroyed");
+    window.removeEventListener("resize", () => {});
   },
 
   watch: {},
@@ -742,6 +738,8 @@ export default {
       if (this.scrollProgress >= 0.9 && !this.itemsLoaded) {
         // this.initItems(); // Uncomment this to load items!
       }
+
+      if (!this.scene) return; // If the camera hasn't loaded yet, we dont need to worry about the stuff below.
 
       let targetScrollFrame = this.scrollProgress * 100; // The frame (integer) we want to go to based on scroll position
 
@@ -799,6 +797,8 @@ export default {
     },
 
     initEngine() {
+      const startTime = performance.now();
+
       // Get the canvas DOM element
       this.canvas = document.getElementById("renderCanvas");
 
@@ -810,13 +810,21 @@ export default {
         preserveDrawingBuffer: true,
         stencil: true
       });
+
+      const duration = performance.now() - startTime;
+      console.log(`initEngine took ${duration}ms`);
     },
 
     initScene() {
+      const startTime = performance.now();
       var vm = this; // This is important! Using `this` in the following callback function won't work,
       // use `vm` instead.
-
+      //   <link
+      //   rel="prefetch"
+      //   href="<%= BASE_URL %>assets/models/pan_scene/pan_scene.babylon"
+      // />
       // here the doc for Load function: http://doc.babylonjs.com/api/classes/babylon.sceneloader#load
+      BABYLON.SceneLoader.loggingLevel = BABYLON.SceneLoader.detailed_logging;
       BABYLON.SceneLoader.Load(
         "./assets/models/pan_scene/",
         "just_a_pan.babylon",
@@ -830,22 +838,19 @@ export default {
 
           vm.scene.clearColor = colors.skin; // Scene bg color
           vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
+          vm.scene.autoClear = true; // Color buffer
 
           vm.engine.runRenderLoop(function() {
             scene.render();
             vm.setLogoPosition();
           });
 
-          window.addEventListener("resize", function() {
-            vm.engine.resize();
-          });
-
           // Highlight layer for selecting items
-          let hl = new BABYLON.HighlightLayer("hl", vm.scene);
-          hl.innerGlow = false;
-          hl.blurHorizontalSize = 2;
-          hl.blurVerticalSize = 2;
-          vm.hl = hl;
+          // let hl = new BABYLON.HighlightLayer("hl", vm.scene);
+          // hl.innerGlow = false;
+          // hl.blurHorizontalSize = 2;
+          // hl.blurVerticalSize = 2;
+          // vm.hl = hl;
 
           // Physics
           // vm.scene.enablePhysics();
@@ -897,7 +902,11 @@ export default {
             });
           }, 10);
         }
+          // vm.handleScroll(0);
       );
+
+      const duration = performance.now() - startTime;
+      console.log(`initScene took ${duration}ms`);
 
       return;
 
@@ -1039,6 +1048,10 @@ export default {
       );
 
       return scene;
+    },
+
+    updateSceneProgress(progress) {
+      console.log("progress", progress);
     },
 
     initItems() {
