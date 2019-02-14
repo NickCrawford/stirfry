@@ -197,6 +197,7 @@ export default {
     },
     projectBackgroundColor(projectId) {
       if (!projectId) return "#545454";
+      if (window.innerWidth < this.$breakpoint("MD_BP")) return "#545454";
 
       try {
         return this.projects[this.activeProject.split("-")[1]].data[
@@ -374,7 +375,7 @@ var hexToDec = function(hexString) {
 .portfolio-container {
   margin: 0 auto;
   position: relative;
-  transition: background-color 0.3s ease, color 0.5s ease 0.3s;
+  transition: background-color 0.3s ease-in-out, color 0.5s ease 0.3s;
 }
 
 .portfolio-navigation {
