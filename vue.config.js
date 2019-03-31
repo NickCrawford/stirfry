@@ -20,26 +20,17 @@ module.exports = {
       module: {
         rules: [
           {
-            test: /\.vue$/,
-            loader: 'vue-loader',
-          },
-          {
-            test: /\.js$/,
-            loader: 'babel-loader',
-            include: [path.join(__dirname, 'src')],
-          },
-          {
-            test: /\.scss$/,
-            use: [
-              'vue-style-loader',
-              'css-loader',
-              {
-                loader: 'sass-loader',
-              },
-            ],
-          },
-        ],
-      },
+            test: /\.m?js$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env']
+              }
+            }
+          }
+        ]
+      }
     };
   }
 };
