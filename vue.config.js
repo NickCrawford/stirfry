@@ -20,10 +20,6 @@ module.exports = {
       module: {
         rules: [
           {
-            test: /\.vue$/,
-            loader: 'vue-loader',
-          },
-          {
             test: /\.m?js$/,
             exclude: /(node_modules|bower_components)/,
             use: {
