@@ -31,7 +31,7 @@
 
     <section class="bio-section reverse-order">
       <div class="image-holder">
-        <img src="@/assets/images/about_page/ben_profile.png">
+        <img src="@/assets/images/about_page/ben_profile.png" style="max-height:  300px">
         <div class="image-caption">
           Ben Holland plays drums and is obsessed with numbers and patterns. Oh, and Super Mario 64. Best game ever. 
         </div>
@@ -127,11 +127,18 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-items: flex-start;
   div {
     background: $black;
     margin-top: 30px;
     padding: 1rem;
     color: $skin;
+        align-self: center;
+
+  }
+  img {
+    align-self: center;
+    max-height: 350px;
   }
 }
 </style>
