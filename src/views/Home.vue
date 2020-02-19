@@ -834,7 +834,7 @@ export default {
       });
 
       const duration = performance.now() - startTime;
-      console.log(`initEngine took ${duration}ms`);
+      // console.log(`initEngine took ${duration}ms`);
     },
 
     initScene() {
@@ -929,7 +929,7 @@ export default {
       );
 
       const duration = performance.now() - startTime;
-      console.log(`initScene took ${duration}ms`);
+      // console.log(`initScene took ${duration}ms`);
 
       return;
 
@@ -1074,7 +1074,7 @@ export default {
     },
 
     updateSceneProgress(progress) {
-      console.log("progress", progress);
+      // console.log("progress", progress);
     },
 
     initItems() {
@@ -1083,7 +1083,7 @@ export default {
       this.assetsManager.useDefaultLoadingScreen = false;
       this.engine.hideLoadingUI();
 
-      console.log("err here?");
+      // console.log("err here?");
       var vm = this;
       setTimeout(() => {
         BABYLON.SceneLoader.Append(
@@ -1091,7 +1091,7 @@ export default {
           "pan_scene_items.babylon",
           this.scene,
           function(scene) {
-            console.log("here?");
+            // console.log("here?");
             vm.scene.ambientColor = new BABYLON.Color3(1, 1, 1); // Makes our flat colors appear brightly
           }
         );
@@ -1164,7 +1164,7 @@ export default {
       );
       if (pickInfo.hit) {
         this.currentMesh = pickInfo.pickedMesh;
-        console.log(this.currentMesh);
+        // console.log(this.currentMesh);
         this.hl.addMesh(this.currentMesh, colors.highlightColor);
       }
 
@@ -1311,10 +1311,10 @@ export default {
         //   mesh.position = new BABYLON.Vector3(0, 0.5, -3);
         // });
 
-        console.log(
-          "aM-loaded pan... task.loadedMeshes.length: ",
-          task.loadedMeshes.length
-        );
+        // console.log(
+        //   "aM-loaded pan... task.loadedMeshes.length: ",
+        //   task.loadedMeshes.length
+        // );
         let pan = task.loadedMeshes[1];
         let handle = task.loadedMeshes[0];
         handle.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
@@ -1369,10 +1369,10 @@ export default {
 
       // You can handle success and error on a per-task basis (onSuccess, onError)
       pepperTask.onSuccess = task => {
-        console.log(
-          "aM-loaded pepper... task.loadedMeshes.length: ",
-          task.loadedMeshes.length
-        );
+        // console.log(
+        //   "aM-loaded pepper... task.loadedMeshes.length: ",
+        //   task.loadedMeshes.length
+        // );
         // let pan = task.loadedMeshes[0];
         let pepper = BABYLON.Mesh.MergeMeshes([...task.loadedMeshes]);
         pepper.position = new BABYLON.Vector3(5, 10, 5);
