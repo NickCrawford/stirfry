@@ -17,8 +17,8 @@ Vue.config.productionTip = false;
 
 Vue.use(PrismicVue, {
   endpoint: window.prismic.endpoint,
-  linkResolver: linkResolver,
-  apiOptions: { accessToken }
+  linkResolver: linkResolver
+  // apiOptions: { accessToken }
 });
 
 Vue.use(VueAnalytics, {
